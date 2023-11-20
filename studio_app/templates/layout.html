@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.104.2">
+    <meta name="description" content="Liza studio: booking.">
+    <meta name="author" content="">
+    <meta name="generator" content="v0.1">
     <title>
         {% block title %}
 
         {% endblock %}
     </title>
-
+    <link rel="icon" href="{{ url_for('static', filename='/img/icon.svg') }}" type="image/svg+xml">
     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/carousel/">
 
     
@@ -79,8 +79,21 @@
   </head>
   <body>
         <header>
-            {% block header %}
-            {% endblock %}
+          <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <div class="container-fluid">
+            <a class="navbar-brand" href="#">Liza Studio</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                  {% block header %}
+                  {% endblock %}
+                </ul>                
+            </div>
+            </div>
+        </nav>
+
         </header>
 
         <main>
@@ -92,7 +105,7 @@
         <!-- FOOTER -->
         <footer class="container">
             <p class="float-end"><a href="#">Back to top</a></p>
-            <p>&copy; 2017–2022 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+            <p>&copy; 2023 Dmitrii Kutyrshin. &middot; <a href="https://github.com/cootook">GitHub</a> &middot; </p>
         </footer>  
   </body>
 </html>
