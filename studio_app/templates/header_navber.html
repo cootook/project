@@ -1,0 +1,8 @@
+{% navbar_menu = [appointments, account, pricing, contact, about, logout] %}
+
+{% for navbar_item in navbar_menu %}
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ navbar_item }}.html">{{ navbar_item }}</a>
+    </li>
+{% endfor %}
+
