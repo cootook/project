@@ -1,3 +1,6 @@
-//export FLASK_DEBUG=1
-//export FLASK_APP=studio_app.webapp
-//FLASK_ENV=development
+This is a final project of Harvard CS50 course. 
+Web app for booking maniqure appointments and managing them.
+Using:
+    -flask
+    -bootstrap
+    
