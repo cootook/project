@@ -1,15 +1,13 @@
 {% extends "layout.html" %}
 
-{% loged_in = 1 %}
-
 {% block title %}
 Liza studio
 {% endblock %}
 
 
-  {% if loged_in%}
+  {% if loged_in %}
     {% block header %}
-      {% include 'header' %}
+      {% include 'header_navbar.html' %}
     {% endblock %}
   {% endif %}
 

@@ -5,7 +5,8 @@ from . import app
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    loged_in = "1"
+    return render_template("index.html", loged_in=loged_in)
 
 @app.route("/about/")
 def about():
