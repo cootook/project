@@ -1,6 +1,16 @@
-{% for navbar_item in navbar_menu %}
+{% if is_loged_in == 1 %}
+    {% for navbar_item in navbar_menu %}
     <li class="nav-item">
         <a class="nav-link active" aria-current="page" href="{{ navbar_item.lower() }}.html">{{ navbar_item }}</a>
     </li>
-{% endfor %}
+    {% endfor %}
+{% else %}
+    {% for navbar_item in navbar_menu_not_loged_in %}
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{{ navbar_item.lower() }}.html">{{ navbar_item }}</a>
+        </li>
+    {% endfor %}
+{% endif %}
+
+
 
