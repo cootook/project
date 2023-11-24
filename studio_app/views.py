@@ -3,9 +3,15 @@ from flask import render_template
 from datetime import datetime
 from . import app
 
+navbar_items = ["Appointments", "Account", "Pricing", "Contact", "About", "LogOut"]
+
+@app.context_processor
+def inject_navbar_items():
+    return dict(navbar_menu=navbar_items)
+
 @app.route("/")
 def home():
-    loged_in = "1"
+    loged_in = 1
     return render_template("index.html", loged_in=loged_in)
 
 @app.route("/about/")
