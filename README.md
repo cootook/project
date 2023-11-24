@@ -11,14 +11,14 @@ Web app for booking maniqure appointments and managing them.
     *- SQLite
 
 **features:**
-    *- optimized for small screens*
-    *- register via login/password or facebook *
-    *- login/logout from user account via facebook*
-    *- user can see the history of it's appointments*
-    *- admin can open and close time for booking*
-    *- admin can manage appointments*
+    * optimized for small screens
+    * register via login/password or facebook 
+    * login/logout from user account via facebook
+    * user can see the history of it's appointments
+    * admin can open and close time for booking
+    * admin can manage appointments
     
 **future features:**
-    *- language selection *
-    *- admin can add articles*
-    *- register via google*
+    * language selection 
+    * admin can add articles
+    * register via google
