@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template
 from datetime import datetime
+from helpers import log_user_in, login_required
 from . import app
 
 
@@ -25,6 +26,38 @@ def home():
 def about():
     return render_template("about.html")
 
+@app.route("/account/")
+@login_required
+def about():
+    return render_template("account.html")
+
+@app.route("/appointments/")
+@login_required
+def about():
+    return render_template("appointments.html")
+
+@app.route("/articles/")
+def about():
+    return render_template("articles.html")
+
 @app.route("/contact/")
-def contact():
+def about():
     return render_template("contact.html")
+
+@app.route("/day/")
+@login_required
+def about():
+    return render_template("day.html")
+
+@app.route("/pricing/")
+def about():
+    return render_template("pricing.html")
+
+@app.route("/signin/")
+def about():
+    return render_template("signin.html")
+
+@app.route("/signup/")
+def about():
+    return render_template("signup.html")
+
