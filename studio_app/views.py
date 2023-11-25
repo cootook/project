@@ -3,6 +3,7 @@ from flask import render_template
 from datetime import datetime
 from . import app
 
+
 navbar_items = ["Appointments", "Account", "Pricing", "Contact", "About", "LogOut"]
 navbar_items_not_loged_in = ["Pricing", "Contact", "About", "SignIn", "SignUp"]
 
