@@ -1,5 +1,5 @@
 {% if session.get("user_id") %}
-Hi {{session.get("user_id")}}!
+<span class="font-weight-light text-warning">Hi {{session.get("user_id")}}!</span>
     {% for navbar_item in navbar_menu %}
         <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{{ navbar_item.lower() }}/">{{ navbar_item }}</a>
