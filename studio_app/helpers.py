@@ -10,10 +10,13 @@ def log_user_in(username, password):
         #return apology("invalid username and/or password", 403)
 
     # Remember which user has logged in
-    session["user_id"] = 1 #rows[0]["id"]
+    session["user_id"] = username #rows[0]["id"]
 
     # Redirect user to home page
     return redirect("/")
+
+def log_user_out():
+    session["user_id"] = None
 
 def login_required(f):
     @wraps(f)
@@ -23,3 +26,4 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+

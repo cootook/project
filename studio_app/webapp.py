@@ -3,7 +3,7 @@ import os
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from studio_app.helpers import log_user_in, login_required
+from studio_app.helpers import log_user_in, log_user_out, login_required
 
 app = Flask(
                 __name__,
@@ -31,9 +31,8 @@ def inject_navbar_items_not_loged_in():
 
 @app.route("/")
 def home():
-    is_loged_in = 1
-    return render_template("index.html", 
-                           is_loged_in = is_loged_in)
+    is_loged_in = 0
+    return render_template("index.html")
 
 @app.route("/about/")
 def about():
@@ -68,8 +67,14 @@ def pricing():
 
 @app.route("/signin/")
 def signin():
-    return render_template("signin.html")
+    log_user_in("Bilbo Sumkin", "1")
+    return redirect("/")
 
 @app.route("/signup/")
 def signup():
     return render_template("signup.html")
+
+@app.route("/logout/")
+def logout():
+    log_user_out()
+    return redirect("/")
