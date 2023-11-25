@@ -1,8 +1,3 @@
-"""
-# Entry point for the application.
-from . import app    # For application discovery by the 'flask' command.
-from . import views  # For import side-effects of setting up routes.
-"""
 import os
 
 from flask import Flask, flash, redirect, render_template, request, session
@@ -22,8 +17,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-print("###############webapp##########")
-
+# Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "Account", "Pricing", "Contact", "About", "LogOut"]
 navbar_items_not_loged_in = ["Pricing", "Contact", "About", "SignIn", "SignUp"]
 
