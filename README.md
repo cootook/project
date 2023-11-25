@@ -31,7 +31,7 @@ Web app for booking maniqure appointments and managing them.
 ###
 *requirements.txt* contains info about modules and extensions to be installed for this app.
 #####
-*.env* for setting enviroment variables to switch prodaction/development and debug on/of
+*.env* for setting enviroment variables to switch prodaction/development and debug on/off
 #####
 set user as admin  in *db.db* manualy *users.is admin = 1*
 #####
