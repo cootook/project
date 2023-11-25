@@ -1,9 +1,11 @@
 from flask import Flask
 from flask import render_template
 from datetime import datetime
-from helpers import log_user_in, login_required
-from . import app
+from werkzeug.security import check_password_hash, generate_password_hash
 
+#from . import app
+
+#from helpers import log_user_in, login_required
 
 navbar_items = ["Appointments", "Account", "Pricing", "Contact", "About", "LogOut"]
 navbar_items_not_loged_in = ["Pricing", "Contact", "About", "SignIn", "SignUp"]
