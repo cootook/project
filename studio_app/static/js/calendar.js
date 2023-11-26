@@ -53,10 +53,14 @@
   
     Calendar.prototype.drawMonth = function() {
       var self = this;
+      //console.log(self.current)
       
-      this.events.forEach(function(ev) {
-       ev.date = self.current.clone().date(Math.random() * (29 - 1) + 1);
-      });
+      // this.events.forEach(function(ev) {
+      //  ev.date = self.current.clone().date(Math.random() * (29 - 1) + 1);
+      //  ev.date = ev.date.month(0).year(2024)
+
+      //  console.log(ev.date)
+      //});
       
       
       if(this.month) {
@@ -227,7 +231,9 @@
   
       this.renderEvents(todaysEvents, details);
   
-      arrow.style.left = el.offsetLeft - el.parentNode.offsetLeft + 27 + 'px';
+      arrow.style.left = el.offsetLeft - el.parentNode.offsetLeft + (window.screen.width / 5) + 'px';
+      console.log(el.parentNode.offsetLeft)
+      console.log(el.offsetLeft)
     }
   
     Calendar.prototype.renderEvents = function(events, ele) {
@@ -321,25 +327,25 @@
   
   !function() {
     var data = [
-      { eventName: 'Lunch Meeting w/ Mark', calendar: 'Work', color: 'orange' },
-      { eventName: 'Interview - Jr. Web Developer', calendar: 'Work', color: 'orange' },
-      { eventName: 'Demo New App to the Board', calendar: 'Work', color: 'orange' },
-      { eventName: 'Dinner w/ Marketing', calendar: 'Work', color: 'orange' },
+      { eventName: 'Lunch Meeting w/ Mark', calendar: 'Work', color: 'orange', date: moment().date(25).month(10).year(2023) },
+      { eventName: 'Interview - Jr. Web Developer', calendar: 'Work', color: 'orange', date: moment().date(1).month(10).year(2023) },
+      { eventName: 'Demo New App to the Board', calendar: 'Work', color: 'orange', date: moment().date(26).month(10).year(2023) },
+      { eventName: 'Dinner w/ Marketing', calendar: 'Work', color: 'orange', date: moment().date(15).month(10).year(2023) },
   
-      { eventName: 'Game vs Portalnd', calendar: 'Sports', color: 'blue' },
-      { eventName: 'Game vs Houston', calendar: 'Sports', color: 'blue' },
-      { eventName: 'Game vs Denver', calendar: 'Sports', color: 'blue' },
-      { eventName: 'Game vs San Degio', calendar: 'Sports', color: 'blue' },
+      { eventName: 'Game vs Portalnd', calendar: 'Sports', color: 'blue', date: moment().date(4).month(11).year(2023) },
+      { eventName: 'Game vs Houston', calendar: 'Sports', color: 'blue', date: moment().date(0).month(11).year(2023) },
+      { eventName: 'Game vs Denver', calendar: 'Sports', color: 'blue', date: moment().date(14).month(11).year(2023) },
+      { eventName: 'Game vs San Degio', calendar: 'Sports', color: 'blue', date: moment().date(26).month(11).year(2023) },
   
-      { eventName: 'School Play', calendar: 'Kids', color: 'yellow' },
-      { eventName: 'Parent/Teacher Conference', calendar: 'Kids', color: 'yellow' },
-      { eventName: 'Pick up from Soccer Practice', calendar: 'Kids', color: 'yellow' },
-      { eventName: 'Ice Cream Night', calendar: 'Kids', color: 'yellow' },
+      { eventName: 'School Play', calendar: 'Kids', color: 'yellow', date: moment().date(26).month(9).year(2023) },
+      { eventName: 'Parent/Teacher Conference', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(10).year(2023) },
+      { eventName: 'Pick up from Soccer Practice', calendar: 'Kids', color: 'yellow', date: moment().date(8).month(10).year(2023) },
+      { eventName: 'Ice Cream Night', calendar: 'Kids', color: 'yellow', date: moment().date(6).month(8).year(2023) },
   
-      { eventName: 'Free Tamale Night', calendar: 'Other', color: 'green' },
-      { eventName: 'Bowling Team', calendar: 'Other', color: 'green' },
-      { eventName: 'Teach Kids to Code', calendar: 'Other', color: 'green' },
-      { eventName: 'Startup Weekend', calendar: 'Other', color: 'green' }
+      { eventName: 'Free Tamale Night', calendar: 'Other', color: 'green', date: moment().date(0).month(0).year(2024) },
+      { eventName: 'Bowling Team', calendar: 'Other', color: 'green', date: moment().date(11).month(0).year(2024) },
+      { eventName: 'Teach Kids to Code', calendar: 'Other', color: 'green', date: moment().date(2).month(1).year(2024) },
+      { eventName: 'Startup Weekend', calendar: 'Other', color: 'green', date: moment().date(22).month(1).year(2024) }
     ];
   
     
