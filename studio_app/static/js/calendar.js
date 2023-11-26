@@ -231,7 +231,7 @@
   
       this.renderEvents(todaysEvents, details);
   
-      arrow.style.left = el.offsetLeft - el.parentNode.offsetLeft + (window.screen.width / 5) + 'px';
+      arrow.style.left = el.offsetLeft + (window.screen.width / 19) + 'px';// - el.parentNode.offsetLeft// + (window.screen.width / 5) + 'px';
       console.log(el.parentNode.offsetLeft)
       console.log(el.offsetLeft)
     }
