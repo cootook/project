@@ -232,8 +232,7 @@
       this.renderEvents(todaysEvents, details);
   
       arrow.style.left = el.offsetLeft + (window.screen.width / 19) + 'px';// - el.parentNode.offsetLeft// + (window.screen.width / 5) + 'px';
-      console.log(el.parentNode.offsetLeft)
-      console.log(el.offsetLeft)
+
     }
   
     Calendar.prototype.renderEvents = function(events, ele) {
@@ -244,16 +243,59 @@
       events.forEach(function(ev) {
         var div = createElement('div', 'event');
         var square = createElement('div', 'event-category ' + ev.color);
-        var span = createElement('span', '', ev.eventName);
-  
+        //var span = createElement('span', '', ev.eventName);
+        var form = createElement('form');
+        form.setAttribute("action", "/book");
+        form.setAttribute("method", "POST");
+
+        var input_minute = createElement('input');
+        input_minute.setAttribute("type", "hidden");
+        input_minute.setAttribute("name", "minute");
+        input_minute.setAttribute("value", ev.date.minute());
+
+
+        var input_hour = createElement('input');
+        input_hour.setAttribute("type", "hidden");
+        input_hour.setAttribute("name", "hour");
+        input_hour.setAttribute("value", ev.date.hour());
+
+
+        var input_date = createElement('input');
+        input_date.setAttribute("type", "hidden");
+        input_date.setAttribute("name", "date");
+        input_date.setAttribute("value", ev.date.date());
+
+
+        var input_month = createElement('input');
+        input_month.setAttribute("type", "hidden");
+        input_month.setAttribute("name", "month");
+        input_month.setAttribute("value", ev.date.month());
+
+
+        var input_year = createElement('input');
+        input_year.setAttribute("type", "hidden");
+        input_year.setAttribute("name", "year");
+        input_year.setAttribute("value", ev.date.year());
+ 
+        
+        var button = createElement('input', 'open_time');
+        button.setAttribute("type", "submit");
+        button.setAttribute("value", ev.eventName);
+        
+        form.appendChild(input_minute);
+        form.appendChild(input_hour);
+        form.appendChild(input_date);
+        form.appendChild(input_month);
+        form.appendChild(input_year);
+        form.appendChild(button)
         div.appendChild(square);
-        div.appendChild(span);
+        div.appendChild(form);
         wrapper.appendChild(div);
       });
   
       if(!events.length) {
         var div = createElement('div', 'event empty');
-        var span = createElement('span', '', 'No Events');
+        var span = createElement('span', '', 'No avaliable time for booking');
   
         div.appendChild(span);
         wrapper.appendChild(div);

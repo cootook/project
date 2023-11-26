@@ -52,6 +52,25 @@ def appointments():
 def articles():
     return render_template("articles.html")
 
+@app.route("/book/", methods=["GET", "POST"])
+@login_required
+def book():
+    if request.method == "POST":
+        minute = int(request.form.get("minute"))
+        hour = int(request.form.get("hour"))
+        day = int(request.form.get("date"))
+        month = int(request.form.get("month"))
+        year = int(request.form.get("year"))
+        print(hour)
+        print(minute)
+        print(day)
+        print(month)
+        print(year)
+        return redirect("/about/")
+
+    else:
+        return redirect("/")
+
 @app.route("/contact/")
 def contact():
     return render_template("contact.html")
