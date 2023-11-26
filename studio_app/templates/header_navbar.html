@@ -2,13 +2,13 @@
 <span class="font-weight-light text-warning">Hi {{session.get("user_id")}}!</span>
     {% for navbar_item in navbar_menu %}
         <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{ navbar_item.lower() }}/">{{ navbar_item }}</a>
+            <a class="nav-link active" aria-current="page" href="/{{ navbar_item.lower() }}/">{{ navbar_item }}</a>
         </li>
     {% endfor %}
 {% else %}
     {% for navbar_item in navbar_menu_not_loged_in %}
         <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{ navbar_item.lower() }}/">{{ navbar_item }}</a>
+            <a class="nav-link active" aria-current="page" href="/{{ navbar_item.lower() }}/">{{ navbar_item }}</a>
         </li>
     {% endfor %}
 {% endif %}
