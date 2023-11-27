@@ -321,8 +321,6 @@
     Calendar.prototype.drawLegend = function() {
       var self = this;
       if (!this.legend) {
-        console.log(this.legend);
-        console.log("if");
         this.legend = createElement('div', 'legend');
         var calendars = this.events.map(function(e) {
           return e.calendar + '|' + e.color;
