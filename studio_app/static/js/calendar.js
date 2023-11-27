@@ -19,11 +19,13 @@
     Calendar.prototype.draw = function() {
       //Create Header
       this.drawHeader();
+
+      this.drawLegend();
   
       //Draw Month
       this.drawMonth();
   
-      this.drawLegend();
+      
     }
   
     Calendar.prototype.drawHeader = function() {
@@ -53,15 +55,7 @@
   
     Calendar.prototype.drawMonth = function() {
       var self = this;
-      //console.log(self.current)
-      
-      // this.events.forEach(function(ev) {
-      //  ev.date = self.current.clone().date(Math.random() * (29 - 1) + 1);
-      //  ev.date = ev.date.month(0).year(2024)
-
-      //  console.log(ev.date)
-      //});
-      
+    
       
       if(this.month) {
         this.oldMonth = this.month;
@@ -325,20 +319,26 @@
     }
   
     Calendar.prototype.drawLegend = function() {
-      var legend = createElement('div', 'legend');
-      var calendars = this.events.map(function(e) {
-        return e.calendar + '|' + e.color;
-      }).reduce(function(memo, e) {
-        if(memo.indexOf(e) === -1) {
-          memo.push(e);
+      var self = this;
+      if (!this.legend) {
+        console.log(this.legend);
+        console.log("if");
+        this.legend = createElement('div', 'legend');
+        var calendars = this.events.map(function(e) {
+          return e.calendar + '|' + e.color;
+        }).reduce(function(memo, e) {
+          if(memo.indexOf(e) === -1) {
+            memo.push(e);
+          }
+          return memo;
+        }, []).forEach(function(e) {
+          var parts = e.split('|');
+          var entry = createElement('span', 'entry ' +  parts[1], parts[0]);
+          self.legend.appendChild(entry);
+        });
+        this.el.appendChild(this.legend);
         }
-        return memo;
-      }, []).forEach(function(e) {
-        var parts = e.split('|');
-        var entry = createElement('span', 'entry ' +  parts[1], parts[0]);
-        legend.appendChild(entry);
-      });
-      this.el.appendChild(legend);
+ 
     }
   
     Calendar.prototype.nextMonth = function() {
