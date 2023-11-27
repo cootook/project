@@ -84,10 +84,25 @@ def day():
 def pricing():
     return render_template("pricing.html")
 
-@app.route("/signin/")
+@app.route("/signin/", methods = ["GET", "POST"])
 def signin():
-    log_user_in("Bilbo Sumkin", "1")
-    return redirect("/")
+    #log_user_in("Bilbo Sumkin", "1")
+    if request.method == "POST":
+        login = request.form.get("login")
+        password = request.form.get("password")
+        remember = request.form.get("remember")
+
+        print(login)
+        print(password)
+        print(remember)
+
+        log_user_in(login, "1")
+        
+        return redirect("/")
+
+    else:
+        return render_template("signin.html")
+    
 
 @app.route("/signup/")
 def signup():
