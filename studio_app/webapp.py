@@ -106,7 +106,21 @@ def signin():
 
 @app.route("/signup/")
 def signup():
-    return render_template("signup.html")
+    if request.method == "POST":
+        login = request.form.get("login")
+        password = request.form.get("password")
+        confirmation = request.form.get("confirmation")
+
+        print(login)
+        print(password)
+        print(confirmation)
+
+        log_user_in(login, "1")
+        
+        return redirect("/")
+
+    else:
+        return render_template("signup.html")
 
 @app.route("/logout/")
 def logout():

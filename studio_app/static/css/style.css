@@ -84,13 +84,11 @@ body {
 /* sign in */
 
 .signin-container {
-  display: grid;
+  padding-left: 1em;
   row-gap: 50px;
   grid-template-columns: auto;
   align-content: center;
   justify-content: center;
-  padding-top: 40px;
-  padding-bottom: 40px;
 }
 
 .form_input {
@@ -104,7 +102,42 @@ body {
   grid-template-columns: auto;
   gap: 50px;
   width: 330px;
-  padding: 15px;
+}
+
+#message {
+  position: relative;
+  padding: 1em;
+}
+
+#name, #login, #password, #confirmation {
+  width: 90%;
+}
+
+
+/* Add a green text color and a checkmark when the requirements are right */
+.valid {
+  color: green;
+  margin: 0;
+  padding: 0;
+}
+
+.valid:before {
+  position: relative;
+  left: -35px;
+  
+}
+
+/* Add a red text color and an "x" icon when the requirements are wrong */
+.invalid {
+  color: red;
+  margin: 0;
+  padding: 0;
+}
+
+.invalid:before {
+  position: relative;
+  left: -35px;
+  
 }
 
 
