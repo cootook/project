@@ -84,11 +84,12 @@ body {
 /* sign in */
 
 .signin-container {
-  padding-left: 1em;
-  row-gap: 50px;
-  grid-template-columns: auto;
-  align-content: center;
+  display: grid;
+  column-gap: 0;
+  row-gap: 0;
   justify-content: center;
+  grid-template-columns: auto;
+ 
 }
 
 .form_input {
