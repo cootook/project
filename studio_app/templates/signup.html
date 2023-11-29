@@ -7,7 +7,7 @@ Sign Up
 {% block content %}
 <script src="{{ url_for('static', filename='/js/signup.js') }}"></script>
 <div class="signin-container">
-    <h1 class="h3 fw-normal">Enter email and password</h1>
+    <div id="gap-1"></div>
         <form class="form-signin" action="/signup/" method="POST">
             
             
@@ -17,7 +17,7 @@ Sign Up
             </div>
             <div class="form_input">
                 <input type="text" class="form-control" id="number" name="number" placeholder="646-591-71-36" >
-                <label for="floatingInput">Your Instagramm name</label>
+                <label for="floatingInput">Your telephone number</label>
             </div>
             <div class="form_input">
                 <input type="email" class="form-control" id="login" name="login" placeholder="name@example.com">

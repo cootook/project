@@ -107,7 +107,6 @@ body {
 
 #message {
   position: relative;
-  padding: 1em;
 }
 
 #name, #login, #password, #confirmation, #floatingInput, #floatingPassword, #number {
@@ -148,5 +147,9 @@ body {
   text-align: center;
 }
 
+#gap-1 {
+  width: 100%;
+  height: 1rem;
+}
 
 
