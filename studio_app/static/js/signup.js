@@ -1,14 +1,22 @@
 window.addEventListener("load", () => {
     var myInput = document.getElementById("password");
+    var confirmation = document.getElementById("confirmation");
     var letter = document.getElementById("letter");
     var capital = document.getElementById("capital");
     var number = document.getElementById("number");
     var length = document.getElementById("length");
+    var submit = document.getElementById("signup_submit")
 
     var letter_before = document.getElementById("letter_before");
     var capital_before = document.getElementById("capital_before");
     var number_before = document.getElementById("number_before");
     var length_before = document.getElementById("length_before");
+
+    var is_letter = false;
+    var is_capital = false;
+    var is_number = false;
+    var is_length = false;
+    var is_same = false;
 
     // When the user clicks on the password field, show the message box
     // myInput.onfocus = function() {
@@ -20,8 +28,17 @@ window.addEventListener("load", () => {
     // document.getElementById("message").style.display = "none";
     // }
 
+    //prevent submit if password and confirmation are not the same
+    
+    submit.addEventListener("submit", () => {
+        if (true) {
+            return;
+        }
+    })
+
     // When the user starts to type something inside the password field
     myInput.onkeyup = function() {
+
     // Validate lowercase letters
     var lowerCaseLetters = /[a-z]/g;
     if(myInput.value.match(lowerCaseLetters)) {
