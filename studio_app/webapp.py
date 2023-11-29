@@ -108,11 +108,13 @@ def signin():
 def signup():
     if request.method == "POST":
         name = request.form.get("name")
+        number = request.form.get("number")
         login = request.form.get("login")
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
 
         print(name)
+        print(number)
         print(login)
         print(password)
         print(confirmation)
