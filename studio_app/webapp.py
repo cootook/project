@@ -104,18 +104,20 @@ def signin():
         return render_template("signin.html")
     
 
-@app.route("/signup/")
+@app.route("/signup/", methods = ["GET", "POST"])
 def signup():
     if request.method == "POST":
+        name = request.form.get("name")
         login = request.form.get("login")
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
 
+        print(name)
         print(login)
         print(password)
         print(confirmation)
 
-        log_user_in(login, "1")
+        log_user_in(name, "1")
         
         return redirect("/")
 

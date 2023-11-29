@@ -110,7 +110,7 @@ body {
   padding: 1em;
 }
 
-#name, #login, #password, #confirmation, #floatingInput, #floatingPassword {
+#name, #login, #password, #confirmation, #floatingInput, #floatingPassword, #number {
   width: 90%;
 }
 
