@@ -109,7 +109,7 @@ body {
   position: relative;
 }
 
-#name, #login, #password, #confirmation, #floatingInput, #floatingPassword, #number {
+#name, #login, #password, #confirmation, #floatingInput, #floatingPassword, #tel_number {
   width: 90%;
 }
 

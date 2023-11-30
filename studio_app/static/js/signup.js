@@ -1,16 +1,16 @@
 window.addEventListener("load", () => {
-    var myInput = document.getElementById("password");
-    var confirmation = document.getElementById("confirmation");
-    var letter = document.getElementById("letter");
-    var capital = document.getElementById("capital");
-    var number = document.getElementById("number");
-    var length = document.getElementById("length");
-    var submit = document.getElementById("signup_submit")
+    const myInput = document.getElementById("password");
+    const confirmation = document.getElementById("confirmation");
+    const letter = document.getElementById("letter");
+    const capital = document.getElementById("capital");
+    const number = document.getElementById("number");
+    const length = document.getElementById("length");
+    const submit = document.getElementById("signup_submit")
 
-    var letter_before = document.getElementById("letter_before");
-    var capital_before = document.getElementById("capital_before");
-    var number_before = document.getElementById("number_before");
-    var length_before = document.getElementById("length_before");
+    const letter_before = document.getElementById("letter_before");
+    const capital_before = document.getElementById("capital_before");
+    const number_before = document.getElementById("number_before");
+    const length_before = document.getElementById("length_before");
 
     var is_letter = false;
     var is_capital = false;
