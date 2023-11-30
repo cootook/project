@@ -8,7 +8,7 @@ Sign Up
 <script src="{{ url_for('static', filename='/js/signup.js') }}"></script>
 <div class="signin-container">
     <div id="gap-1"></div>
-        <form class="form-signin" action="/signup/" method="POST">
+        <form class="form-signin" id="form_signup" action="/signup/" method="POST">
             
             
             <div class="form_input">
@@ -34,13 +34,25 @@ Sign Up
         
             <div id="message">
                 <h5  class="h6 fw-normal">Password must contain the following:</h5>
-                <p id="letter" class="invalid"><b id="letter_before">{{"&#10006;"|safe}}</b>A <b>lowercase</b> letter</p>
-                <p id="capital" class="invalid"><b id="capital_before">{{"&#10006;"|safe}}</b>A <b>capital (uppercase)</b> letter</p>
-                <p id="number" class="invalid"><b id="number_before">{{"&#10006;"|safe}}</b>A <b>number</b></p>
-                <p id="length" class="invalid"><b id="length_before">{{"&#10006;"|safe}}</b>Minimum <b>6 characters</b></p>
+                <p id="letter" class="invalid">
+
+                    A <b>lowercase</b> letter
+                </p>
+                <p id="capital" class="invalid">
+
+                    A <b>capital (uppercase)</b> letter
+                </p>
+                <p id="number" class="invalid">
+
+                    A <b>number</b>
+                </p>
+                <p id="length" class="invalid">
+
+                    Minimum <b>6 characters</b>
+                </p>
               </div>
 
-            <button class="w-100 btn btn-lg btn-primary" id="signup_submit" type="submit">Sign in</button>
+            <button class="w-100 btn btn-lg btn-primary" id="signup_submit" type="submit" disabled>Sign in</button>
         </form>
 </div>
 
