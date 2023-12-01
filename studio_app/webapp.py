@@ -1,4 +1,5 @@
 import os
+import re
 
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
@@ -106,6 +107,12 @@ def signin():
 
 @app.route("/signup/", methods = ["GET", "POST"])
 def signup():
+    def validate_password_confirmation (password, confirmation):
+        if password != confirmation:
+            return False
+        is_same = password == confirmation
+        #lowerCaseLetters = /[a-z]/g
+    
     try:
 
         if request.method == "POST":
