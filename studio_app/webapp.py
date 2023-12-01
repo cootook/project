@@ -106,26 +106,30 @@ def signin():
 
 @app.route("/signup/", methods = ["GET", "POST"])
 def signup():
-    if request.method == "POST":
-        name = request.form.get("name")
-        tel_number = request.form.get("tel_number")
-        login = request.form.get("login")
-        password = request.form.get("password")
-        confirmation = request.form.get("confirmation")
+    try:
 
-        print(name)
-        print(tel_number)
-        print(login)
-        print(password)
-        print(confirmation)
+        if request.method == "POST":
+            name = request.form.get("name")
+            tel_number = request.form.get("tel_number")
+            login = request.form.get("login")
+            password = request.form.get("password")
+            confirmation = request.form.get("confirmation")
 
-        log_user_in(name, "1")
-        
+            print(name)
+            print(tel_number)
+            print(login)
+            print(password)
+            print(confirmation)
+            print(request.args.get("page"))
+
+            log_user_in(name, "1")
+            
+            return redirect("/")
+
+        else:
+            return render_template("signup.html")
+    except:
         return redirect("/")
-
-    else:
-        return render_template("signup.html")
-
 @app.route("/logout/")
 def logout():
     log_user_out()
