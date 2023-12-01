@@ -1,8 +1,10 @@
 window.addEventListener("load", () => {
     
-    const ok = document.createElement("b", "status_pic");
+    const ok = document.createElement("b");
+    ok.classList.add("status_pic");
     ok.innerHTML = "&#10004;"
-    const not_ok = document.createElement("b", "status_pic");
+    const not_ok = document.createElement("b");
+    not_ok.classList.add("status_pic");
     not_ok.innerHTML = "&#10006;"
 
     const myInput = document.getElementById("password");
@@ -11,15 +13,15 @@ window.addEventListener("load", () => {
     const capital = document.getElementById("capital");
     const number = document.getElementById("number");
     const length = document.getElementById("length");
+    const pass_same = document.getElementById("pass_same");
     const submit = document.getElementById("form_signup");
     const btn = document.getElementById("signup_submit");
 
-    letter.prepend(document.createElement("b", "status_pic"));
-    letter.status_pic.innerHTML = "&#10006;"
-    capital.prepend(not_ok);
-    number.prepend(not_ok);
-    length.prepend(not_ok);
-    // pass_same.prepend(not_ok);
+    letter.prepend(not_ok.cloneNode(true));
+    capital.prepend(not_ok.cloneNode(true));
+    number.prepend(not_ok.cloneNode(true));
+    length.prepend(not_ok.cloneNode(true));
+    pass_same.prepend(not_ok.cloneNode(true));
 
     var is_letter = false;
     var is_capital = false;
@@ -27,113 +29,80 @@ window.addEventListener("load", () => {
     var is_length = false;
     var is_same = false;
 
-
-    // When the user clicks on the password field, show the message box
-    // myInput.onfocus = function() {
-    // document.getElementById("message").style.display = "block";
-    // }
-
-    // When the user clicks outside of the password field, hide the message box
-    // myInput.onblur = function() {
-    // document.getElementById("message").style.display = "none";
-    // }
-
     //validate password and confirmation are not the same
 
     function set_valid_invalid (element, is_valid, to_disable) {
-        if (is_valid == true) {
-            to_disable.forEach(el => {
-                el.disabled = false;
-            })
+        if (is_valid) {
             element.classList.remove("invalid");
             element.classList.add("valid");
-            element.status_pic.remove();
-            element.prepend(ok);
+            element.querySelector(".status_pic").remove();
+            element.prepend(ok.cloneNode(true));
         } else {
-            to_disable.forEach(el => {
-                el.disabled = true;
-            })
             element.classList.remove("valid");
             element.classList.add("invalid");
-            element.status_pic.remove();
-            element.prepend(not_ok);
+            element.querySelector(".status_pic").remove();
+            element.prepend(not_ok.cloneNode(true));
 
         }
+
+        to_disable.forEach(el => {
+            if(
+                is_letter &&
+                is_capital &&
+                is_number &&
+                is_length &&
+                is_same) {
+                    el.disabled = false;
+                } else {
+                    el.disabled = true;
+                }
+            
+        })
         
 
     }
+    
+    function validate_pass() {
+
+        // Validate the same
+        is_same = myInput.value == confirmation.value;
+        console.log(is_same)
+        console.log(myInput.value)
+        console.log(confirmation.value)
+        set_valid_invalid(pass_same, is_same, [btn]);
+    
+        // Validate lowercase letters
+        var lowerCaseLetters = /[a-z]/g;
+        is_letter = myInput.value.match(lowerCaseLetters);
+        set_valid_invalid(letter, is_letter, [btn]);
+    
+        // Validate capital letters
+        var upperCaseLetters = /[A-Z]/g;
+        is_capital = myInput.value.match(upperCaseLetters);
+        set_valid_invalid(capital, is_capital, [btn]);  
+    
+        // Validate numbers
+        var numbers = /[0-9]/g;
+        is_number = myInput.value.match(numbers);
+        set_valid_invalid(number, is_number, [btn]);
+     
+        // Validate length
+        is_length = myInput.value.length >= 6;
+        set_valid_invalid(length, is_length, [btn])
+        }
+
     submit.addEventListener("submit", (event) => {
-        if (myInput.value != confirmation.value) {
+        if (!is_letter ||
+            !is_capital ||
+            !is_number ||
+            !is_length ||
+            !is_same) {
             event.preventDefault();
         };
     })
 
     // When the user starts to type something inside the password field
-    myInput.onkeyup = function() {
-
-    // Validate the same
-    if(myInput.value != confirmation.value) {
-
-    } else {
-
-    }
-
-    // Validate lowercase letters
-    var lowerCaseLetters = /[a-z]/g;
-    is_letter = myInput.value.match(lowerCaseLetters);
-    if(is_letter) {
-        set_valid_invalid(letter, is_letter, [btn]);
-        letter_before.innerHTML = ok;
-        
-    } else {
-        set_valid_invalid(letter, false, [btn]);
-        letter_before.innerHTML = not_ok;
-        
-    }
-
-    // Validate capital letters
-    var upperCaseLetters = /[A-Z]/g;
-    if(myInput.value.match(upperCaseLetters)) {
-        btn.disabled = false;
-        capital.classList.remove("invalid");
-        capital.classList.add("valid");
-        capital_before.innerHTML = ok;
-        is_capital = true;
-    } else {
-        capital.classList.remove("valid");
-        btn.disabled = true;
-        capital.classList.add("invalid");
-        capital_before.innerHTML = not_ok;
-    }
-
-    // Validate numbers
-    var numbers = /[0-9]/g;
-    if(myInput.value.match(numbers)) {
-        btn.disabled = false;
-        number.classList.remove("invalid");
-        number.classList.add("valid");
-        number_before.innerHTML = ok;
-        is_number = true;
-    } else {
-        btn.disabled = true;
-        number.classList.remove("valid");
-        number.classList.add("invalid");
-        number_before.innerHTML = not_ok;
-    }
-
-    // Validate length
-    if(myInput.value.length >= 8) {
-        btn.disabled = false;
-        length.classList.remove("invalid");
-        length.classList.add("valid");
-        length_before.innerHTML = ok;
-        is_length = true;
-    } else {
-        btn.disabled = true;
-        length.classList.remove("valid");
-        length.classList.add("invalid");
-        length_before.innerHTML = not_ok;
-    }
-    }
+    myInput.onkeyup = validate_pass;
+    confirmation.onkeyup = validate_pass;
 })
 
