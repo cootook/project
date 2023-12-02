@@ -24,10 +24,15 @@ Web app for booking maniqure appointments and managing them.
 * admin can manage appointments
 ###    
 **future features:**
+* HTTPS
+* reCAPTCHA
 * language selection 
+* sign up with Google
+* instagram bot
 * admin can add articles
-* register via google
-* add user *smm* to manage *articles* and *about* 
+* add user *clerk* to manage *articles* and *about* 
+* create Android app
+* create iOS app
 ###
 *requirements.txt* contains info about modules and extensions to be installed for this app.
 #####
@@ -35,3 +40,9 @@ Web app for booking maniqure appointments and managing them.
 #####
 set user as admin  in *db.db* manualy *users.is admin = 1*
 #####
+### Database structure
+* Users (id, is_admin, is_clerck, instagram_name, email, lang, tel, is_subscribed_promo, avatar)
+* Login (user_id, hash, fb, google)
+* Calendar(slot_id, year, month, weekday, day, hour, minute, is_open)
+* Appointments (id, user_id, service_name, slot_id, is_seen, is_aproved)
+* Sessions (user_id, from, to,  year, month, day, hour, minute, second, data)
