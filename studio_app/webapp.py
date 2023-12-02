@@ -44,6 +44,10 @@ def about():
 def account():
     return render_template("account.html")
 
+@app.route("/apology/")
+def apology():
+    return render_template("apology.html")
+
 @app.route("/appointments/")
 @login_required
 def appointments():
