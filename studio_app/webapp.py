@@ -4,7 +4,7 @@ import re
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password
+from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found
 
 app = Flask(
                 __name__,
@@ -17,6 +17,8 @@ app = Flask(
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+app.register_error_handler(404, page_not_found)
 
 # Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "Account", "Pricing", "Articles", "Contact", "About", "LogOut"]

@@ -28,6 +28,10 @@ def login_required(f):
 
     return decorated_function
 
+def page_not_found(e):
+  error_message  = "404 - page not fond"
+  return render_template('apology.html', error_message = error_message), 404
+
 def validate_password (password):
     is_lower = re.search("[a-z]", password) != None
     is_capital = re.search("[A-Z]", password) != None
