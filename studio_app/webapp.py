@@ -107,12 +107,16 @@ def signin():
 
 @app.route("/signup/", methods = ["GET", "POST"])
 def signup():
-    def validate_password_confirmation (password, confirmation):
-        if password != confirmation:
-            return False
-        is_same = password == confirmation
+    def validate_password (password):
         #lowerCaseLetters = /[a-z]/g
-    
+        is_lower = re.search("[a-z]", password) != None
+        is_capital = re.search("[A-Z]", password) != None
+        is_number = re.search("[0-9]", password) != None
+        is_length = len(password) >= 6
+        if is_lower and is_capital and is_number and is_length:
+            return True
+        else:
+            return False
     try:
 
         if request.method == "POST":
@@ -122,13 +126,14 @@ def signup():
             password = request.form.get("password")
             confirmation = request.form.get("confirmation")
 
+            is_pass_ok = (password == confirmation) and validate_password(password)
+            
+
             print(name)
             print(tel_number)
             print(login)
-            print(password)
-            print(confirmation)
-            print(request.args.get("page"))
-
+            print("password is OK")
+            
             log_user_in(name, "1")
             
             return redirect("/")
