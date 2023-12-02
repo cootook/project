@@ -127,12 +127,17 @@ def signup():
             confirmation = request.form.get("confirmation")
 
             is_pass_ok = (password == confirmation) and validate_password(password)
-            
+            is_name_ok = len(name) >= 3
+            is_tell_ok = len(tel_number) >= 10
+            regex_email = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+            is_login_ok = (re.fullmatch(regex_email, login) != None)
+
 
             print(name)
-            print(tel_number)
-            print(login)
-            print("password is OK")
+            print("password is " + "ok" if is_pass_ok else "not ok")
+            print("name is " + "ok" if is_name_ok else "not ok")
+            print("tell is " + "ok" if is_tell_ok else "not ok")
+            print("login is " + "ok" if is_login_ok else "not ok")
             
             log_user_in(name, "1")
             
