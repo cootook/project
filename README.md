@@ -41,8 +41,8 @@ Web app for booking maniqure appointments and managing them.
 set user as admin  in *db.db* manualy *users.is admin = 1*
 #####
 ### Database structure
-* Users (id, is_admin, is_clerck, instagram_name, email, lang, tel, is_subscribed_promo, avatar)
-* Login (user_id, hash, fb, google)
-* Calendar(slot_id, year, month, weekday, day, hour, minute, is_open)
-* Appointments (id, user_id, service_name, slot_id, is_seen, is_aproved)
-* Sessions (user_id, from, to,  year, month, day, hour, minute, second, data)
+* CREATE TABLE users (id INTEGER PRIMARY KEY, is_admin INT, is_clerck INT ,  name TEXT, email TEXT, lang TEXT, instagram TEXT, tel TEXT, is_subscribed_promo INT, avatar TEXT);
+* CREATE TABLE login (user_id INTEGER PRIMARY KEY, hash TEXT, fb TEXT, google TEXT, FOREIGN KEY(user_id) REFERENCES users(id));
+* CREATE TABLE calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
+* CREATE TABLE appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, is_seen INT, is_aproved INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
+* CREATE TABLE sessions (rowid INTEGER PRIMARY KEY, user_id INT, from_route TEXT, to_route TEXT,  year INT, month INT, day INT, hour INT, minute INT, second INT, type TEXT, data TEXT, FOREIGN KEY (user_id) REFERENCES users(id));
