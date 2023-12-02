@@ -1,3 +1,4 @@
+import re
 from flask import redirect, render_template, session
 from functools import wraps
 
@@ -26,4 +27,14 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+def validate_password (password):
+    is_lower = re.search("[a-z]", password) != None
+    is_capital = re.search("[A-Z]", password) != None
+    is_number = re.search("[0-9]", password) != None
+    is_length = len(password) >= 6
+    if is_lower and is_capital and is_number and is_length:
+        return True
+    else:
+        return False
 

@@ -4,7 +4,7 @@ import re
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from studio_app.helpers import log_user_in, log_user_out, login_required
+from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password
 
 app = Flask(
                 __name__,
@@ -107,16 +107,7 @@ def signin():
 
 @app.route("/signup/", methods = ["GET", "POST"])
 def signup():
-    def validate_password (password):
-        #lowerCaseLetters = /[a-z]/g
-        is_lower = re.search("[a-z]", password) != None
-        is_capital = re.search("[A-Z]", password) != None
-        is_number = re.search("[0-9]", password) != None
-        is_length = len(password) >= 6
-        if is_lower and is_capital and is_number and is_length:
-            return True
-        else:
-            return False
+
     try:
 
         if request.method == "POST":
