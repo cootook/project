@@ -146,8 +146,14 @@ def signup():
 
         con = sqlite3.connect("./db.db") 
         cur = con.cursor()
-        cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
-        con.commit()
+
+        #chek if email exist in db
+        is_email_db = cur.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,))
+        is_email_db = is_email_db.fetchone()
+        print(int(is_email_db[0]) == 1)
+        #cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
+
+        #con.commit()
         con.close()
         
         log_user_in(instagram, "1")
