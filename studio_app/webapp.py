@@ -5,7 +5,7 @@ import sqlite3
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found
+from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist
 
 app = Flask(
                 __name__,
@@ -99,6 +99,7 @@ def signin():
     #log_user_in("Bilbo Sumkin", "1")
     #hash_from_db = cur.execute("SELECT hash FROM login WHERE user_id=1").fetchone()[0]
     #print(check_password_hash(hash_from_db, password))
+    
     if request.method == "POST":
         login = request.form.get("login")
         password = request.form.get("password")
@@ -144,8 +145,8 @@ def signup():
         con = sqlite3.connect("./db.db") 
         cur = con.cursor()
         #chek if email exist in db
-        is_email_in_db = cur.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
-        if is_email_in_db:            
+        # is_email_in_db = cur.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
+        if does_user_exist(login, cur):            
             error_message = "Email " + login + " already registred, try restore password instead."
             con.close()
             return render_template("apology.html", error_message=error_message)

@@ -2,6 +2,9 @@ import re
 from flask import redirect, render_template, session
 from functools import wraps
 
+def does_user_exist(login, db_cursor):
+    return db_cursor.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
+
 def log_user_in(username, password):
     # Query database for username
     #rows = db.execute("SELECT * FROM users WHERE username = ?", username)
