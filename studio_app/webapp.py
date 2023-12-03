@@ -21,8 +21,7 @@ Session(app)
 
 app.register_error_handler(404, page_not_found)
 
-# Connect database
-db = sqlite3.connect("./db.db") 
+
 
 # Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "Account", "Pricing", "Articles", "Contact", "About", "LogOut"]
@@ -119,35 +118,39 @@ def signin():
 def signup():
     try:
         if request.method == "POST":
-            name = request.form.get("name")
+            instagram = request.form.get("instagram")
             tel_number = request.form.get("tel_number")
             login = request.form.get("login")
             password = request.form.get("password")
             confirmation = request.form.get("confirmation")
 
             is_pass_ok = (password == confirmation) and validate_password(password)
-            is_name_ok = len(name) >= 3
+            is_instagram_ok = len(instagram) >= 3
             is_tel_ok = len(tel_number) >= 10
             regex_email = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
             is_login_ok = (re.fullmatch(regex_email, login) != None)
 
-            if not is_pass_ok or not is_name_ok or not is_tel_ok or not is_login_ok:
+            if not is_pass_ok or not is_instagram_ok or not is_tel_ok or not is_login_ok:
                 return render_template("apology.html", "Something went wrong. Try again or contact us.")
         else:
             return render_template("signup.html")
     except:
         return render_template("apology.html", "Something went wrong. Try again or contact us.")
     else:   
-        print(name)
+        print(instagram)
         print("password is " + "ok" if is_pass_ok else "not ok")
-        print("name is " + "ok" if is_name_ok else "not ok")
+        print("instagram is " + "ok" if is_instagram_ok else "not ok")
         print("tell is " + "ok" if is_tel_ok else "not ok")
         print("login is " + "ok" if is_login_ok else "not ok")
         password_hash = generate_password_hash(password)
 
-        db.execute("INSERT INTO users (is_admin, is_clerck, name, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 0, 0, login, "en", name, tel_number, 1)
+        con = sqlite3.connect("./db.db") 
+        cur = con.cursor()
+        cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
+        con.commit()
+        con.close()
         
-        log_user_in(name, "1")
+        log_user_in(instagram, "1")
         return redirect("/")
     
 @app.route("/logout/")

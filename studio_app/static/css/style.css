@@ -113,7 +113,7 @@ body {
   position: relative;
 }
 
-#name, #login, #password, #confirmation, #floatingInput, #floatingPassword, #tel_number {
+#name, #login, #password, #confirmation, #floatingInput, #floatingPassword, #tel_number, #instagram {
   width: 90%;
 }
 
