@@ -151,9 +151,9 @@ def signup():
 
         #chek if email exist in db
         is_email_in_db = cur.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
-        print(is_email_in_db) # [0]) == 1)
         if is_email_in_db:
             error_message = "Email " + login + " already registred, try restore password instead."
+            con.close()
             return render_template("apology.html", error_message=error_message)
         #cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
 
