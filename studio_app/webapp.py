@@ -116,6 +116,8 @@ def signin():
 
 @app.route("/signup/", methods = ["GET", "POST"])
 def signup():
+    if session.get("user_id") is not None:
+        return redirect("/")
     try:
         if request.method == "POST":
             instagram = request.form.get("instagram")
@@ -131,11 +133,11 @@ def signup():
             is_login_ok = (re.fullmatch(regex_email, login) != None)
 
             if not is_pass_ok or not is_instagram_ok or not is_tel_ok or not is_login_ok:
-                return render_template("apology.html", "Something went wrong. Try again or contact us.")
+                return render_template("apology.html", error_message="Something went wrong. Try again or contact us.")
         else:
             return render_template("signup.html")
     except:
-        return render_template("apology.html", "Something went wrong. Try again or contact us.")
+        return render_template("apology.html", error_message="Something went wrong. Try again or contact us.")
     else:   
         print(instagram)
         print("password is " + "ok" if is_pass_ok else "not ok")
@@ -148,9 +150,11 @@ def signup():
         cur = con.cursor()
 
         #chek if email exist in db
-        is_email_db = cur.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,))
-        is_email_db = is_email_db.fetchone()
-        print(int(is_email_db[0]) == 1)
+        is_email_in_db = cur.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
+        print(is_email_in_db) # [0]) == 1)
+        if is_email_in_db:
+            error_message = "Email " + login + " already registred, try restore password instead."
+            return render_template("apology.html", error_message=error_message)
         #cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
 
         #con.commit()
