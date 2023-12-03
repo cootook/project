@@ -5,7 +5,7 @@ import sqlite3
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_login_exist_in_db
+from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found
 
 app = Flask(
                 __name__,
