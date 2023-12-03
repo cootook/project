@@ -5,7 +5,7 @@ import sqlite3
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found
+from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_login_exist_in_db
 
 app = Flask(
                 __name__,
@@ -150,11 +150,12 @@ def signup():
         cur = con.cursor()
 
         #chek if email exist in db
-        is_email_in_db = cur.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
-        print(is_email_in_db) # [0]) == 1)
-        if is_email_in_db:
-            error_message = "Email " + login + " already registred, try restore password instead."
-            return render_template("apology.html", error_message=error_message)
+        does_login_exist_in_db(login, cur)
+        #is_email_in_db = cur.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
+        #if is_email_in_db:
+           # error_message = "Email " + login + " already registred, try restore password instead."
+            #return render_template("apology.html", error_message=error_message)
+        
         #cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
 
         #con.commit()
