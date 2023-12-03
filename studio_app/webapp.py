@@ -97,6 +97,8 @@ def pricing():
 @app.route("/signin/", methods = ["GET", "POST"])
 def signin():
     #log_user_in("Bilbo Sumkin", "1")
+    #hash_from_db = cur.execute("SELECT hash FROM login WHERE user_id=1").fetchone()[0]
+    #print(check_password_hash(hash_from_db, password))
     if request.method == "POST":
         login = request.form.get("login")
         password = request.form.get("password")
@@ -133,34 +135,29 @@ def signup():
             is_login_ok = (re.fullmatch(regex_email, login) != None)
 
             if not is_pass_ok or not is_instagram_ok or not is_tel_ok or not is_login_ok:
-                return render_template("apology.html", error_message="Something went wrong. Try again or contact us.")
+                return render_template("apology.html", error_message="Something went wrong. Try again or contact us. SignUp")
         else:
             return render_template("signup.html")
     except:
-        return render_template("apology.html", error_message="Something went wrong. Try again or contact us.")
-    else:   
-        print(instagram)
-        print("password is " + "ok" if is_pass_ok else "not ok")
-        print("instagram is " + "ok" if is_instagram_ok else "not ok")
-        print("tell is " + "ok" if is_tel_ok else "not ok")
-        print("login is " + "ok" if is_login_ok else "not ok")
-        password_hash = generate_password_hash(password)
-
+        return render_template("apology.html", error_message="Something went wrong. SignUp exeption ocured.")
+    else:         
         con = sqlite3.connect("./db.db") 
         cur = con.cursor()
-
         #chek if email exist in db
         is_email_in_db = cur.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
-        if is_email_in_db:
+        if is_email_in_db:            
             error_message = "Email " + login + " already registred, try restore password instead."
             con.close()
             return render_template("apology.html", error_message=error_message)
-        #cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
-
-        #con.commit()
+        #insert new user to db
+        cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
+        user_id = cur.execute("SELECT user_id FROM users WHERE login=?", (login,)).fetchone()[0]
+        password_hash = generate_password_hash(password)
+        cur.execute("INCERT INTO login (user_id, hash) VALUES (?, ?)", (user_id, password_hash))
+        con.commit()
         con.close()
         
-        log_user_in(instagram, "1")
+        log_user_in(login, password)
         return redirect("/")
     
 @app.route("/logout/")
