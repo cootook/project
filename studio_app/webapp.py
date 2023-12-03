@@ -1,5 +1,6 @@
 import os
 import re
+import sqlite3
 
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
@@ -19,6 +20,9 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 app.register_error_handler(404, page_not_found)
+
+# Connect database
+db = sqlite3.connect("./db.db") 
 
 # Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "Account", "Pricing", "Articles", "Contact", "About", "LogOut"]
@@ -113,9 +117,7 @@ def signin():
 
 @app.route("/signup/", methods = ["GET", "POST"])
 def signup():
-
     try:
-
         if request.method == "POST":
             name = request.form.get("name")
             tel_number = request.form.get("tel_number")
@@ -125,25 +127,29 @@ def signup():
 
             is_pass_ok = (password == confirmation) and validate_password(password)
             is_name_ok = len(name) >= 3
-            is_tell_ok = len(tel_number) >= 10
+            is_tel_ok = len(tel_number) >= 10
             regex_email = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
             is_login_ok = (re.fullmatch(regex_email, login) != None)
 
-
-            print(name)
-            print("password is " + "ok" if is_pass_ok else "not ok")
-            print("name is " + "ok" if is_name_ok else "not ok")
-            print("tell is " + "ok" if is_tell_ok else "not ok")
-            print("login is " + "ok" if is_login_ok else "not ok")
-            
-            log_user_in(name, "1")
-            
-            return redirect("/")
-
+            if not is_pass_ok or not is_name_ok or not is_tel_ok or not is_login_ok:
+                return render_template("apology.html", "Something went wrong. Try again or contact us.")
         else:
             return render_template("signup.html")
     except:
+        return render_template("apology.html", "Something went wrong. Try again or contact us.")
+    else:   
+        print(name)
+        print("password is " + "ok" if is_pass_ok else "not ok")
+        print("name is " + "ok" if is_name_ok else "not ok")
+        print("tell is " + "ok" if is_tel_ok else "not ok")
+        print("login is " + "ok" if is_login_ok else "not ok")
+        password_hash = generate_password_hash(password)
+
+        db.execute("INSERT INTO users (is_admin, is_clerck, name, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 0, 0, login, "en", name, tel_number, 1)
+        
+        log_user_in(name, "1")
         return redirect("/")
+    
 @app.route("/logout/")
 def logout():
     log_user_out()
