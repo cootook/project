@@ -2,6 +2,15 @@ import re
 from flask import redirect, render_template, session
 from functools import wraps
 
+#chek if email exist in db
+def does_login_exist_in_db(login, cur):
+    is_email_in_db = cur.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
+    if is_email_in_db:
+        error_message = "Email " + login + " already registred, try restore password instead."
+        return render_template("apology.html", error_message=error_message)
+    else:
+        return False
+
 def log_user_in(username, password):
     # Query database for username
     #rows = db.execute("SELECT * FROM users WHERE username = ?", username)
