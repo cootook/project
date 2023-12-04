@@ -115,8 +115,9 @@ def signin():
                 return render_template("apology.html", error_message="wrong login or passwor")                
 
         except Exception as er:
+            print("### ERROR signin: request.form, db")
             print(er)
-            return render_template("apology.html", error_message="sign in")
+            return render_template("apology.html", error_message="Soomething went wrong")
 
         con.close()
         return redirect("/")
@@ -147,13 +148,13 @@ def signup():
                 return render_template("apology.html", error_message="Something went wrong. Try again or contact us. SignUp")
         else:
             return render_template("signup.html")
-    except:
-        return render_template("apology.html", error_message="Something went wrong. SignUp exeption ocured.")
+    except Exception as er:
+        print("### ERROR signup: request.form, validation")
+        print(er)
+        return render_template("apology.html", error_message="Something went wrong.")
     else:         
         con = sqlite3.connect("./db.db") 
         cur = con.cursor()
-        #chek if email exist in db
-        # is_email_in_db = cur.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
         if does_user_exist(login, cur):            
             error_message = "Email " + login + " already registred, try restore password instead."
             con.close()
@@ -171,6 +172,7 @@ def signup():
         return redirect("/")
     
 @app.route("/logout/")
+@login_required
 def logout():
     log_user_out()
     return redirect("/")
