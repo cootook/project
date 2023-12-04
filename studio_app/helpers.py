@@ -34,13 +34,18 @@ def log_user_in(login, password, cursor):
         print(er)
 
     if is_password_correct:
-        user = cursor.execute("SELECT * FROM users WHERE email=?", (login,)).fetchone()[0]
-        print("#User")
-        print(user)
-        # Remember which user has logged in
-        # is_clerck INT ,  name TEXT, email TEXT, lang TEXT, instagram TEXT, tel TEXT, is_subscribed_promo INT, avatar
-        session["user_id"] = user_id #rows[0]["id"]
+        user = cursor.execute("SELECT * FROM users WHERE email=?", (login,)).fetchone()
+        #seve user info 
+        session["user_id"] = user_id[0] #rows[0]["id"]
+        session["is_admin"] = user[1]
+        session["is_clerck"] = user[2]
+        session["name"] = user[3]
         session["login"] = login
+        session["lang"] = user[5]
+        session["instagram"] = user[6]
+        session["tell"] = user[7]
+        session["is_subscribed"] = user[8]
+        session["avatar"] = user[9]
         return True
     else:
         return False
