@@ -2,6 +2,7 @@ import os
 import re
 import sqlite3
 
+from datetime import timedelta
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -15,8 +16,10 @@ app = Flask(
                 )
 
 # Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
+app.config['SESSION_FILE_THRESHOLD'] = 250
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=90)
 Session(app)
 
 app.register_error_handler(404, page_not_found)
