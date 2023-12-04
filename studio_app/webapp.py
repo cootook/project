@@ -5,7 +5,7 @@ import sqlite3
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist
+from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only
 
 app = Flask(
                 __name__,
@@ -95,22 +95,27 @@ def pricing():
     return render_template("pricing.html")
 
 @app.route("/signin/", methods = ["GET", "POST"])
+@not_loged_only
 def signin():
-    #log_user_in("Bilbo Sumkin", "1")
-    #hash_from_db = cur.execute("SELECT hash FROM login WHERE user_id=1").fetchone()[0]
-    #print(check_password_hash(hash_from_db, password))
-    
     if request.method == "POST":
-        login = request.form.get("login")
-        password = request.form.get("password")
-        remember = request.form.get("remember")
+        try:
 
-        print(login)
-        print(password)
-        print(remember)
+            login = request.form.get("login")
+            password = request.form.get("password")
+            remember = request.form.get("remember")
 
-        log_user_in(login, "1")
-        
+            con = sqlite3.connect("./db.db") 
+            cur = con.cursor()
+            print("###remember")
+            print(remember)
+            if not log_user_in(login, password, cur):
+                return render_template("apology.html", error_message="wrong login or passwor")                
+
+        except Exception as er:
+            print(er)
+            return render_template("apology.html", error_message="sign in")
+
+        con.close()
         return redirect("/")
 
     else:
@@ -118,9 +123,9 @@ def signin():
     
 
 @app.route("/signup/", methods = ["GET", "POST"])
+@not_loged_only
 def signup():
-    if session.get("user_id") is not None:
-        return redirect("/")
+
     try:
         if request.method == "POST":
             instagram = request.form.get("instagram")
@@ -155,10 +160,11 @@ def signup():
         user_id = cur.execute("SELECT user_id FROM users WHERE login=?", (login,)).fetchone()[0]
         password_hash = generate_password_hash(password)
         cur.execute("INCERT INTO login (user_id, hash) VALUES (?, ?)", (user_id, password_hash))
+
+        log_user_in(login, password, cur)
         con.commit()
-        con.close()
+        con.close()       
         
-        log_user_in(login, password)
         return redirect("/")
     
 @app.route("/logout/")
