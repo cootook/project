@@ -1,10 +1,16 @@
 {% if session.get("user_id") %}
-<span class="font-weight-light text-warning">Hi {{session.get("user_id")}}!</span>
+    {% if session.get("name") %}
+        <span class="font-weight-light text-warning">Hi {{session.get("name")}}!</span>
+    {% else %}
+        <span class="font-weight-light text-warning">Hi {{session.get("instagram")}}!</span>
+    {% endif %}
+
     {% for navbar_item in navbar_menu %}
         <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/{{ navbar_item.lower() }}/">{{ navbar_item }}</a>
         </li>
     {% endfor %}
+
 {% else %}
     {% for navbar_item in navbar_menu_not_loged_in %}
         <li class="nav-item">
