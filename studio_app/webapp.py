@@ -29,6 +29,7 @@ app.register_error_handler(404, page_not_found)
 # Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "Account", "Pricing", "Articles", "Contact", "About", "LogOut"]
 navbar_items_not_loged_in = ["Pricing", "Articles", "Contact", "About", "SignIn", "SignUp"]
+navbar_items_admin = ["Appointments", "Account", "Clients", "Windows" "Pricing", "Articles", "Contact", "About", "LogOut"]
 
 @app.context_processor
 def inject_navbar_items():
