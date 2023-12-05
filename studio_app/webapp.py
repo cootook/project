@@ -181,3 +181,9 @@ def signup():
 def logout():
     log_user_out()
     return redirect("/")
+
+@app.route("/windows/")
+@login_required
+@admin_only
+def windows():
+    return render_template("windows.html")
