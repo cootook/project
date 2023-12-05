@@ -3,6 +3,16 @@ from flask import redirect, render_template, session
 from werkzeug.security import check_password_hash
 from functools import wraps
 
+def admin_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("is_admin")==0:
+            return redirect("/")
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
 def does_user_exist(login, db_cursor):
     return db_cursor.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
 
