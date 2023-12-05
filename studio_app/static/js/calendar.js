@@ -239,7 +239,7 @@
         var square = createElement('div', 'event-category ' + ev.color);
         //var span = createElement('span', '', ev.eventName);
         var form = createElement('form');
-        form.setAttribute("action", "/book");
+        form.setAttribute("action", action_path);
         form.setAttribute("method", "POST");
 
         var input_minute = createElement('input');
