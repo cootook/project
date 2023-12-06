@@ -182,8 +182,23 @@ def logout():
     log_user_out()
     return redirect("/")
 
-@app.route("/windows/")
+@app.route("/windows/", methods = ["GET", "POST"])
 @login_required
 @admin_only
 def windows():
-    return render_template("windows.html")
+    if request.method == "POST":
+        minute = int(request.form.get("minute"))
+        hour = int(request.form.get("hour"))
+        day = int(request.form.get("date"))
+        month = int(request.form.get("month"))
+        year = int(request.form.get("year"))
+        print("##windows")
+        print(hour)
+        print(minute)
+        print(day)
+        print(month)
+        print(year)
+        return redirect("/windows/")
+
+    else:
+        return render_template("windows.html")
