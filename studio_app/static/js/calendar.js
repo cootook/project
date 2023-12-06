@@ -140,7 +140,13 @@
   
       //Events
       var events = createElement('div', 'day-events');
-      this.drawEvents(day, events);
+      if (action_path == '/book/') {
+        this.drawEvents(day, events);
+      }
+      else if (action_path == '/windows/') {
+        this.drawSlots(day, events);
+      }
+      
   
       outer.appendChild(name);
       outer.appendChild(number);
@@ -162,6 +168,87 @@
           element.appendChild(evSpan);
         });
       }
+    }
+
+    Calendar.prototype.drawSlots = function(day, element) {
+      console.log(day.year())
+      console.log(day.month())
+      console.log(day.date())
+      console.log(day.hour())
+      console.log(day.minute())
+
+      var days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [1, 0], [1, 30], [2, 0], [2, 30], [3, 0]]
+
+      days_slots.forEach(function(slot) {
+        var min = day.minute(slot[1])
+        var min = day.minute(slot[1])
+
+        var div = createElement('div', 'event');
+        var square = createElement('div', 'event-category yellow');
+        //var span = createElement('span', '', ev.eventName);
+        var form = createElement('form');
+        form.setAttribute("action", action_path);
+        form.setAttribute("method", "POST");
+
+        var input_minute = createElement('input');
+        input_minute.setAttribute("type", "hidden");
+        input_minute.setAttribute("name", "minute");
+        
+        input_minute.setAttribute("value", day.minute());
+
+
+        var input_hour = createElement('input');
+        input_hour.setAttribute("type", "hidden");
+        input_hour.setAttribute("name", "hour");
+        input_hour.setAttribute("value", ev.date.hour());
+
+
+        var input_date = createElement('input');
+        input_date.setAttribute("type", "hidden");
+        input_date.setAttribute("name", "date");
+        input_date.setAttribute("value", ev.date.date());
+
+
+        var input_month = createElement('input');
+        input_month.setAttribute("type", "hidden");
+        input_month.setAttribute("name", "month");
+        input_month.setAttribute("value", ev.date.month());
+
+
+        var input_year = createElement('input');
+        input_year.setAttribute("type", "hidden");
+        input_year.setAttribute("name", "year");
+        input_year.setAttribute("value", ev.date.year());
+ 
+        
+        var button = createElement('input', 'open_time');
+        button.setAttribute("type", "submit");
+        button.setAttribute("value", ev.eventName);
+        
+        form.appendChild(input_minute);
+        form.appendChild(input_hour);
+        form.appendChild(input_date);
+        form.appendChild(input_month);
+        form.appendChild(input_year);
+        form.appendChild(button)
+        div.appendChild(square);
+        div.appendChild(form);
+        wrapper.appendChild(div);
+      });
+
+      // if(day.month() === this.current.month()) {
+      //   var todaysEvents = this.events.reduce(function(memo, ev) {
+      //     if(ev.date.isSame(day, 'day')) {
+      //       memo.push(ev);
+      //     }
+      //     return memo;
+      //   }, []);
+  
+      //   todaysEvents.forEach(function(ev) {
+      //     var evSpan = createElement('span', ev.color);
+      //     element.appendChild(evSpan);
+      //   });
+      // }
     }
   
     Calendar.prototype.getDayClass = function(day) {
