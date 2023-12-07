@@ -171,17 +171,19 @@
     }
 
     Calendar.prototype.drawSlots = function(day, element) {
-      console.log(day.year())
-      console.log(day.month())
-      console.log(day.date())
-      console.log(day.hour())
-      console.log(day.minute())
 
-      var days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [1, 0], [1, 30], [2, 0], [2, 30], [3, 0]]
+      var days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
+
+      var currentWrapper = element.querySelector('.events');
+      var wrapper = createElement('div', 'events in' + (currentWrapper ? ' new' : ''));
 
       days_slots.forEach(function(slot) {
-        var min = day.minute(slot[1])
-        var min = day.minute(slot[1])
+        //var slot_time = day
+        day.hour(slot[0])
+        //var slot_time = 
+        day.minute(slot[1])
+        console.log(day.format('h:mm a'))
+        
 
         var div = createElement('div', 'event');
         var square = createElement('div', 'event-category yellow');
@@ -192,38 +194,32 @@
 
         var input_minute = createElement('input');
         input_minute.setAttribute("type", "hidden");
-        input_minute.setAttribute("name", "minute");
-        
+        input_minute.setAttribute("name", "minute");        
         input_minute.setAttribute("value", day.minute());
-
 
         var input_hour = createElement('input');
         input_hour.setAttribute("type", "hidden");
         input_hour.setAttribute("name", "hour");
-        input_hour.setAttribute("value", ev.date.hour());
-
+        input_hour.setAttribute("value", day.hour());
 
         var input_date = createElement('input');
         input_date.setAttribute("type", "hidden");
         input_date.setAttribute("name", "date");
-        input_date.setAttribute("value", ev.date.date());
-
+        input_date.setAttribute("value", day.date());
 
         var input_month = createElement('input');
         input_month.setAttribute("type", "hidden");
         input_month.setAttribute("name", "month");
-        input_month.setAttribute("value", ev.date.month());
-
+        input_month.setAttribute("value", day.month());
 
         var input_year = createElement('input');
         input_year.setAttribute("type", "hidden");
         input_year.setAttribute("name", "year");
-        input_year.setAttribute("value", ev.date.year());
- 
+        input_year.setAttribute("value", day.year()); 
         
         var button = createElement('input', 'open_time');
         button.setAttribute("type", "submit");
-        button.setAttribute("value", ev.eventName);
+        button.setAttribute("value", day.format('h:mm a'));
         
         form.appendChild(input_minute);
         form.appendChild(input_hour);
@@ -235,6 +231,7 @@
         div.appendChild(form);
         wrapper.appendChild(div);
       });
+      element.appendChild(wrapper)
 
       // if(day.month() === this.current.month()) {
       //   var todaysEvents = this.events.reduce(function(memo, ev) {
