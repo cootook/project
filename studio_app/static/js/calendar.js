@@ -227,6 +227,7 @@
         form.appendChild(input_month);
         form.appendChild(input_year);
         form.appendChild(button)
+        
         div.appendChild(square);
         div.appendChild(form);
         wrapper.appendChild(div);
