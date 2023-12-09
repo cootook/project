@@ -107,7 +107,6 @@ def generate_slots():
         try:
             month = 12#int(request.form.get("month"))
             year = 2023#int(request.form.get("year"))
-            print("##generate")
         except Exception as er:
             print("#generate: request.form")
 
@@ -128,14 +127,11 @@ def generate_slots():
 
         
         days_in_month = monthrange(year, month)[1]
-        print("#days in month")
-        print(days_in_month)
 
         for day in range(1, days_in_month+1):
             for time in days_slots:
-                #(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT)
+                # calendar (slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT)
                 cur.execute("INSERT INTO calendar (year, month, day, hour, minute, is_open) VALUES (?, ?, ?, ?, ?, ?)", (year, month, day, time[0], time[1], 0))
-                #print("{} -- {}:{}".format(day, time[0], time[1]))
                 con.commit()
         
         con.close()
