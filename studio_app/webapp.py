@@ -2,6 +2,7 @@ import os
 import re
 import sqlite3
 
+from calendar import monthrange
 from datetime import timedelta, date
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
@@ -104,13 +105,13 @@ def day():
 def generate_slots():
     if request.method == "GET":
         try:
-            month = int(request.form.get("month"))
-            year = int(request.form.get("year"))
+            month = 12#int(request.form.get("month"))
+            year = 2023#int(request.form.get("year"))
             print("##generate")
         except Exception as er:
             print("#generate: request.form")
 
-        days_slots = {[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]}
+        days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
 
         try:
             con = sqlite3.connect("./db.db") 
@@ -119,18 +120,25 @@ def generate_slots():
             print("#generate: db connection")
         else:
             #check if this month generated
-            count_lines = cur.execute("SELECT COUNT(*) FROM calender WHERE year=? AND month=?")
+            count_lines = cur.execute("SELECT COUNT(*) FROM calendar WHERE year=? AND month=?", (year, month)).fetchone()[0]
             if not count_lines == 0:
                 print("#month exists; count != 0")
+                print(count_lines)
                 return redirect("/")
 
-        days_in_month = (date(year, month + 1, 1) - date(year, month, 1)).days
+        
+        days_in_month = monthrange(year, month)[1]
+        print("#days in month")
+        print(days_in_month)
 
         for day in range(1, days_in_month+1):
             for time in days_slots:
                 #(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT)
-                print("{} -- {}:{}".format(day, time[0], time[1]))
-
+                cur.execute("INSERT INTO calendar (year, month, day, hour, minute, is_open) VALUES (?, ?, ?, ?, ?, ?)", (year, month, day, time[0], time[1], 0))
+                #print("{} -- {}:{}".format(day, time[0], time[1]))
+                con.commit()
+        
+        con.close()
         return redirect("/")
 
     else:
