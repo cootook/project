@@ -144,7 +144,8 @@
         this.drawEvents(day, events);
       }
       else if (action_path == '/windows/') {
-        this.drawSlots(day, events);
+        this.drawEvents(day, events);
+       // this.drawSlots(day, events);
       }
       
   
@@ -227,7 +228,7 @@
         form.appendChild(input_month);
         form.appendChild(input_year);
         form.appendChild(button)
-        
+
         div.appendChild(square);
         div.appendChild(form);
         wrapper.appendChild(div);
@@ -451,6 +452,8 @@
   }();
   
   !function() {
+    // [ [title, calendar, color, date] ]
+    console.log(slots)
     var data = [
       { eventName: 'Lunch Meeting w/ Mark', calendar: 'Work', color: 'orange', date: moment().date(25).month(10).year(2023) },
       { eventName: 'Interview - Jr. Web Developer', calendar: 'Work', color: 'orange', date: moment().date(1).month(10).year(2023) },
@@ -462,7 +465,16 @@
       { eventName: 'Game vs Denver', calendar: 'Sports', color: 'blue', date: moment().date(14).month(11).year(2023) },
       { eventName: 'Game vs San Degio', calendar: 'Sports', color: 'blue', date: moment().date(26).month(11).year(2023) },
   
-      { eventName: 'School Play', calendar: 'Kids', color: 'yellow', date: moment().date(26).month(9).year(2023) },
+      { eventName: '10:30', calendar: 'Kids', color: 'green', date: moment().date(9).month(11).year(2023) },
+      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
       { eventName: 'Parent/Teacher Conference', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(10).year(2023) },
       { eventName: 'Pick up from Soccer Practice', calendar: 'Kids', color: 'yellow', date: moment().date(8).month(10).year(2023) },
       { eventName: 'Ice Cream Night', calendar: 'Kids', color: 'yellow', date: moment().date(6).month(8).year(2023) },

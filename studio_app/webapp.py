@@ -1,6 +1,7 @@
 import os
 import re
 import sqlite3
+import datetime
 
 from calendar import monthrange
 from datetime import timedelta, date
@@ -228,6 +229,7 @@ def logout():
 @login_required
 @admin_only
 def windows():
+    # slots = [[1, 2], [3, 4]]
     if request.method == "POST":
         minute = int(request.form.get("minute"))
         hour = int(request.form.get("hour"))
@@ -243,4 +245,18 @@ def windows():
         return redirect("/windows/")
 
     else:
-        return render_template("windows.html")
+        today = datetime.datetime.now()
+        try:
+            con = sqlite3.connect("./db.db") 
+            cur = con.cursor()
+            # slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT
+            slots_db = cur.execute("SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=? AND month>=? AND hour>=?", (today.year, today.month, today.hour)).fetchall()
+            slots = []
+            for slot in slots_db:
+                slots.append(list(slot))
+            print(slots)
+        except Exception as er:
+            slots = None
+            print("##/windows/")
+            print(er)
+        return render_template("windows.html", slots=slots)
