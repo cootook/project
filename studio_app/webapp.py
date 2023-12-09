@@ -30,7 +30,7 @@ app.register_error_handler(404, page_not_found)
 # Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "Account", "Pricing", "Articles", "Contact", "About", "LogOut"]
 navbar_items_not_loged_in = ["Pricing", "Articles", "Contact", "About", "SignIn", "SignUp"]
-navbar_items_admin = ["Appointments", "Account", "Clients", "Windows", "Pricing", "Articles", "Contact", "About", "LogOut"]
+navbar_items_admin = ["Appointments", "Account", "Clients", "Windows", "Generate_slots", "Pricing", "Articles", "Contact", "About", "LogOut"]
 
 @app.context_processor
 def inject_navbar_items():
@@ -103,10 +103,10 @@ def day():
 @login_required
 @admin_only
 def generate_slots():
-    if request.method == "GET":
+    if request.method == "POST":
         try:
-            month = 12#int(request.form.get("month"))
-            year = 2023#int(request.form.get("year"))
+            month = int(request.form.get("month"))
+            year = int(request.form.get("year"))
         except Exception as er:
             print("#generate: request.form")
 
@@ -138,7 +138,7 @@ def generate_slots():
         return redirect("/")
 
     else:
-        return render_template("windows.html")
+        return render_template("generate_slots.html")
 
 @app.route("/pricing/")
 def pricing():
