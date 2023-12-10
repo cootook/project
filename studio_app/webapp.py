@@ -234,12 +234,12 @@ def windows():
             minute = int(request.form.get("minute"))
             hour = int(request.form.get("hour"))
             day = int(request.form.get("date"))
-            month = int(request.form.get("month"))
+            month = int(request.form.get("month")) + 1
             year = int(request.form.get("year"))
 
             con = sqlite3.connect("./db.db") 
             cur = con.cursor()
-            slot_to_edit = cur.execute("SELECT slot_id, is_open FROM calendar WHERE year=? AND month=? AND day=? AND hour=? AND minute=?;", (year, month+1, day, hour, minute)).fetchone()
+            slot_to_edit = cur.execute("SELECT slot_id, is_open FROM calendar WHERE year=? AND month=? AND day=? AND hour=? AND minute=?;", (year, month, day, hour, minute)).fetchone()
             new_is_open = 1 if slot_to_edit[1] == 0 else 0
             cur.execute("UPDATE calendar SET is_open=? WHERE slot_id=?", (new_is_open, slot_to_edit[0]))
             con.commit()
