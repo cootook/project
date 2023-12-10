@@ -231,18 +231,31 @@ def logout():
 def windows():
     # slots = [[1, 2], [3, 4]]
     if request.method == "POST":
-        minute = int(request.form.get("minute"))
-        hour = int(request.form.get("hour"))
-        day = int(request.form.get("date"))
-        month = int(request.form.get("month"))
-        year = int(request.form.get("year"))
-        print("##windows")
-        print(hour)
-        print(minute)
-        print(day)
-        print(month)
-        print(year)
-        return redirect("/windows/")
+        try:
+            minute = int(request.form.get("minute"))
+            hour = int(request.form.get("hour"))
+            day = int(request.form.get("date"))
+            month = int(request.form.get("month"))
+            year = int(request.form.get("year"))
+            print("##/windows/")
+            print(hour)
+            print(minute)
+            print(day)
+            print(month)
+            print(year)
+
+            con = sqlite3.connect("./db.db") 
+            cur = con.cursor()
+            slot_to_edit = cur.execute("SELECT slot_id, is_open FROM calendar WHERE year=? AND month=? AND day=? AND hour=? AND minute=?;", (year, month+1, day, hour, minute)).fetchone()
+            print(slot_to_edit)
+            return redirect("/windows/")
+
+        except Exception as er:
+            print("##/windows/ --request.form.get, db query")
+            print(er)
+            return render_template("apology.html", error_message="Something went wrong.")
+        
+        
 
     else:
         today = datetime.datetime.now()
@@ -254,8 +267,9 @@ def windows():
             slots = []
             for slot in slots_db:
                 slots.append(list(slot))
-            print(slots)
+            con.close()
         except Exception as er:
+            con.close()
             slots = None
             print("##/windows/")
             print(er)
