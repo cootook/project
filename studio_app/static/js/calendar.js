@@ -453,37 +453,44 @@
   
   !function() {
     // [ [title, calendar, color, date] ]
-    console.log(slots)
-    var data = [
-      { eventName: 'Lunch Meeting w/ Mark', calendar: 'Work', color: 'orange', date: moment().date(25).month(10).year(2023) },
-      { eventName: 'Interview - Jr. Web Developer', calendar: 'Work', color: 'orange', date: moment().date(1).month(10).year(2023) },
-      { eventName: 'Demo New App to the Board', calendar: 'Work', color: 'orange', date: moment().date(26).month(10).year(2023) },
-      { eventName: 'Dinner w/ Marketing', calendar: 'Work', color: 'orange', date: moment().date(15).month(10).year(2023) },
+    // "SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=? AND month>=? AND hour>=?"
+    console.log(moment().month());
+    var data = slots.map((slot) => {
+      slot[5] = (slot[5] < 10) ? ('0' + slot[5]) : slot[5]
+      return { eventName: ` ${slot[4]}:${slot[5]}}`, calendar: 'Avaliable time', color: 'yellow', date: moment().date(slot[3]).month(slot[2] - 1).year(slot[1]) }
+    });
+    console.log(data);
+    // var data = [
+
+    //   { eventName: 'Lunch Meeting w/ Mark', calendar: 'Work', color: 'orange', date: moment().date(25).month(10).year(2023) },
+    //   { eventName: 'Interview - Jr. Web Developer', calendar: 'Work', color: 'orange', date: moment().date(1).month(10).year(2023) },
+    //   { eventName: 'Demo New App to the Board', calendar: 'Work', color: 'orange', date: moment().date(26).month(10).year(2023) },
+    //   { eventName: 'Dinner w/ Marketing', calendar: 'Work', color: 'orange', date: moment().date(15).month(10).year(2023) },
   
-      { eventName: 'Game vs Portalnd', calendar: 'Sports', color: 'blue', date: moment().date(4).month(11).year(2023) },
-      { eventName: 'Game vs Houston', calendar: 'Sports', color: 'blue', date: moment().date(0).month(11).year(2023) },
-      { eventName: 'Game vs Denver', calendar: 'Sports', color: 'blue', date: moment().date(14).month(11).year(2023) },
-      { eventName: 'Game vs San Degio', calendar: 'Sports', color: 'blue', date: moment().date(26).month(11).year(2023) },
+    //   { eventName: 'Game vs Portalnd', calendar: 'Sports', color: 'blue', date: moment().date(4).month(11).year(2023) },
+    //   { eventName: 'Game vs Houston', calendar: 'Sports', color: 'blue', date: moment().date(0).month(11).year(2023) },
+    //   { eventName: 'Game vs Denver', calendar: 'Sports', color: 'blue', date: moment().date(14).month(11).year(2023) },
+    //   { eventName: 'Game vs San Degio', calendar: 'Sports', color: 'blue', date: moment().date(26).month(11).year(2023) },
   
-      { eventName: '10:30', calendar: 'Kids', color: 'green', date: moment().date(9).month(11).year(2023) },
-      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
-      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
-      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
-      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
-      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
-      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
-      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
-      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
-      { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
-      { eventName: 'Parent/Teacher Conference', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(10).year(2023) },
-      { eventName: 'Pick up from Soccer Practice', calendar: 'Kids', color: 'yellow', date: moment().date(8).month(10).year(2023) },
-      { eventName: 'Ice Cream Night', calendar: 'Kids', color: 'yellow', date: moment().date(6).month(8).year(2023) },
+    //   { eventName: '10:30', calendar: 'Kids', color: 'green', date: moment().date(9).month(11).year(2023) },
+    //   { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+    //   { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+    //   { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+    //   { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+    //   { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+    //   { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+    //   { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+    //   { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+    //   { eventName: '10:30', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(11).year(2023) },
+    //   { eventName: 'Parent/Teacher Conference', calendar: 'Kids', color: 'yellow', date: moment().date(9).month(10).year(2023) },
+    //   { eventName: 'Pick up from Soccer Practice', calendar: 'Kids', color: 'yellow', date: moment().date(8).month(10).year(2023) },
+    //   { eventName: 'Ice Cream Night', calendar: 'Kids', color: 'yellow', date: moment().date(6).month(8).year(2023) },
   
-      { eventName: 'Free Tamale Night', calendar: 'Other', color: 'green', date: moment().date(0).month(0).year(2024) },
-      { eventName: 'Bowling Team', calendar: 'Other', color: 'green', date: moment().date(11).month(0).year(2024) },
-      { eventName: 'Teach Kids to Code', calendar: 'Other', color: 'green', date: moment().date(2).month(1).year(2024) },
-      { eventName: 'Startup Weekend', calendar: 'Other', color: 'green', date: moment().date(22).month(1).year(2024) }
-    ];
+    //   { eventName: 'Free Tamale Night', calendar: 'Other', color: 'green', date: moment().date(0).month(0).year(2024) },
+    //   { eventName: 'Bowling Team', calendar: 'Other', color: 'green', date: moment().date(11).month(0).year(2024) },
+    //   { eventName: 'Teach Kids to Code', calendar: 'Other', color: 'green', date: moment().date(2).month(1).year(2024) },
+    //   { eventName: 'Startup Weekend', calendar: 'Other', color: 'green', date: moment().date(22).month(1).year(2024) }
+    // ];
   
     
   
