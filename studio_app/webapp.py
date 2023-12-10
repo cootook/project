@@ -47,11 +47,28 @@ def inject_navbar_items_admin():
 
 @app.route("/")
 def home():
-    is_loged_in = 0
-    return render_template("index.html")
+    today = datetime.datetime.now()
+    try:
+        con = sqlite3.connect("./db.db") 
+        cur = con.cursor()
+        # slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT
+        slots_db = cur.execute("SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=? AND month>=? AND is_open=1", (today.year, today.month)).fetchall()
+          
+    except Exception as er:
+        con.close()
+        slots = None
+        print("##/")
+        print(er)
+        return render_template("apology.html", error_message="Something went wrong.")
+    else:
+        con.close()
+        slots = []
+        for slot in slots_db:
+            slots.append(list(slot))
+        return render_template("index.html", slots=slots)
 
 @app.route("/about/")
-def about():
+def about():    
     return render_template("about.html")
 
 @app.route("/account/")
@@ -76,17 +93,30 @@ def articles():
 @login_required
 def book():
     if request.method == "POST":
-        minute = int(request.form.get("minute"))
-        hour = int(request.form.get("hour"))
-        day = int(request.form.get("date"))
-        month = int(request.form.get("month"))
-        year = int(request.form.get("year"))
-        print(hour)
-        print(minute)
-        print(day)
-        print(month)
-        print(year)
-        return redirect("/about/")
+        try:
+            minute = int(request.form.get("minute"))
+            hour = int(request.form.get("hour"))
+            day = int(request.form.get("date"))
+            month = int(request.form.get("month")) + 1 # in calendar.js month range starts from 0
+            year = int(request.form.get("year"))
+            #calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
+            #appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, is_seen INT, is_aproved INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
+            con = sqlite3.connect("./db.db") 
+            cur = con.cursor()
+            slot_to_book = cur.execute("SELECT slot_id, is_open FROM calendar WHERE year=? AND month=? AND day=? AND hour=? AND minute=?;", (year, month, day, hour, minute)).fetchone()
+            is_open = True if slot_to_book[1] == 0 else False
+            slot_id = slot_to_book[0]
+            cur.execute("UPDATE calendar SET is_open=0 WHERE slot_id=?;", (slot_id,))
+            cur.execute("UPDATE appointments SET user_id=?, slot_id=?, is_seen=0, is_aproved=0;", (session.get("user_id"), slot_id))
+            con.commit()
+            con.close()
+            return redirect("/")
+        
+        except Exception as er:
+            con.close()
+            print("##/book/ --request.form.get, db query")
+            print(er)
+            return  render_template("apology.html", error_message="Something went wrong")        
 
     else:
         return redirect("/")
@@ -234,7 +264,7 @@ def windows():
             minute = int(request.form.get("minute"))
             hour = int(request.form.get("hour"))
             day = int(request.form.get("date"))
-            month = int(request.form.get("month")) + 1
+            month = int(request.form.get("month")) + 1 # in calendar.js month range starts from 0
             year = int(request.form.get("year"))
 
             con = sqlite3.connect("./db.db") 
