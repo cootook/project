@@ -248,6 +248,10 @@ def windows():
             cur = con.cursor()
             slot_to_edit = cur.execute("SELECT slot_id, is_open FROM calendar WHERE year=? AND month=? AND day=? AND hour=? AND minute=?;", (year, month+1, day, hour, minute)).fetchone()
             print(slot_to_edit)
+            new_is_open = 1 if slot_to_edit[1] == 0 else 0
+            cur.execute("UPDATE calendar SET is_open=? WHERE slot_id=?", (new_is_open, slot_to_edit[0]))
+            con.commit()
+            con.close()
             return redirect("/windows/")
 
         except Exception as er:
