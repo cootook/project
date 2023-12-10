@@ -32,6 +32,7 @@ app.register_error_handler(404, page_not_found)
 navbar_items = ["Appointments", "Account", "Pricing", "Articles", "Contact", "About", "LogOut"]
 navbar_items_not_loged_in = ["Pricing", "Articles", "Contact", "About", "SignIn", "SignUp"]
 navbar_items_admin = ["Appointments", "Account", "Clients", "Windows", "Generate_slots", "Pricing", "Articles", "Contact", "About", "LogOut"]
+days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
 
 @app.context_processor
 def inject_navbar_items():
@@ -139,9 +140,7 @@ def generate_slots():
             month = int(request.form.get("month"))
             year = int(request.form.get("year"))
         except Exception as er:
-            print("#generate: request.form")
-
-        days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
+            print("#generate: request.form")        
 
         try:
             con = sqlite3.connect("./db.db") 
