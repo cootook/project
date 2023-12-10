@@ -229,7 +229,6 @@ def logout():
 @login_required
 @admin_only
 def windows():
-    # slots = [[1, 2], [3, 4]]
     if request.method == "POST":
         try:
             minute = int(request.form.get("minute"))
@@ -237,17 +236,10 @@ def windows():
             day = int(request.form.get("date"))
             month = int(request.form.get("month"))
             year = int(request.form.get("year"))
-            print("##/windows/")
-            print(hour)
-            print(minute)
-            print(day)
-            print(month)
-            print(year)
 
             con = sqlite3.connect("./db.db") 
             cur = con.cursor()
             slot_to_edit = cur.execute("SELECT slot_id, is_open FROM calendar WHERE year=? AND month=? AND day=? AND hour=? AND minute=?;", (year, month+1, day, hour, minute)).fetchone()
-            print(slot_to_edit)
             new_is_open = 1 if slot_to_edit[1] == 0 else 0
             cur.execute("UPDATE calendar SET is_open=? WHERE slot_id=?", (new_is_open, slot_to_edit[0]))
             con.commit()
