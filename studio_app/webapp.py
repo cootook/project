@@ -250,7 +250,7 @@ def windows():
             con = sqlite3.connect("./db.db") 
             cur = con.cursor()
             # slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT
-            slots_db = cur.execute("SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=? AND month>=? AND hour>=?", (today.year, today.month, today.hour)).fetchall()
+            slots_db = cur.execute("SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=? AND month>=?", (today.year, today.month)).fetchall()
             slots = []
             for slot in slots_db:
                 slots.append(list(slot))

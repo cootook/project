@@ -456,8 +456,10 @@
     // "SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=? AND month>=? AND hour>=?"
     console.log(moment().month());
     var data = slots.map((slot) => {
+      slot_status = slot[6] == 1 ? 'Avaliable time' : 'Closed time'
+      slot_color  = slot[6] == 1 ? 'yellow' : 'blue'
       slot[5] = (slot[5] < 10) ? ('0' + slot[5]) : slot[5]
-      return { eventName: ` ${slot[4]}:${slot[5]}}`, calendar: 'Avaliable time', color: 'yellow', date: moment().date(slot[3]).month(slot[2] - 1).year(slot[1]) }
+      return { eventName: ` ${slot[4]}:${slot[5]}}`, calendar: slot_status, color: slot_color, date: moment().date(slot[3]).month(slot[2] - 1).year(slot[1]) }
     });
     console.log(data);
     // var data = [
