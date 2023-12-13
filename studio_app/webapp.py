@@ -229,24 +229,29 @@ def signup():
         print("### ERROR signup: request.form, validation")
         print(er)
         return render_template("apology.html", error_message="Something went wrong.")
-    else:         
-        con = sqlite3.connect("./db.db") 
-        cur = con.cursor()
-        if does_user_exist(login, cur):            
-            error_message = "Email " + login + " already registred, try restore password instead."
+    else:   
+        try:       
+            con = sqlite3.connect("./db.db") 
+            cur = con.cursor()
+            if does_user_exist(login, cur):            
+                error_message = "Email " + login + " already registred, try restore password instead."
+                con.close()
+                return render_template("apology.html", error_message=error_message)
+            #insert new user to db
+            cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
+            user_id = cur.execute("SELECT id FROM users WHERE email=?", (login,)).fetchone()[0]
+            password_hash = generate_password_hash(password)
+            cur.execute("INSERT INTO login (user_id, hash) VALUES (?, ?)", (user_id, password_hash))
+        except Exception as er:
+            print("###/signup/ --insert new user to db")
+            print(er)
             con.close()
-            return render_template("apology.html", error_message=error_message)
-        #insert new user to db
-        cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
-        user_id = cur.execute("SELECT user_id FROM users WHERE login=?", (login,)).fetchone()[0]
-        password_hash = generate_password_hash(password)
-        cur.execute("INCERT INTO login (user_id, hash) VALUES (?, ?)", (user_id, password_hash))
-
-        log_user_in(login, password, cur)
-        con.commit()
-        con.close()       
-        
-        return redirect("/")
+            return render_template("apology.html", error_message="Something went wrong. Try again or contact us.") 
+        else:
+            log_user_in(login, password, cur)
+            con.commit()
+            con.close()            
+            return redirect("/")
     
 @app.route("/logout/")
 @login_required
