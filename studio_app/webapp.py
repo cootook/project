@@ -31,7 +31,7 @@ app.register_error_handler(404, page_not_found)
 # Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "History", "Account", "Pricing", "Articles", "Contact", "About", "LogOut"]
 navbar_items_not_loged_in = ["Pricing", "Articles", "Contact", "About", "SignIn", "SignUp"]
-navbar_items_admin = ["All_appointments", "History", "Account", "Clients", "Windows", "Generate_slots", "Pricing", "Articles", "Contact", "About", "LogOut"]
+navbar_items_admin = ["All_appointments", "All_history", "Account", "Clients", "Windows", "Generate_slots", "Pricing", "Articles", "Contact", "About", "LogOut"]
 days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
 
 @app.context_processor
