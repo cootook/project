@@ -129,7 +129,9 @@
     }
     
     .day.today {
-      color: rgba(156, 202, 235, 1);
+      color: rgb(247 242 15);
+      background-color: gray;
+      font-weight: 600;
     }
     
     .day-name {
