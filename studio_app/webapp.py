@@ -53,7 +53,7 @@ def home():
         con = sqlite3.connect("./db.db") 
         cur = con.cursor()
         # slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT
-        slots_db = cur.execute("SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=? AND month>=? AND is_open=1", (today.year, today.month)).fetchall()
+        slots_db = cur.execute("SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=? AND is_open=1", (today.year,)).fetchall()
           
     except Exception as er:
         con.close()
@@ -321,7 +321,7 @@ def windows():
             con = sqlite3.connect("./db.db") 
             cur = con.cursor()
             # slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT
-            slots_db = cur.execute("SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=? AND month>=?", (today.year, today.month)).fetchall()
+            slots_db = cur.execute("SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=?", (today.year,)).fetchall()
             slots = []
             for slot in slots_db:
                 slots.append(list(slot))

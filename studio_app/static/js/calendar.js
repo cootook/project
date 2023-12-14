@@ -459,6 +459,8 @@
       slot[5] = (slot[5] < 10) ? ('0' + slot[5]) : slot[5]
       return { eventName: ` ${slot[4]}:${slot[5]}}`, calendar: slot_status, color: slot_color, date: moment().minute(slot[5]).hour(slot[4]).date(slot[3]).month(slot[2] - 1).year(slot[1]) }
     });
+    console.log(slots)
+    console.log(data)
     // var data = [
 
     //   { eventName: 'Lunch Meeting w/ Mark', calendar: 'Work', color: 'orange', date: moment().date(25).month(10).year(2023) },
