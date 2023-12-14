@@ -81,10 +81,38 @@ def account():
 def apology():
     return render_template("apology.html")
 
-@app.route("/appointments/")
+@app.route("/appointments/", methods=["GET", "POST"])
 @login_required
 def appointments():
-    return render_template("appointments.html")
+    today = datetime.datetime.now()
+    try:
+        con = sqlite3.connect("./db.db") 
+        cur = con.cursor()
+        # calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
+        # appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, is_seen INT, is_aproved INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
+        user_appoint = cur.execute("SELECT service_name, slot_id, is_seen, is_aproved FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year>=? AND month>=? AND day>=?);", (session.get("user_id"), today.year, today.month, today.day)).fetchall()
+        print(user_appoint)
+    except Exception as er:
+        con.close()
+        print("##/appointments/ --db connection")
+        print(er)
+        return  render_template("apology.html", error_message="Something went wrong")
+
+    if request.method == "POST":
+        try:
+            minute = int(request.form.get("minute"))
+            hour = int(request.form.get("hour"))
+            day = int(request.form.get("date"))
+            month = int(request.form.get("month")) + 1 # in calendar.js month range starts from 0
+            year = int(request.form.get("year"))
+
+        except Exception as er:
+            con.close()
+            print("##/appointments/")
+            print(er)
+            return  render_template("apology.html", error_message="Something went wrong")
+    else:
+        return render_template("appointments.html")
 
 @app.route("/articles/")
 def articles():
