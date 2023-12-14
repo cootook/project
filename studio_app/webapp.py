@@ -136,7 +136,7 @@ def book():
             is_open = True if slot_to_book[1] == 0 else False
             slot_id = slot_to_book[0]
             cur.execute("UPDATE calendar SET is_open=0 WHERE slot_id=?;", (slot_id,))
-            cur.execute("UPDATE appointments SET user_id=?, slot_id=?, is_seen=0, is_aproved=0;", (session.get("user_id"), slot_id))
+            cur.execute("INSERT INTO appointments (user_id, slot_id, is_seen, is_aproved) VALUES (?, ?, 0, 0);", (session.get("user_id"), slot_id))
             con.commit()
             con.close()
             return redirect("/")
