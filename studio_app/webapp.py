@@ -90,13 +90,22 @@ def appointments():
         cur = con.cursor()
         # calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
         # appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, is_seen INT, is_aproved INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
-        user_appoint = cur.execute("SELECT service_name, slot_id, is_seen, is_aproved FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year>=? AND month>=? AND day>=?);", (session.get("user_id"), today.year, today.month, today.day)).fetchall()
-        print(user_appoint)
+        user_appoint_db = cur.execute("SELECT service_name, slot_id, is_seen, is_aproved FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year>=?);", (session.get("user_id"), today.year)).fetchall()
+        user_appoint = []
+        for appointment in user_appoint_db:
+            slot_db = list(cur.execute("SELECT year, month, day, hour, minute FROM calendar WHERE slot_id=?", (appointment[1],)).fetchone())
+            appointment_as_list = []
+            for el in appointment:
+                el = 'No data' if el == None else el
+                appointment_as_list.append(el)
+            appointment_as_list = appointment_as_list + slot_db
+            user_appoint.append(appointment_as_list)
     except Exception as er:
         con.close()
         print("##/appointments/ --db connection")
         print(er)
         return  render_template("apology.html", error_message="Something went wrong")
+       
 
     if request.method == "POST":
         try:
@@ -111,8 +120,9 @@ def appointments():
             print("##/appointments/")
             print(er)
             return  render_template("apology.html", error_message="Something went wrong")
-    else:
-        return render_template("appointments.html")
+
+    return render_template("appointments.html", user_appoint=user_appoint)
+
 
 @app.route("/articles/")
 def articles():

@@ -3,5 +3,30 @@
 Appointsments
 {% endblock %}
 {% block content %}
+<script>var user_appoint = {{user_appoint | safe}}; console.log(user_appoint); </script>
+
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Date</th>
+        <th scope="col">Time</th>
+        <th scope="col">Sevice</th>
+        <th scope="col">Aproved</th>
+        <th scope="col">Cancel</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for appointment in user_appoint %}
+        <p>{{appointment}}</p>
+        <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
 
 {% endblock %}
