@@ -89,17 +89,18 @@ def appointments():
         con = sqlite3.connect("./db.db") 
         cur = con.cursor()
         # calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
-        # appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, is_seen INT, is_aproved INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
-        user_appoint_db = cur.execute("SELECT service_name, slot_id, is_seen, is_aproved FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year>=?);", (session.get("user_id"), today.year)).fetchall()
+        # appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, amount_time_min INT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
+        user_appoint_db = cur.execute("SELECT service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year>=?);", (session.get("user_id"), today.year)).fetchall()
         user_appoint = []
         for appointment in user_appoint_db:
-            slot_db = list(cur.execute("SELECT year, month, day, hour, minute FROM calendar WHERE slot_id=?", (appointment[1],)).fetchone())
-            appointment_as_list = []
-            for el in appointment:
-                el = 'No data' if el == None else el
-                appointment_as_list.append(el)
-            appointment_as_list = appointment_as_list + slot_db
-            user_appoint.append(appointment_as_list)
+            if appointment[4] == 0:
+                slot_db = list(cur.execute("SELECT year, month, day, hour, minute FROM calendar WHERE slot_id=?", (appointment[1],)).fetchone())
+                appointment_as_list = []
+                for el in appointment:
+                    el = 'No data' if el == None else el
+                    appointment_as_list.append(el)
+                appointment_as_list = appointment_as_list + slot_db
+                user_appoint.append(appointment_as_list)
     except Exception as er:
         con.close()
         print("##/appointments/ --db connection")
@@ -139,14 +140,14 @@ def book():
             month = int(request.form.get("month")) + 1 # in calendar.js month range starts from 0
             year = int(request.form.get("year"))
             #calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
-            #appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, is_seen INT, is_aproved INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
+            #appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, amount_time_min INT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
             con = sqlite3.connect("./db.db") 
             cur = con.cursor()
             slot_to_book = cur.execute("SELECT slot_id, is_open FROM calendar WHERE year=? AND month=? AND day=? AND hour=? AND minute=?;", (year, month, day, hour, minute)).fetchone()
             is_open = True if slot_to_book[1] == 0 else False
             slot_id = slot_to_book[0]
             cur.execute("UPDATE calendar SET is_open=0 WHERE slot_id=?;", (slot_id,))
-            cur.execute("INSERT INTO appointments (user_id, slot_id, is_seen, is_aproved) VALUES (?, ?, 0, 0);", (session.get("user_id"), slot_id))
+            cur.execute("INSERT INTO appointments (user_id, slot_id, is_seen, is_aproved, is_canceled, amount_time_min) VALUES (?, ?, 0, 0, 0, 120);", (session.get("user_id"), slot_id))
             con.commit()
             con.close()
             return redirect("/")
