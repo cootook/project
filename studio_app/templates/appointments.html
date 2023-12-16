@@ -11,6 +11,7 @@ Appointsments
         <th scope="col">Date</th>
         <th scope="col">Time</th>
         <th scope="col">Sevice</th>
+        <th scope="col">Duration</th>
         <th scope="col">Aproved</th>
         <th scope="col">Cancel</th>
       </tr>
@@ -28,6 +29,7 @@ Appointsments
                 {% endif %}
             </td>
             <td>{{appointment[0]}}</td>
+            <td>{{appointment[5]}} min</td>
             <td>
                 {% if appointment[3] == 0 %}
                     ...not yet
