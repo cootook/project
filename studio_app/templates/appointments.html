@@ -5,9 +5,9 @@ Appointsments
 {% block content %}
 <script>var user_appoint = {{user_appoint | safe}}; console.log(user_appoint); </script>
 
-<table class="table table-hover">
+<table class="table">
     <thead>
-      <tr>
+      <tr class="text-danger">
         <th scope="col">Date</th>
         <th scope="col">Time</th>
         <th scope="col">Sevice</th>
@@ -15,14 +15,32 @@ Appointsments
         <th scope="col">Cancel</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody class="text-white">
+
         {% for appointment in user_appoint %}
-        <p>{{appointment}}</p>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
+        <tr class="my-table-hover">
+            <th scope="row">{{appointment[5]}}/{{appointment[6]}}</th>
+            <td>{{appointment[7]}} :
+                {% if appointment[8] == 0 %}
+                00
+                {% else %}
+                {{appointment[8]}}
+                {% endif %}
+            </td>
+            <td>{{appointment[0]}}</td>
+            <td>
+                {% if appointment[3] == 0 %}
+                    ...not yet
+                {% else %}
+                    Aproved
+                {% endif %}
+            </td>
+            <td>
+                <form action="/appointments/" method="post">
+                    <input type="hidden" name="slot_id" value={{appointment[1]}}>
+                    <input type="submit" value="CANCEL">
+                </form>
+            </td>
           </tr>
         {% endfor %}
     </tbody>

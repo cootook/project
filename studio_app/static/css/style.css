@@ -57,6 +57,15 @@ body {
   letter-spacing: -.05rem;
 }
 
+.my-table-hover:hover {
+  color: yellow;
+  background-color: rgb(61, 51, 51);
+}
+
+.table {
+  width: 98%;
+  margin: 1%;
+}
 /* rtl:end:remove */
 
 /* RESPONSIVE CSS
