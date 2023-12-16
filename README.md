@@ -17,16 +17,18 @@ Web app for booking maniqure appointments and managing them.
 **features:**
 * optimized for small screens
 * session uses filesystem (instead of signed cookies)
-* register via login/password or facebook 
-* login/logout from user account via facebook
+* register via login/password 
+* login/logout from user account
 * user can see the history of it's appointments
 * admin can open and close time for booking
 * admin can manage appointments
 ###    
 **future features:**
+* email notification and confirmation
 * HTTPS
 * reCAPTCHA
 * language selection 
+* sign up with Facebook
 * sign up with Google
 * instagram bot
 * admin can add articles
