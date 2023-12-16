@@ -473,7 +473,7 @@
       slot_status = slot[6] == 1 ? 'Avaliable time' : 'Closed time'
       slot_color  = slot[6] == 1 ? 'yellow' : 'blue'
       slot[5] = (slot[5] < 10) ? ('0' + slot[5]) : slot[5]
-      return { eventName: ` ${slot[4]}:${slot[5]}}`, calendar: slot_status, color: slot_color, date: moment().minute(slot[5]).hour(slot[4]).date(slot[3]).month(slot[2] - 1).year(slot[1]) }
+      return { eventName: ` ${slot[4]}:${slot[5]}`, calendar: slot_status, color: slot_color, date: moment().minute(slot[5]).hour(slot[4]).date(slot[3]).month(slot[2] - 1).year(slot[1]) }
     });
 
     // var data = [
