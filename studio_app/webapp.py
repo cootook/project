@@ -103,7 +103,7 @@ def appointments():
                     appointment_as_list.append(el)
                 appointment_as_list = appointment_as_list + slot_db
                 user_appoint.append(appointment_as_list)
-                user_appoint_sorted = sorted(user_appoint, key = lambda x: (x[7], x[8], x[9], x[10], x[11]))
+        user_appoint_sorted = sorted(user_appoint, key = lambda x: (x[7], x[8], x[9], x[10], x[11]))
     except Exception as er:
         con.close()
         print("##/appointments/ --db connection")
