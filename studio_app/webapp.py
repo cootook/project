@@ -90,7 +90,9 @@ def appointments():
         cur = con.cursor()
         # calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
         # appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, amount_time_min INT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
-        user_appoint_db = cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year>=?);", (session.get("user_id"), today.year)).fetchall()
+        user_appoint_db = cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month=? AND day>=?);", (session.get("user_id"), today.year, today.month, today.day)).fetchall()
+        user_appoint_db = user_appoint_db + cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month>?);", (session.get("user_id"), today.year, today.month)).fetchall()
+        user_appoint_db = user_appoint_db + cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year>?);", (session.get("user_id"), today.year,)).fetchall()
         user_appoint = []
         for appointment in user_appoint_db:
             if appointment[5] == 0:
@@ -222,7 +224,9 @@ def history():
         cur = con.cursor()
         # calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
         # appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, amount_time_min INT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
-        user_appoint_db = cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year>=?);", (session.get("user_id"), today.year)).fetchall()
+        user_appoint_db = cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month=? AND day>=?);", (session.get("user_id"), today.year, today.month, today.day)).fetchall()
+        user_appoint_db = user_appoint_db + cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month>?);", (session.get("user_id"), today.year, today.month)).fetchall()
+        user_appoint_db = user_appoint_db + cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year>?);", (session.get("user_id"), today.year,)).fetchall()
         user_appoint = []
         for appointment in user_appoint_db:
             if appointment[5] == 0:
