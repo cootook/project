@@ -118,6 +118,7 @@ def appointments():
             cur.execute("UPDATE appointments SET is_canceled=1 WHERE id=?", (appointment_id_to_cancel,))
             con.commit()
             con.close()
+            return redirect("/appointments/")
 
         except Exception as er:
             con.close()
