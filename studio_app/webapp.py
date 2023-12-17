@@ -268,6 +268,7 @@ def history():
 
 @app.route("/all_history/")
 @login_required
+@admin_only
 def all_history():
     today = datetime.datetime.now()
     try:
