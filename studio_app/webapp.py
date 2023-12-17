@@ -266,6 +266,52 @@ def history():
 
     return render_template("history.html", user_appoint=user_appoint_sorted)
 
+@app.route("/all_history/")
+@login_required
+def all_history():
+    today = datetime.datetime.now()
+    try:
+        con = sqlite3.connect("./db.db") 
+        cur = con.cursor()        
+        # calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
+        # appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, amount_time_min INT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
+        user_appoint_db = cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min, user_id FROM appointments WHERE slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month=? AND day<?);", (today.year, today.month, today.day)).fetchall()
+        user_appoint_db = user_appoint_db + cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min, user_id FROM appointments WHERE slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month<?);", (today.year, today.month)).fetchall()
+        user_appoint_db = user_appoint_db + cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min, user_id FROM appointments WHERE slot_id IN (SELECT slot_id FROM calendar WHERE year<?);", (today.year,)).fetchall()
+        user_appoint = []
+        for appointment in user_appoint_db:
+            
+            slot_db = list(cur.execute("SELECT year, month, day, hour, minute FROM calendar WHERE slot_id=?", (appointment[2],)).fetchone())
+            appointment_as_list = []
+            for el in appointment:
+                el = 'No data' if el == None else el
+                appointment_as_list.append(el)
+            appointment_as_list = appointment_as_list + slot_db
+            user_appoint.append(appointment_as_list)
+                # (id - 7, service_name - None, slot - 252, seen - 0, aproved - 0, canceled - 1, timing - 120, 2023, 12, 27, 11, 30)
+        print(user_appoint)
+        user_appoint_sorted = sorted(user_appoint, key = lambda x: (x[9], x[8], x[7], x[10], x[11]))
+    except Exception as er:
+        con.close()
+        print("##/all_history/ --db connection")
+        print(er)
+        return  render_template("apology.html", error_message="Something went wrong")
+       
+
+    if request.method == "POST":
+        try:
+            # appointment_id_to_cancel = int(request.form.get("appointment_id"))
+
+            return redirect("/all_history/")
+
+        except Exception as er:
+            con.close()
+            print("##/all_history/ --edit")
+            print(er)
+            return  render_template("apology.html", error_message="Something went wrong")
+
+    return render_template("all_history.html", user_appoint=user_appoint_sorted)
+
 @app.route("/pricing/")
 def pricing():
     return render_template("pricing.html")
