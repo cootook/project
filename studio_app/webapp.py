@@ -246,24 +246,6 @@ def history():
         print(er)
         return  render_template("apology.html", error_message="Something went wrong")
        
-
-    if request.method == "POST":
-        try:
-            appointment_id_to_cancel = int(request.form.get("appointment_id"))
-            print("canceled appointment, id:")
-            print(appointment_id_to_cancel)
-
-            cur.execute("UPDATE appointments SET is_canceled=1 WHERE id=?", (appointment_id_to_cancel,))
-            con.commit()
-            con.close()
-            return redirect("/history/")
-
-        except Exception as er:
-            con.close()
-            print("##/appointments/ --cancell")
-            print(er)
-            return  render_template("apology.html", error_message="Something went wrong")
-
     return render_template("history.html", user_appoint=user_appoint_sorted)
 
 @app.route("/all_history/")
