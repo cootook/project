@@ -14,23 +14,35 @@ Web app for booking maniqure appointments and managing them.
 * Flask-Session
 * werkzeug.security
 ###
+**planing canges (to do list):**
+* add pic to user profile
+* add list of time slots that are occupide by appointment to db
+* remake appointments as tiles (not table)
+* make it possible to edit windows (open/close time slots) withot refreshing page (stay on the same element after editing)
+* refactor: split webapp.py into multiple files with only function included
+###
 **features:**
 * optimized for small screens
 * session uses filesystem (instead of signed cookies)
 * register via login/password 
 * login/logout from user account
-* user can see the history of it's appointments
+* user can see the history of appointments
 * admin can open and close time for booking
 * admin can manage appointments
+* admin can edit user profile
 ###    
 **future features:**
 * email notification and confirmation
 * HTTPS
+* write logs into db
+* testing (QI)
+* stat and metrics (google?)
 * reCAPTCHA
 * language selection 
 * sign up with Facebook
 * sign up with Google
 * instagram bot
+* get rid of moment.js
 * admin can add articles
 * add user *clerk* to manage *articles* and *about* 
 * create Android app
