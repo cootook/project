@@ -10,38 +10,52 @@ Appointsments
       <tr class="text-danger">
         <th scope="col">Date</th>
         <th scope="col">Time</th>
+        <th scope="col">Client</th>
         <th scope="col">Sevice</th>
         <th scope="col">Duration</th>
         <th scope="col">Aproved</th>
-        <th scope="col">Cancel</th>
+        <th scope="col">Status</th>
       </tr>
     </thead>
     <tbody class="text-white">
 
         {% for appointment in user_appoint %}
         <tr class="my-table-hover">
-            <th scope="row">{{appointment[8]}}/{{appointment[9]}}</th>
-            <td>{{appointment[10]}} :
-                {% if appointment[11] == 0 %}
+            <th scope="row">{{appointment[9]}}/{{appointment[10]}}</th>
+            <td>{{appointment[11]}} :
+                {% if appointment[12] == 0 %}
                 00
                 {% else %}
-                {{appointment[11]}}
+                {{appointment[12]}}
                 {% endif %}
             </td>
-            <td>{{appointment[1]}}</td>
-            <td>{{appointment[6]}} min</td>
+            <td>{{appointment[0]}}</td>
+            <td>{{appointment[2]}}</td>
+            <td>{{appointment[7]}} min</td>
             <td>
-                {% if appointment[4] == 0 %}
+                {% if appointment[5] == 0 %}
                     ...not yet
                 {% else %}
                     Aproved
                 {% endif %}
             </td>
             <td>
-                <form action="/appointments/" method="post">
-                    <input type="hidden" name="appointment_id" value={{appointment[0]}}>
-                    <input type="submit" value="CANCEL">
-                </form>
+               
+                    {% if appointment[4] == 1 %}
+                        Done
+                    {% elif appointment[6] == 1 %}
+                        Canceled
+                    {% else %}
+                        ...waiting
+                    {% endif %}
+                
+                <!--
+                    <form action="/all_appointments/" method="post">
+                    <input type="hidden" name="appointment_id" value={{appointment[1]}}>
+                    <input type="submit" value="edit">
+                    </form>
+                --> 
+
             </td>
           </tr>
         {% endfor %}
