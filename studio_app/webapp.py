@@ -212,6 +212,36 @@ def book():
     else:
         return redirect("/")
 
+
+@app.route("/clients/", methods=["GET", "POST"])
+@login_required
+@admin_only
+def clients():
+    try:
+        con = sqlite3.connect("./db.db") 
+        cur = con.cursor()
+ 
+    except Exception as er:
+        con.close()
+        print("##/clients/ --db connection")
+        print(er)
+        return  render_template("apology.html", error_message="Something went wrong")
+       
+
+    if request.method == "POST":
+        try:
+            # appointment_id_to_cancel = int(request.form.get("appointment_id"))
+            return redirect("/clients/")
+
+        except Exception as er:
+            con.close()
+            print("##/clients/ --edit")
+            print(er)
+            return  render_template("apology.html", error_message="Something went wrong")
+
+    return render_template("clients.html", clients=clients)
+
+
 @app.route("/contact/")
 def contact():
     return render_template("contact.html")
