@@ -3,7 +3,7 @@
 Clients
 {% endblock %}
 {% block content %}
-<script>var user_appoint = {{user_appoint | safe}}; console.log(user_appoint); </script>
+<script>var clients = {{clients | safe}};</script>
 
 <table class="table">
     <thead>
@@ -12,19 +12,22 @@ Clients
         <th scope="col">Instagram</th>
         <th scope="col">Tel</th>
         <th scope="col">Email</th>
-        <th scope="col">Edit</th>
       </tr>
     </thead>
     <tbody class="text-white">
 
-        {% for appointment in user_appoint %}
-        <tr class="my-table-hover">
-            <th scope="row">{{appointment[0]}}</th>
-            <td>{{appointment[1]}}</td>
-            <td>{{appointment[2]}}</td>
-            <td>{{appointment[3]}}</td>
-            <td>edit</td>
-        </tr>
+        {% for client in clients %}
+        <form>
+            <input type="submit">
+            <tr class="my-table-hover">
+                <th scope="row">{{client[0]}}</th>
+                <td>{{client[1]}}</td>
+                <td>{{client[2]}}</td>
+                <td>{{client[3]}}</td>
+            </tr>
+        
+        </form>
+
         {% endfor %}
     </tbody>
   </table>
