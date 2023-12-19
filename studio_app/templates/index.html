@@ -1,5 +1,10 @@
 {% extends "layout.html" %}
 
+{% block custom_styles %} 
+  <!-- Custom styles for this template -->
+  <link href="{{ url_for('static', filename='/css/calendar.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block title %}
 Liza Nail Studio
 {% endblock %}

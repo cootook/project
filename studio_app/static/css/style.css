@@ -3,9 +3,11 @@
 /* Padding below the footer and lighter body text */
 
 body {
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-  color: #5a5a5a;
+  /* padding-top: 3rem; */
+  /* padding-bottom: 3rem; */
+  font-weight: 100;
+  color: rgba(255, 255, 255, 1);
+  background: #4A4A4A;
 }
 
 
