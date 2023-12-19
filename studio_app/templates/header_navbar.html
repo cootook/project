@@ -1,3 +1,14 @@
+{% block custom_styles %}
+<style>
+    .nav-link {
+        transition: font-weight .3s;
+    }
+    .nav-link:hover {
+        font-weight: 400;
+    }
+</style>
+{% endblock %}
+
 {% if session.get("user_id") %}
     {% if session.get("name") %}
         <span class="font-weight-light text-warning">Hi {{session.get("name")}}!</span>

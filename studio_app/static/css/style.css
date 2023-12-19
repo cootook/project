@@ -154,10 +154,12 @@ body {
 }
 
 .footer {
-  position: absolute;
+  position: fixed;
+  background-color: rgba(33,37,41, 0.9);
   bottom: 0;
   width: 100%;
   text-align: center;
+  padding-top: .5em;
 }
 
 #gap-1 {

@@ -3,7 +3,7 @@
     }
     
     body {
-     overflow: hidden;
+     /* overflow: hidden; */
      font-weight: 100;
      color: rgba(255, 255, 255, 1);
      margin: 0;
