@@ -68,7 +68,7 @@ Accoutn
             <div class="row g-3">
               <div class="col-12">
                 <label for="firstName" class="form-label">Name</label>
-                <input type="text" class="form-control" id="firstName" placeholder="" value={{user[0]}} required disabled>
+                <input type="text" class="form-control" id="client_name" placeholder="" value={{user[0]}} required disabled>
                 <div class="invalid-feedback">
                   Valid name is required.
                 </div>
@@ -137,4 +137,5 @@ Accoutn
   
   
 <script src="{{ url_for('static', filename='/js/form-validation.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/account.js') }}"></script>
 {% endblock %}
