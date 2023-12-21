@@ -17,4 +17,14 @@ def account():
         print("##/account/ --db connection")
         print(er)
         return  render_template("apology.html", error_message="Something went wrong")
+    
+    if request.method == "POST":
+        try:
+            new_name = request.form.get("tel")
+            print(new_name)
+        except Exception as er:
+            print("##/account/ --edit")
+            print(er)
+            return  render_template("apology.html", error_message="Something went wrong")
+
     return render_template("account.html", user=user)

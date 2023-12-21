@@ -56,10 +56,9 @@
         enable_editing(inputs_to_enable, el_to_show, el_to_hide)
     })
 
-    document.getElementById('savet_btn').addEventListener('submit', ev => {
-        ev.preventDefault()
-        disable_editing(inputs_to_enable, el_to_show, el_to_hide)
-    })
+    // document.getElementById('savet_btn').addEventListener('submit', ev => {
+    //     disable_editing(inputs_to_enable, el_to_show, el_to_hide)
+    // })
 
 
 })()

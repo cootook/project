@@ -1,10 +1,7 @@
-import os
 import re
-import sys
 import sqlite3
 import datetime
 
-#from rout_handlers import *
 from calendar import monthrange
 from datetime import timedelta, date
 from flask import Flask, flash, redirect, render_template, request, session
@@ -78,6 +75,7 @@ def about():
 @app.route("/account/", methods=["GET", "POST"])
 @login_required
 def _account():
+    print(request.form.get("tel"))
     return account.account()
 
 

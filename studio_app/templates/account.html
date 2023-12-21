@@ -71,7 +71,7 @@ Accoutn
           <form class="needs-validation" action="/account/" method="post" novalidate>
             <div class="row g-3">
               <div class="col-12">
-                <label for="firstName" class="form-label">Name</label>
+                <label for="client_name" class="form-label">Name</label>
                 <input type="text" class="form-control" id="client_name" placeholder="" value={{user[0]}} required disabled>
                 <div class="invalid-feedback">
                   Valid name is required.
@@ -98,7 +98,7 @@ Accoutn
               </div>
   
               <div class="col-12">
-                <label for="address" class="form-label">Telephone number</label>
+                <label for="tel" class="form-label">Telephone number</label>
                 <input type="text" class="form-control" id="tel" placeholder="625-172-3788" value={{user[4]}} required disabled>
                 <div class="invalid-feedback">
                   Please enter your phone number.
@@ -132,8 +132,9 @@ Accoutn
             <hr class="my-6">
   
             <button class="w-100 btn btn-primary btn-lg" type="submit" id="savet_btn" hidden>Save</button>
+            <button class="w-100 btn btn-primary btn-lg" id="edit_btn">Edit information</button>
+
           </form>
-          <button class="w-100 btn btn-primary btn-lg" id="edit_btn">Edit information</button>
         </div>
       </div>
 
