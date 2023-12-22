@@ -69,10 +69,13 @@ Accoutn
       
         <div class="col-md-7 col-lg-8">
           <form class="needs-validation" action="/account/" method="post" novalidate>
+            {% if is_admin==1 %}
+            <input type="hidden" name="user_id" id="user_id" value={{user_id}}>
+            {% endif %}
             <div class="row g-3">
               <div class="col-12">
                 <label for="client_name" class="form-label">Name</label>
-                <input type="text" class="form-control" name="client_name" id="client_name" placeholder="" value={{user[0]}} required disabled>
+                <input type="text" class="form-control" name="client_name" id="client_name" placeholder="" value="{{user[0]}}" required disabled>
                 <div class="invalid-feedback">
                   Valid name is required.
                 </div>
