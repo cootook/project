@@ -5,11 +5,20 @@ from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 
 def account():
+    print("#is admin")
+    print(session.get("is_admin"))
+    if session.get("is_admit") == 1:
+        user_id = request.args.get("user")
+        print("#id")
+        print(user_id)
+    else:
+        print("#else")
+        user_id = None
     try:
         con = sqlite3.connect("./db.db")
         cur = con.cursor()
         # users (id INTEGER PRIMARY KEY, is_admin INT, is_clerck INT ,  name TEXT, email TEXT, lang TEXT, instagram TEXT, tel TEXT, is_subscribed_promo INT, avatar TEXT);
-        user = list(cur.execute("SELECT name, email, lang, instagram, tel, is_subscribed_promo, avatar, is_admin FROM users WHERE id=?", (session.get("user_id"), )).fetchone())
+        user = list(cur.execute("SELECT name, email, lang, instagram, tel, is_subscribed_promo, avatar, is_admin FROM users WHERE id=?", (session.get("user_id") if user_id is None else id, )).fetchone())
         for index in range(len(user)):
             user[index] = "-" if user[index] == None else user[index]
 
