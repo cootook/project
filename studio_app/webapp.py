@@ -75,7 +75,6 @@ def about():
 @app.route("/account/", methods=["GET", "POST"])
 @login_required
 def _account():
-    print(request.form.get("tel"))
     return account.account()
 
 
