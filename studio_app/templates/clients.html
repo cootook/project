@@ -2,6 +2,16 @@
 {% block title %}
 Clients
 {% endblock %}
+
+{% block custom_styles %} 
+  <!-- Custom styles for this template -->
+  <style>
+    .my-table-hover { cursor: pointer; }
+    table { overflow: scroll; }
+  </style>
+{% endblock %}
+
+
 {% block content %}
 <script>var clients = {{clients | safe}};</script>
 
@@ -17,16 +27,17 @@ Clients
     <tbody class="text-white">
 
         {% for client in clients %}
-        <form>
-            <input type="submit">
-            <tr class="my-table-hover">
+        
+            <tr class="my-table-hover" onclick="window.location='/account/?user={{client[4]}}';">
+              <!-- <a href="/account/?user={{client[4]}}" style="display: block;"></a> -->
                 <th scope="row">{{client[0]}}</th>
                 <td>{{client[1]}}</td>
                 <td>{{client[2]}}</td>
                 <td>{{client[3]}}</td>
+              <!-- </a> -->
             </tr>
+          
         
-        </form>
 
         {% endfor %}
     </tbody>

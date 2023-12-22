@@ -223,7 +223,7 @@ def clients():
         con = sqlite3.connect("./db.db") 
         cur = con.cursor()
         # users (id INTEGER PRIMARY KEY, is_admin INT, is_clerck INT ,  name TEXT, email TEXT, lang TEXT, instagram TEXT, tel TEXT, is_subscribed_promo INT, avatar TEXT)
-        clients_db = cur.execute("SELECT name, instagram, tel, email FROM users").fetchall()
+        clients_db = cur.execute("SELECT name, instagram, tel, email, id FROM users").fetchall()
         clients = list()
         for client in clients_db:
             client_new = list()
