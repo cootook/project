@@ -4,11 +4,11 @@
 # nail studio booking
 #### web app
 ###
-This is a final project of **Harvard CS50** course. 
+This is a final project of **[Harvard CS50](https://pll.harvard.edu/course/cs50-introduction-computer-science)** course. 
 Web app for booking maniqure appointments and managing them.
 ###
 **Using:**
-* flask
+* flask (jinja)
 * bootstrap
 * SQLite
 * Flask-Session
