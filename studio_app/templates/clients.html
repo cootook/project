@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+
 {% block title %}
 Clients
 {% endblock %}
@@ -11,10 +12,7 @@ Clients
   </style>
 {% endblock %}
 
-
 {% block content %}
-<script>var clients = {{clients | safe}};</script>
-
 <table class="table">
     <thead>
       <tr class="text-danger">
@@ -26,22 +24,14 @@ Clients
     </thead>
     <tbody class="text-white">
 
-        {% for client in clients %}
-        
+        {% for client in clients %}        
             <tr class="my-table-hover" onclick="window.location='/account/?user={{client[4]}}';">
-              <!-- <a href="/account/?user={{client[4]}}" style="display: block;"></a> -->
                 <th scope="row">{{client[0]}}</th>
                 <td>{{client[1]}}</td>
                 <td>{{client[2]}}</td>
                 <td>{{client[3]}}</td>
-              <!-- </a> -->
-            </tr>
-          
-        
-
+            </tr>               
         {% endfor %}
     </tbody>
   </table>
-
-
 {% endblock %}
