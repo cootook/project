@@ -15,6 +15,7 @@ Web app for booking maniqure appointments and managing them.
 * werkzeug.security
 ###
 **planing canges (to do list):**
+* make it possible to edit appointments
 * add more settings of notification to user table of db
 * make it possible to delete account forever
 * add pic to user profile
