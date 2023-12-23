@@ -26,7 +26,7 @@ Clients
 
         {% for client in clients %}        
             <tr class="my-table-hover" onclick="window.location='/account/?user={{client[4]}}';">
-                <th scope="row">{{client[0]}}</th>
+                <th scope="row"><a  class="link-light  link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="/account/?user={{client[4]}}">{{client[0]}}</a></th>
                 <td>{{client[1]}}</td>
                 <td>{{client[2]}}</td>
                 <td>{{client[3]}}</td>
