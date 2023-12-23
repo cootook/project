@@ -22,7 +22,7 @@ Web app for booking maniqure appointments and managing them.
 * remake appointments as tiles (not table)
 * make it possible to edit windows (open/close time slots) withot refreshing page (stay on the same element after editing)
 * refactor: split webapp.py into multiple files with only function included
-###
+* add atempt limit to login table in db
 **features:**
 * optimized for small screens
 * session uses filesystem (instead of signed cookies)
