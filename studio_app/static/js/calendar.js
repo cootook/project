@@ -189,6 +189,8 @@
         var div = createElement('div', 'event');
         var square = createElement('div', 'event-category yellow');
         //var span = createElement('span', '', ev.eventName);
+
+
         var form = createElement('form');
         form.setAttribute("action", action_path);
         form.setAttribute("method", "POST");
@@ -324,6 +326,24 @@
         var div = createElement('div', 'event');
         var square = createElement('div', 'event-category ' + ev.color);
         //var span = createElement('span', '', ev.eventName);
+        if (action_path == "/book/"){
+                // <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Open modal for @mdo</button>
+                var modal_button = createElement('button', 'btn btn-primary btn-calendar')
+                modal_button.setAttribute("data-toggle", "modal")
+                modal_button.setAttribute("data-target", "#book_confirm_modal")
+                modal_button.setAttribute("data-minute", ev.date.minute())
+                modal_button.setAttribute("data-hour", ev.date.hour())
+                modal_button.setAttribute("data-date", ev.date.date())
+                modal_button.setAttribute("data-month", ev.date.month())
+                modal_button.setAttribute("data-year", ev.date.year())
+                modal_button.setAttribute("data-full", ev.date.format('LLLL'))
+                // modal_button.setAttribute("value", ev.date.format('h:mm a'))
+                modal_button.innerText = ev.date.format('llll')
+                div.appendChild(modal_button);
+                console.log("##modal")
+                console.log(modal_button)}
+        else if (action_path == "/windows/") {
+          
         var form = createElement('form');
         form.setAttribute("action", action_path);
         form.setAttribute("method", "POST");
@@ -369,6 +389,7 @@
         form.appendChild(button)
         div.appendChild(square);
         div.appendChild(form);
+        }        
         wrapper.appendChild(div);
       });
   
@@ -471,9 +492,10 @@
     })
     var data = filtered_slots.map((slot) => {
       slot_status = slot[6] == 1 ? 'Avaliable time' : 'Closed time'
-      slot_color  = slot[6] == 1 ? 'yellow' : 'blue'
+      slot_color  = slot[6] == 1 ? 'green' : 'yellow'
       slot[5] = (slot[5] < 10) ? ('0' + slot[5]) : slot[5]
-      return { eventName: ` ${slot[4]}:${slot[5]}`, calendar: slot_status, color: slot_color, date: moment().minute(slot[5]).hour(slot[4]).date(slot[3]).month(slot[2] - 1).year(slot[1]) }
+      var the_date = moment().minute(slot[5]).hour(slot[4]).date(slot[3]).month(slot[2] - 1).year(slot[1])
+      return { eventName: the_date.format("llll"), calendar: slot_status, color: slot_color, date: the_date}
     });
 
     // var data = [
