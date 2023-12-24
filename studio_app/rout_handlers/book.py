@@ -24,14 +24,14 @@ def book():
             pedicure = 1 if request.form.get("pedicure") is not None else 0
             message = request.form.get("message-text")
             #calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
-            #CREATE TABLE appointments (id INTEGER PRIMARY KEY, user_id INT, pedicure INT, manicure INT, message TEXT, slot_id INT, amount_time_min INT, slots_in TEXT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
+            #appointments (id INTEGER PRIMARY KEY, user_id INT, pedicure INT, manicure INT, message TEXT, slot_id INT, amount_time_min INT, slots_in TEXT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
             con = sqlite3.connect("./db.db") 
             cur = con.cursor()
             slot_to_book = cur.execute("SELECT slot_id, is_open FROM calendar WHERE year=? AND month=? AND day=? AND hour=? AND minute=?;", (year, month, day, hour, minute)).fetchone()
             is_open = True if slot_to_book[1] == 0 else False
             slot_id = slot_to_book[0]
             cur.execute("UPDATE calendar SET is_open=0 WHERE slot_id=?;", (slot_id,))
-            cur.execute("INSERT INTO appointments (user_id, slot_id, is_seen, is_aproved, is_canceled, amount_time_min) VALUES (?, ?, 0, 0, 0, 120);", (session.get("user_id"), slot_id))
+            cur.execute("INSERT INTO appointments (user_id, slot_id, manicure, pedicure, message, is_seen, is_aproved, is_canceled, amount_time_min) VALUES (?, ?, ?, ?, ?, 0, 0, 0, 120);", (session.get("user_id"), slot_id, manicure, pedicure, message))
             con.commit()
             con.close()
             return redirect("/")
