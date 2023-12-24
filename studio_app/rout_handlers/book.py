@@ -5,12 +5,24 @@ from flask_session import Session
 
 def book():
     if request.method == "POST":
-        try:
+        try:                  
+    #       <input type="hidden" name="minute" id="minute_input" value="0">
+    #       <input type="hidden" name="hour" id="hour_input" value="11">
+    #       <input type="hidden" name="date" id="date_input" value="24">
+    #       <input type="hidden" name="month" id="month_input" value="11">
+    #       <input type="hidden" name="year" id="year_input" value="2023">
+    #       <input type="checkbox" class="form-check-input" id="manicure" name="manicure">
+    #       <input type="checkbox" class="form-check-input" id="pedicure" name="pedicure">
+    #       <textarea class="form-control" id="message-text" name="message-text"></textarea>
+
             minute = int(request.form.get("minute"))
             hour = int(request.form.get("hour"))
             day = int(request.form.get("date"))
             month = int(request.form.get("month")) + 1 # in calendar.js month range starts from 0
             year = int(request.form.get("year"))
+            manicure = 1 if request.form.get("manicure") is not None else 0
+            pedicure = 1 if request.form.get("pedicure") is not None else 0
+            message = request.form.get("message-text")
             #calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
             #appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, amount_time_min INT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
             con = sqlite3.connect("./db.db") 
