@@ -143,7 +143,7 @@ def all_appointments():
         cur = con.cursor()
         # calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
         # appointments (id INTEGER PRIMARY KEY, user_id INT, service_name TEXT, slot_id INT, amount_time_min INT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
-        user_appoint_db = cur.execute("SELECT user_id, id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month=? AND day>=?) OR slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month>?) OR slot_id IN (SELECT slot_id FROM calendar WHERE year>?);", (today.year, today.month, today.day, today.year, today.month, today.year)).fetchall()
+        user_appoint_db = cur.execute("SELECT user_id, id, manicure, pedicure, message, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month=? AND day>=?) OR slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month>?) OR slot_id IN (SELECT slot_id FROM calendar WHERE year>?);", (today.year, today.month, today.day, today.year, today.month, today.year)).fetchall()
         #user_appoint_db = user_appoint_db + cur.execute("SELECT user_id, id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month>?);", (today.year, today.month)).fetchall()
         #user_appoint_db = user_appoint_db + cur.execute("SELECT user_id, id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE slot_id IN (SELECT slot_id FROM calendar WHERE year>?);", (today.year,)).fetchall()
         user_appoint = []
@@ -152,10 +152,25 @@ def all_appointments():
                 slot_db = list(cur.execute("SELECT year, month, day, hour, minute FROM calendar WHERE slot_id=?", (appointment[3],)).fetchone())
                 appointment_as_list = []
                 for el in appointment:
-                    el = 'No data' if el == None else el
+                    el = '-' if el == None else el
                     appointment_as_list.append(el)
-                appointment_as_list = appointment_as_list + slot_db
-                user_appoint.append(appointment_as_list)
+                temp = []
+                temp = temp + appointment_as_list[0:2]
+                servise_name = ""
+                print(appointment_as_list)
+                if appointment_as_list[2] == 1 and appointment_as_list[3] == 1:
+                    servise_name = "combo"
+                elif appointment_as_list[2] == 1 and not appointment_as_list[3] == 1:
+                    servise_name = "manicure"
+                else:
+                    servise_name = "pedicure"
+                temp.append(servise_name)
+                temp = temp + appointment_as_list[5:10]
+                temp = temp + slot_db
+                temp.append(appointment_as_list[4])
+                print(temp)
+                user_appoint.append(temp)
+        print(user_appoint)
         user_appoint_sorted = sorted(user_appoint, key = lambda x: (x[8], x[9], x[10], x[11], x[12]))
     except Exception as er:
         con.close()
