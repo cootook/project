@@ -28,10 +28,12 @@ History
             </td>
             <td>{{appointment[1]}}</td>
             <td>
-                {% if appointment[4] == 0 %}
+                {% if appointment[5] == 1 %}
+                    Canceled
+                {% elif appointment[3] == 1 %}
                     Done
                 {% else %}
-                    Canceled
+                    no data
                 {% endif %}
             </td>
           </tr>
