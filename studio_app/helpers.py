@@ -16,6 +16,16 @@ def admin_only(f):
 def does_user_exist(login, db_cursor):
     return db_cursor.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
 
+def get_service_name(is_manicure, is_pedicure):
+    servise_name = ""
+    if is_manicure == 1 and is_pedicure == 1:
+        servise_name = "combo"
+    elif is_manicure == 1 and not is_pedicure == 1:
+        servise_name = "manicure"
+    else:
+        servise_name = "pedicure"
+    return servise_name
+
 def log_user_in(login, password, cursor):
     # Query database for username
     if not does_user_exist(login, cursor):
