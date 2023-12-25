@@ -12,8 +12,6 @@ def all_history():
         cur = con.cursor()        
         user_appoint_db = cur.execute("SELECT id, manicure, pedicure, message, slot_id, is_seen, is_aproved, is_canceled, amount_time_min, user_id FROM appointments WHERE slot_id IN (SELECT slot_id FROM calendar WHERE (year=? AND month=? AND day<?) OR (year=? AND month<?) OR (year<?));", (today.year, today.month, today.day, today.year, today.month, today.year)).fetchall()
         user_appoint_db = user_appoint_db + cur.execute("SELECT id, manicure, pedicure, message, slot_id, is_seen, is_aproved, is_canceled, amount_time_min, user_id FROM appointments WHERE is_canceled=? AND slot_id IN (SELECT slot_id FROM calendar WHERE (year=? AND month=? AND day>=?) OR (year=? AND month>?) or (year>?));", (1, today.year, today.month, today.day, today.year, today.month, today.year)).fetchall()
-        #user_appoint_db = user_appoint_db + cur.execute("SELECT id, manicure, pedicure, message, slot_id, is_seen, is_aproved, is_canceled, amount_time_min, user_id FROM appointments WHERE slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month<?);", (today.year, today.month)).fetchall()
-        #user_appoint_db = user_appoint_db + cur.execute("SELECT id, manicure, pedicure, message, slot_id, is_seen, is_aproved, is_canceled, amount_time_min, user_id FROM appointments WHERE slot_id IN (SELECT slot_id FROM calendar WHERE year<?);", (today.year,)).fetchall()
         user_appoint = []
         for appointment in user_appoint_db:
             
@@ -42,7 +40,6 @@ def all_history():
 
     if request.method == "POST":
         try:
-            # appointment_id_to_cancel = int(request.form.get("appointment_id"))
 
             return redirect("/all_history/")
 
