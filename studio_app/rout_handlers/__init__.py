@@ -3,5 +3,6 @@ __all__ = [
     'book',
     'all_appointments',
     'appointments',
-    'history'
+    'history',
+    'all_history'
 ]
