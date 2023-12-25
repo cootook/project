@@ -31,10 +31,12 @@ History
             <td>{{appointment[7]}}</td>
             <td>{{appointment[1]}}</td>
             <td>
-                {% if appointment[4] == 0 %}
-                    Done
+                {% if appointment[5] == 1 %}
+                  Canceled
+                {% elif appointment[3] == 1 %}
+                  Done
                 {% else %}
-                    Canceled
+                    no data
                 {% endif %}
             </td>
             <td>form</td>
