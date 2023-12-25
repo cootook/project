@@ -12,8 +12,6 @@ def appointments():
         con = sqlite3.connect("./db.db") 
         cur = con.cursor()
         user_appoint_db = cur.execute("SELECT id, manicure, pedicure, message, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE (year=? AND month=? AND day>=?) OR (year=? AND month>?) or (year>?));", (session.get("user_id"), today.year, today.month, today.day, today.year, today.month, today.year)).fetchall()
-        #user_appoint_db = user_appoint_db + cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month>?);", (session.get("user_id"), today.year, today.month)).fetchall()
-        #user_appoint_db = user_appoint_db + cur.execute("SELECT id, service_name, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE user_id=? AND slot_id IN (SELECT slot_id FROM calendar WHERE year>?);", (session.get("user_id"), today.year,)).fetchall()
         user_appoint = []
         for appointment in user_appoint_db:
             if appointment[7] == 0:
