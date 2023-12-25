@@ -1,5 +1,6 @@
 __all__ = [
     'account',
     'book',
-    'all_appointments'
+    'all_appointments',
+    'appointments'
 ]
