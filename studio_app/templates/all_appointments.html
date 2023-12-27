@@ -18,6 +18,26 @@ Appointsments
 {% endblock %}
 {% block content %}
 <script>var user_appoint = {{user_appoint | safe}}; console.log(user_appoint); </script>
+<!-- [
+0    "Not admin Dmitrii",
+1    6,
+2    "combo",
+3    404,
+4    0,
+5    0,
+6    0,
+7    120,
+8    2024,
+9    1,
+10    10,
+11    11,
+12    30,
+13    "hi!",
+14    "zibubu",
+15    "1763"
+] -->
+
+{% for appointment in user_appoint %}
 <div class="container py-2 bg-transparent">
 <div class="card mb-4 rounded-3 shadow-sm">
     <div class="card-header py-1 bg-success bg-gradient" >
@@ -39,12 +59,14 @@ Appointsments
       <div class="mb-2 text-dark fw-normal">
         message from client 
       </div>
-      <button type="button" class="w-100 btn btn-lg btn-warning py-1 mb-1">Confirm</button>
-      <button type="button" class="w-100 btn btn-lg btn-success py-1 mb-1">Done</button>
-      <button type="button" class="w-100 btn btn-lg btn-danger py-1 mb-1" data-toggle="modal" data-target="#cancelModal" data-booking_id="123" data-id="123">Cancel</button>
+      <button type="button" class="w-100 btn btn-lg btn-warning py-1 mb-1" data-toggle="modal" data-target="#confirmModal" data-booking_id="123" data-id="123" data-date="{{get_this_date}}" data-service="{{service}}" data-client="{{client}}">Confirm</button>
+      <button type="button" class="w-100 btn btn-lg btn-success py-1 mb-1" data-toggle="modal" data-target="#doneModal" data-booking_id="123" data-id="123" data-date="{{get_this_date}}" data-service="{{service}}" data-client="{{client}}">Done</button>
+      <button type="button" class="w-100 btn btn-lg btn-danger py-1 mb-1" data-toggle="modal" data-target="#cancelModal" data-booking_id="123" data-id="123" data-date="{{get_this_date}}" data-service="{{service}}" data-client="{{client}}">Cancel</button>
     </div>
   </div>
 </div>
+{% endfor %}
+
 <table class="table">
     <thead>
       <tr class="text-danger">
@@ -113,7 +135,7 @@ Appointsments
           </button>
         </div>
         <div class="modal-body">
-          
+            <span id="date_cancel"></span>, <span id="service_cancel"></span> for <span id="client_cancel"></span>
             <div class="form-group">
               <label for="cancel_message" class="col-form-label">Message:</label>
               <textarea class="form-control" id="cancel_message" placeholder="can you please write about reasons"></textarea>
@@ -131,17 +153,74 @@ Appointsments
     </form>
     </div>
   </div>
+  <div class="modal fade text-dark" id="doneModal" tabindex="-1" role="dialog" aria-labelledby="doneModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="doneModalLabel">Success</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <span id="date_done"></span>, <span id="service_done"></span> for <span id="client_done"></span>
+        </div>
+        <input type="text" name="user_id_done" id="user_id_done" hidden>
+        <input type="text" name="booking_id_done" id="booking_id_done" hidden>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">No, go back</button>
+          <button type="button" type="submit" class="btn btn-danger">ok, it is finished</button>
+        </div>
+      </div>
+    </form>
+    </div>
+  </div>
+  <div class="modal fade text-dark" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Confirm appointment</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        <span id="date_confirm"></span>, <span id="service_confirm"></span> for <span id="client_confirm"></span>
+        </div>
+        <input type="text" name="user_id_confirm" id="user_id_confirm" hidden>
+        <input type="text" name="booking_id_confirm" id="booking_id_confirm" hidden>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">No, go back</button>
+          <button type="button" type="submit" class="btn btn-danger">Confirm booking</button>
+        </div>
+      </div>
+    </form>
+    </div>
+  </div>
   <script>
+
+
     document.addEventListener("DOMContentLoaded", () => {
+       // data-date="{{get_this_date}}" data-service="{{service}}" data-client="{{client}}"
         $('#cancelModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
             var user_id_cancel  = button.data('id') 
-            var booking_id_cancel = button.data('booking_id')// Extract info from data-* attributes
+            var booking_id_cancel = button.data('booking_id')
+            var date_cancel = button.data('date')
+            var secvece_cancel = button.data('service')
+            var name_cancel = button.data('client')// Extract info from data-* attributes
             // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
             // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
             var modal = $(this)            
             modal.find('#user_id_cancel').val(user_id_cancel)
             modal.find('#booking_id_cancel').val(booking_id_cancel)
+            modal.find('#date_cancel').val(booking_id_cancel)
+            modal.find('#service_cancel').val(booking_id_cancel)
+            modal.find('#client_cancel').val(booking_id_cancel)
           })
     })
 
