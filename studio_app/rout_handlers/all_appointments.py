@@ -36,6 +36,11 @@ def all_appointments():
                 temp.append(appointment_as_list[4])
                 temp.append(user_name_inst_tel[1])
                 temp.append(user_name_inst_tel[2])
+
+                date_for_templete = datetime.datetime(temp[8], temp[9], temp[10])
+                time_for_templete = datetime.time(temp[11], temp[12])
+                datetime_for_template = datetime.datetime.combine(date_for_templete.date(), time_for_templete)
+                print(datetime_for_template.strftime("%c"))
                 user_appoint.append(temp)
         user_appoint_sorted = sorted(user_appoint, key = lambda x: (x[8], x[9], x[10], x[11], x[12]))
     except Exception as er:
