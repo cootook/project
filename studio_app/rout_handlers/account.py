@@ -49,7 +49,7 @@ def account():
 
             cur.execute("UPDATE users SET name=?, instagram=?, tel=?, is_subscribed_promo=? WHERE id=?", (new_name if not new_name == "-" else None, new_username, new_tel, new_subscribe, user_id))
             con.commit()
-            return redirect("/account?user=" + user_id)
+            return redirect("/account?user=" + str(user_id))
         except Exception as er:
             print("##/account/ --edit")
             print(er)
