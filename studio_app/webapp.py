@@ -148,7 +148,7 @@ def contact():
 def day():
     return render_template("day.html")
 
-@app.route("edit_appointment/", methods=["POST"])
+@app.route("/edit_appointment/", methods=["POST"])
 @login_required
 @admin_only
 def _edit_appointment():

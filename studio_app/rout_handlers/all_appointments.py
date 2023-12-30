@@ -16,6 +16,7 @@ def all_appointments():
             if appointment[8] == 0: # check if was canceled
                 user_name_inst_tel = list(cur.execute("SELECT name, instagram, tel FROM users WHERE id=?", (appointment[0],)).fetchone())
                 slot_db = list(cur.execute("SELECT year, month, day, hour, minute FROM calendar WHERE slot_id=?", (appointment[5],)).fetchone())
+                user_id = appointment[0]
                 appointment_as_list = []
                 for el in appointment:
                     el = '-' if el == None else el
@@ -36,12 +37,12 @@ def all_appointments():
                 temp.append(appointment_as_list[4])
                 temp.append(user_name_inst_tel[1])
                 temp.append(user_name_inst_tel[2])
-
+                
                 date_for_templete = datetime.datetime(temp[8], temp[9], temp[10])
                 time_for_templete = datetime.time(temp[11], temp[12])
                 datetime_for_template = datetime.datetime.combine(date_for_templete.date(), time_for_templete)
-                print(datetime_for_template.strftime("%a %d %b - %I:%M %p"))
                 temp.append(datetime_for_template.strftime("%a %d %b - %I:%M %p"))
+                temp.append(user_id)
                 user_appoint.append(temp)
         user_appoint_sorted = sorted(user_appoint, key = lambda x: (x[8], x[9], x[10], x[11], x[12]))
     except Exception as er:
