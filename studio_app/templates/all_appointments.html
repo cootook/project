@@ -73,18 +73,24 @@ Appointsments
       <div class="mb-2 text-dark fw-normal">
         {{appointment[13]}} 
       </div>
-      <button type="button" class="w-100 btn btn-lg btn-primary py-1 mb-1" data-toggle="modal" data-target="#editModal" data-booking_id="{{appointment[3]}}" data-id="{{appointment[17]}}" data-date="{{appointment[16]}}" data-service="{{appointment[2]}}" data-client="{{appointment[0]}} ({{appointment[14]}})" data-time="{{appointment[11]}}:{% if appointment[12]<10 %}0{% endif %}{{appointment[12]}}" data-date_picker_format="{{appointment[8]}}-{% if appointment[9]<10 %}0{{appointment[9]}}{% else %}{{appointment[9]}}{% endif %}-{% if appointment[10]<10 %}0{{appointment[10]}}{% else %}{{appointment[10]}}{% endif %}" data-duration="{{appointment[7]}}" data-message="{{appointment[13]}}">Edit</button>
+      <div class="row">
+      
+      <button type="button" class="col m-1 w-100 btn btn-lg btn-primary py-1 mb-1" data-toggle="modal" data-target="#editModal" data-booking_id="{{appointment[3]}}" data-id="{{appointment[17]}}" data-date="{{appointment[16]}}" data-service="{{appointment[2]}}" data-client="{{appointment[0]}} ({{appointment[14]}})" data-time="{{appointment[11]}}:{% if appointment[12]<10 %}0{% endif %}{{appointment[12]}}" data-date_picker_format="{{appointment[8]}}-{% if appointment[9]<10 %}0{{appointment[9]}}{% else %}{{appointment[9]}}{% endif %}-{% if appointment[10]<10 %}0{{appointment[10]}}{% else %}{{appointment[10]}}{% endif %}" data-duration="{{appointment[7]}}" data-message="{{appointment[13]}}">Edit</button>
       <button
       {% if appointment[5]==1 %}
        disabled  
       {% endif %}
-      type="button" class="w-100 btn btn-lg btn-warning py-1 mb-1" data-toggle="modal" data-target="#confirmModal" data-booking_id="{{appointment[3]}}" data-id="{{appointment[17]}}" data-date="{{appointment[16]}}" data-service="{{service}}" data-client="{{appointment[0]}} ({{appointment[14]}})">Confirm</button>
+      type="button" class="col m-1 w-100 btn btn-lg btn-warning py-1 mb-1" data-toggle="modal" data-target="#confirmModal" data-booking_id="{{appointment[3]}}" data-id="{{appointment[17]}}" data-date="{{appointment[16]}}" data-service="{{service}}" data-client="{{appointment[0]}} ({{appointment[14]}})">Confirm</button>
+      
+    </div>
+    <div class="row"> 
       <button 
       {% if appointment[5]==0 %}
       disabled  
      {% endif %}
-      type="button" class="w-100 btn btn-lg btn-success py-1 mb-1" data-toggle="modal" data-target="#doneModal" data-booking_id="{{appointment[3]}}" data-id="{{appointment[17]}}" data-date="{{appointment[16]}}" data-service="{{service}}" data-client="{{appointment[0]}} ({{appointment[14]}})">Done</button>
-      <button type="button" class="w-100 btn btn-lg btn-danger py-1 mb-1" data-toggle="modal" data-target="#cancelModal" data-booking_id="{{appointment[3]}}" data-id="{{appointment[17]}}" data-date="{{appointment[16]}}" data-service="{{service}}" data-client="{{appointment[0]}} ({{appointment[14]}})">Cancel</button>
+      type="button" class="col m-1 w-100 btn btn-lg btn-success py-1 mb-1" data-toggle="modal" data-target="#doneModal" data-booking_id="{{appointment[3]}}" data-id="{{appointment[17]}}" data-date="{{appointment[16]}}" data-service="{{service}}" data-client="{{appointment[0]}} ({{appointment[14]}})">Done</button>
+      <button type="button" class="col m-1 w-100 btn btn-lg btn-danger py-1 mb-1" data-toggle="modal" data-target="#cancelModal" data-booking_id="{{appointment[3]}}" data-id="{{appointment[17]}}" data-date="{{appointment[16]}}" data-service="{{service}}" data-client="{{appointment[0]}} ({{appointment[14]}})">Cancel</button>
+    </div>
     </div>
   </div>
 </div>
