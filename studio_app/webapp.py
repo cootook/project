@@ -148,6 +148,12 @@ def contact():
 def day():
     return render_template("day.html")
 
+@app.route("edit_appointment/", methods=["POST"])
+@login_required
+@admin_only
+def _edit_appointment():
+    return edit_appointment.edit_appointment()
+
 @app.route("/generate_slots/", methods = ["GET", "POST"])
 @login_required
 @admin_only

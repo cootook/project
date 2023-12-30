@@ -4,5 +4,6 @@ __all__ = [
     'all_appointments',
     'appointments',
     'history',
-    'all_history'
+    'all_history',
+    'edit_appointment'
 ]
