@@ -22,8 +22,8 @@ def edit_appointment():
         booking_id_edit = int(request.form.get("booking_id_edit"))
         print(new_date, new_time, new_duration, new_manicure, new_pedicure, new_message, user_id_edit, booking_id_edit)
         new_year = int(new_date[0:4])
-        new_day = int(new_date[5:7]) 
-        new_month = int(new_date[8:10]) 
+        new_month = int(new_date[5:7]) 
+        new_day = int(new_date[8:10]) 
         new_hour = int(new_time[0:2]) 
         new_minute = int(new_time[3:5]) 
 
