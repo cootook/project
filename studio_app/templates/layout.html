@@ -76,7 +76,7 @@
   </head>
   <body>
         <header>
-          <nav class="navbar navbar-expand-md navbar-dark fixed--top bg-dark">
+          <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
             <div class="container-fluid">
             <a class="navbar-brand" href="/">Liza Nail Studio</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,7 +92,7 @@
 
         </header>
 
-        <main>
+        <main class="mt-5 pt-1">
             {% block content %}
             {% endblock %}
             <script src="{{ url_for('static', filename='/js/bootstrap.bundle.min.js') }}"></script>
