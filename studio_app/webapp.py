@@ -139,6 +139,13 @@ def clients():
     return render_template("clients.html", clients=clients)
 
 
+@app.route("/confirm_appointment/", methods = ["POST"])
+@login_required
+@admin_only
+def _confirm_appointment():
+    return confirm_appointment.confirm_appointment()
+
+
 @app.route("/contact/")
 def contact():
     return render_template("contact.html")
