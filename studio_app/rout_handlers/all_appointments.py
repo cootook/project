@@ -49,18 +49,7 @@ def all_appointments():
         print("##/all_appointments/ --db connection")
         print(er)
         return  render_template("apology.html", error_message="Something went wrong")
-       
-
-    if request.method == "POST":
-        try:
-            # appointment_id_to_cancel = int(request.form.get("appointment_id"))
-            return redirect("/all_appointments/")
-
-        except Exception as er:
-            con.close()
-            print("##/all_appointments/ --edit")
-            print(er)
-            return  render_template("apology.html", error_message="Something went wrong")
+         
 
     return render_template("all_appointments.html", user_appoint=user_appoint_sorted)
 

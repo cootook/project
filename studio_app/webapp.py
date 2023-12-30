@@ -86,7 +86,7 @@ def apology():
 def _appointments():
     return appointments.appointments()
 
-@app.route("/all_appointments/", methods=["GET", "POST"])
+@app.route("/all_appointments/", methods=["GET"])
 @login_required
 @admin_only
 def _all_appointments():
