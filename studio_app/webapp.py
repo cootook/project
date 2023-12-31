@@ -155,6 +155,13 @@ def contact():
 def day():
     return render_template("day.html")
 
+
+@app.route("/done_appointment/", methods = ["POST"])
+@login_required
+@admin_only
+def _done_appointment():
+    return done_appointment.done_appointment()
+
 @app.route("/edit_appointment/", methods=["POST"])
 @login_required
 @admin_only
