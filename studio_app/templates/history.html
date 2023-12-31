@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block title %}
-Appointsments
+History
 {% endblock %}
 {% block content %}
 <!--<script>var user_appoint = {{user_appoint | safe}}; console.log(user_appoint); </script>-->
@@ -11,9 +11,7 @@ Appointsments
         <th scope="col">Date</th>
         <th scope="col">Time</th>
         <th scope="col">Sevice</th>
-        <th scope="col">Duration</th>
-        <th scope="col">Aproved</th>
-        <th scope="col">Cancel</th>
+        <th scope="col">Status</th>
       </tr>
     </thead>
     <tbody class="text-white">
@@ -29,19 +27,14 @@ Appointsments
                 {% endif %}
             </td>
             <td>{{appointment[1]}}</td>
-            <td>{{appointment[6]}} min</td>
             <td>
-                {% if appointment[4] == 0 %}
-                    ...not yet
+                {% if appointment[5] == 1 %}
+                    Canceled
+                {% elif appointment[3] == 1 %}
+                    Done
                 {% else %}
-                    Aproved
+                    no data
                 {% endif %}
-            </td>
-            <td>
-                <form action="/appointments/" method="post">
-                    <input type="hidden" name="appointment_id" value={{appointment[0]}}>
-                    <input type="submit" value="CANCEL">
-                </form>
             </td>
           </tr>
         {% endfor %}

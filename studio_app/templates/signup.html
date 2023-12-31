@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Sign Up 
+{% endblock %}
+
+{% block content %}
+<script src="{{ url_for('static', filename='/js/signup.js') }}"></script>
+<div class="signin-container">
+    <div id="gap-1"></div>
+        <form class="form-signin" id="form_signup" action="/signup/" method="POST">
+            
+            
+            <div class="form_input">
+                <input type="text" class="form-control" id="instagram" name="instagram" placeholder="kika.nails.nails" minlength="3">
+                <label for="name">Your Instagramm name</label>
+            </div>
+            <div class="form_input">
+                <input type="text" class="form-control" id="tel_number" name="tel_number" placeholder="646-591-71-36" minlength="10">
+                <label for="tel_number">Your telephone number</label>
+            </div>
+            <div class="form_input">
+                <input type="email" class="form-control" id="login" name="login" placeholder="name@example.com">
+                <label for="login">Email address</label>
+            </div>
+            <div class="form_input">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
+                <label for="password">Password</label>
+            </div>
+            <div class="form_input">
+                <input type="password" class="form-control" id="confirmation" name="confirmation" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
+                <label for="confirmation">Password</label>
+            </div>
+        
+            <div id="message">
+                <h5  class="h6 fw-normal">Password must contain the following:</h5>
+                <p id="letter" class="invalid">
+
+                    A <b>lowercase</b> letter
+                </p>
+                <p id="capital" class="invalid">
+
+                    A <b>capital (uppercase)</b> letter
+                </p>
+                <p id="number" class="invalid">
+
+                    A <b>number</b>
+                </p>
+                <p id="length" class="invalid">
+
+                    Minimum <b>6 characters</b>
+                </p>
+                <p id="pass_same" class="invalid">
+
+                    Passwords are <b>the same</b>
+                </p>
+              </div>
+
+            <button class="w-100 btn btn-lg btn-primary" id="signup_submit" type="submit" disabled>Sign Up</button>
+        </form>
+</div>
+
+
+{% endblock %}

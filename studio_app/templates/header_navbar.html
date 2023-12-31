@@ -1,0 +1,42 @@
+{% block custom_styles %}
+<style>
+    .nav-link {
+        transition: font-weight .3s;
+    }
+    .nav-link:hover {
+        font-weight: 400;
+    }
+</style>
+{% endblock %}
+
+{% if session.get("user_id") %}
+    {% if session.get("name") %}
+        <span class="font-weight-light text-warning">Hi {{session.get("name")}}!</span>
+    {% else %}
+        <span class="font-weight-light text-warning">Hi {{session.get("instagram")}}!</span>
+    {% endif %}
+        {% if session.get("is_admin")==1 %}
+            {% for navbar_item in navbar_items_admin %}
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/{{ navbar_item.lower() }}/">{{ navbar_item }}</a>
+            </li>
+            {% endfor %}
+        {% else %}
+            {% for navbar_item in navbar_menu %}
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/{{ navbar_item.lower() }}/">{{ navbar_item }}</a>
+            </li>
+            {% endfor %}
+        {% endif %}
+
+
+{% else %}
+    {% for navbar_item in navbar_menu_not_loged_in %}
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/{{ navbar_item.lower() }}/">{{ navbar_item }}</a>
+        </li>
+    {% endfor %}
+{% endif %}
+
+
+
