@@ -13,7 +13,7 @@ def all_appointments():
         user_appoint_db = cur.execute("SELECT user_id, id, manicure, pedicure, message, slot_id, is_seen, is_aproved, is_canceled, amount_time_min FROM appointments WHERE slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month=? AND day>=?) OR slot_id IN (SELECT slot_id FROM calendar WHERE year=? AND month>?) OR slot_id IN (SELECT slot_id FROM calendar WHERE year>?);", (today.year, today.month, today.day, today.year, today.month, today.year)).fetchall()
         user_appoint = []
         for appointment in user_appoint_db:
-            if appointment[8] == 0: # check if was canceled
+            if appointment[8] == 0 and appointment[6] == 0: # check if was canceled
                 user_name_inst_tel = list(cur.execute("SELECT name, instagram, tel FROM users WHERE id=?", (appointment[0],)).fetchone())
                 slot_db = list(cur.execute("SELECT year, month, day, hour, minute FROM calendar WHERE slot_id=?", (appointment[5],)).fetchone())
                 user_id = appointment[0]
