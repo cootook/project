@@ -1,5 +1,5 @@
 # nail studio booking
-#### Video Demo:  <URL HERE>
+#### Video Demo:  https://youtu.be/I3gxLVvUi6A
 #### Description: web app to manage appointments for manicure 
 #### Each client has an account. Clients can book or cancel appointments and edit their information (name, telephone, etc.). Administrators can confirm, edit, cancel, or mark appointments as done. They can also edit client information and manage available time in the calendar by adding or removing slots.
 ###
