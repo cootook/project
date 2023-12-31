@@ -89,7 +89,7 @@ Appointsments
       disabled  
      {% endif %}
       type="button" class="col m-1 w-100 btn btn-lg btn-success py-1 mb-1" data-toggle="modal" data-target="#doneModal" data-booking_id="{{appointment[3]}}" data-id="{{appointment[17]}}" data-date="{{appointment[16]}}" data-service="{{service}}" data-client="{{appointment[0]}} ({{appointment[14]}})">Done</button>
-      <button type="button" class="col m-1 w-100 btn btn-lg btn-danger py-1 mb-1" data-toggle="modal" data-target="#cancelModal" data-booking_id="{{appointment[3]}}" data-id="{{appointment[17]}}" data-date="{{appointment[16]}}" data-service="{{service}}" data-client="{{appointment[0]}} ({{appointment[14]}})">Cancel</button>
+      <button type="button" class="col m-1 w-100 btn btn-lg btn-danger py-1 mb-1" data-toggle="modal" data-target="#cancelModal" data-booking_id="{{appointment[3]}}" data-id="{{appointment[17]}}" data-date="{{appointment[16]}}" data-service="{{service}}" data-client="{{appointment[0]}} ({{appointment[14]}})" data-message="{{appointment[13]}}">Cancel</button>
     </div>
     </div>
   </div>
@@ -153,7 +153,7 @@ Appointsments
 
   <div class="modal fade text-dark" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form>
+        <form action="/cancel_appointment/" method="post">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="cancelModalLabel">Cancel appointment</h5>
@@ -165,7 +165,7 @@ Appointsments
             <span id="date_cancel"></span>, <span id="service_cancel"></span> for <span id="client_cancel"></span>
             <div class="form-group">
               <label for="cancel_message" class="col-form-label">Message:</label>
-              <textarea class="form-control" id="cancel_message" placeholder="can you please write about reasons"></textarea>
+              <input class="form-control" id="cancel_message" name="cancel_message" placeholder="can you please write about reasons">
             </div>
           
         </div>
@@ -174,7 +174,7 @@ Appointsments
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">No, go back</button>
-          <button type="button" type="submit" class="btn btn-danger">Delete this booking forever</button>
+          <button type="submit" class="btn btn-danger">Delete this booking forever</button>
         </div>
       </div>
     </form>
@@ -243,12 +243,14 @@ Appointsments
             var date_cancel = button.data('date')
             var service_cancel = button.data('service')
             var name_cancel = button.data('client')
+            var cancel_message = button.data('message')
             console.log(user_id_cancel, booking_id_cancel, date_cancel, service_cancel, name_cancel)// Extract info from data-* attributes
             // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
             // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
             var modal = $(this)            
             modal.find('#user_id_cancel').val(user_id_cancel)
             modal.find('#booking_id_cancel').val(booking_id_cancel)
+            modal.find('#cancel_message').val(cancel_message)
             modal.find('#date_cancel').text(date_cancel)
             modal.find('#service_cancel').text(service_cancel)
             modal.find('#client_cancel').text(name_cancel)

@@ -101,6 +101,15 @@ def articles():
 def _book():
     return book.book()
 
+
+
+@app.route("/cancel_appointment/", methods = ["POST"])
+@login_required
+@admin_only
+def _cancel_appointment():
+    return cancel_appointment.cancel_appointment()
+
+
 @app.route("/clients/", methods=["GET", "POST"])
 @login_required
 @admin_only

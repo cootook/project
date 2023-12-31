@@ -7,5 +7,6 @@ __all__ = [
     'all_history',
     'edit_appointment',
     'confirm_appointment',
-    'done_appointment'
+    'done_appointment',
+    'cancel_appointment'
 ]
