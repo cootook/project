@@ -185,14 +185,20 @@ def generate_slots():
         try:
             month = int(request.form.get("month"))
             year = int(request.form.get("year"))
+            print("###")
+            print(month, year)
         except Exception as er:
-            print("#generate: request.form")        
+            print("##/generate_slots/ request.form")
+            print(er)
+            return  render_template("apology.html", error_message="Something went wrong")        
 
         try:
             con = sqlite3.connect("./db.db") 
             cur = con.cursor()
         except Exception as er:
-            print("#generate: db connection")
+            print("##/generate_slots/ -dbm")
+            print(er)
+            return  render_template("apology.html", error_message="Something went wrong")
         else:
             #check if this month generated
             count_lines = cur.execute("SELECT COUNT(*) FROM calendar WHERE year=? AND month=?", (year, month)).fetchone()[0]
@@ -360,4 +366,5 @@ def windows():
             slots = None
             print("##/windows/")
             print(er)
+            return  render_template("apology.html", error_message="Something went wrong")
         return render_template("windows.html", slots=slots)
