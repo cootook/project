@@ -1,3 +1,4 @@
+import os
 import re
 import sqlite3
 import datetime
@@ -9,6 +10,7 @@ from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
 from .rout_handlers import *
+from flask_mail import Mail, Message
 
 app = Flask(
                 __name__,
@@ -22,6 +24,15 @@ app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
 app.config['SESSION_FILE_THRESHOLD'] = 250
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=90)
+
+app.config['MAIL_SERVER'] = 'smtp.sendgrid.net'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'apikey'
+app.config['MAIL_PASSWORD'] = os.environ.get('SENDGRID_API_KEY')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
+mail = Mail(app)
+
 Session(app)
 
 app.register_error_handler(404, page_not_found)
