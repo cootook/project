@@ -2,7 +2,10 @@ import os
 import re
 import sqlite3
 import datetime
+import smtplib, ssl
 
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from calendar import monthrange
 from datetime import timedelta, date
 from flask import Flask, flash, redirect, render_template, request, session
@@ -70,6 +73,77 @@ def test_mail():
     mail.send(msg)
     flash(f'A test message was sent to {recipient}.')
     return redirect("/")
+
+
+@app.route("/test_mail_py/", methods=["GET", "POST"])
+@login_required
+def test_mail_py():
+    receiver = "cootook@gmail.com"
+    sender = "matveising@ya.ru"
+    port = 465
+    username = os.environ.get('MAIL_USERNAME')
+    password = os.environ.get('MAIL_APP_KEY')
+    message = MIMEMultipart("alternative")
+    # message.set_content("This message is sent from Python.")
+    message['Subject'] = 'Test of sending via Python'
+    message['To'] = "cootook@gmail.con"
+    message['From'] = "Liza nail studio <matveising@ya.ru>"
+
+    text = """\
+    Hi,
+    This is a plain text.
+    """
+    html = """\
+    <html>
+    <body>
+        <p>Hi,<br>
+        This is HTML<br>
+        <a href="https://github.com/cootook">my GitHub</a> 
+        </p>
+    </body>
+    </html>
+    """
+
+    part1 = MIMEText(text, "plain")
+    part2 = MIMEText(html, "html")
+
+    message.attach(part1)
+    message.attach(part2)
+
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL("smtp.yandex.com", port, context=context) as server:
+        server.login(username, password)
+        server.sendmail(sender, receiver, message.as_string())
+
+    # msg = EmailMessage()
+    # msg.set_content("test message python")
+
+    # # me == the sender's email address
+    # # you == the recipient's email address
+    # msg['Subject'] = f'Test of sending'
+    # msg['From'] = "cootook@gmail.con"
+    # msg['To'] = "matveising@ya.ru"
+
+    # # Send the message via our own SMTP server.
+    # s = smtplib.SMTP("127.0.0.1")
+
+    # username = os.environ.get('MAIL_USERNAME')
+    # password = os.environ.get('MAIL_APP_KEY')
+    # server = smtplib.SMTP('smtp.yandex.com:465')
+    # server.ehlo()
+    # server.starttls()
+    # server.login(username,password)
+    # server.sendmail(fromaddr, toaddrs, msg)
+    # server.quit()
+
+    # s.send_message(msg)
+    # s.quit()
+
+
+    flash(f'A test message was sent to {receiver}.')
+    return redirect("/")
+
 
 @app.route("/")
 def home():
