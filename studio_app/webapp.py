@@ -13,7 +13,7 @@ from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
 from .rout_handlers import *
-from flask_mail import Mail, Message
+# from flask_mail import Mail, Message
 
 app = Flask(
                 __name__,
@@ -30,11 +30,11 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=90)
 
 app.config['MAIL_SERVER'] = 'smtp.yandex.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_SSL'] = True
+# app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_APP_KEY')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
-mail = Mail(app)
+# mail = Mail(app)
 
 Session(app)
 
@@ -60,27 +60,28 @@ def inject_navbar_items_not_loged_in():
 def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
 
-@app.route("/test_mail/", methods=["GET", "POST"])
-@login_required
-def test_mail():
-    recipient = "cootook@gmail.com"
-    msg = Message('Test Email', recipients=[recipient])
-    msg.body = ('Congratulations! You have sent a test email with '
-                'Yandex')
-    msg.html = ('<h1>Test Email</h1>'
-                '<p>Congratulations! You have sent a test email with '
-                '<b>Yandex</b>!</p>')
-    mail.send(msg)
-    flash(f'A test message was sent to {recipient}.')
-    return redirect("/")
+# @app.route("/test_mail/", methods=["GET", "POST"])
+# @login_required
+# def test_mail():
+#     recipient = "cootook@gmail.com"
+#     msg = Message('Test Email', recipients=[recipient])
+#     msg.body = ('Congratulations! You have sent a test email with '
+#                 'Yandex')
+#     msg.html = ('<h1>Test Email</h1>'
+#                 '<p>Congratulations! You have sent a test email with '
+#                 '<b>Yandex</b>!</p>')
+#     mail.send(msg)
+#     flash(f'A test message was sent to {recipient}.')
+#     return redirect("/")
 
 
 @app.route("/test_mail_py/", methods=["GET", "POST"])
 @login_required
 def test_mail_py():
+    mail_server = os.environ.get('MAIL_SERVER')
     receiver = "cootook@gmail.com"
     sender = "matveising@ya.ru"
-    port = 465
+    port = os.environ.get('MAIL_PORT')
     username = os.environ.get('MAIL_USERNAME')
     password = os.environ.get('MAIL_APP_KEY')
     message = MIMEMultipart("alternative")
