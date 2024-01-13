@@ -10,6 +10,14 @@ body {
   background: #4A4A4A;
 }
 
+@media (max-height: 840px)
+{
+  #emty_block_400px 
+  {
+  height: 400px;
+  }
+}
+
 
 /* CUSTOMIZE THE CAROUSEL
 -------------------------------------------------- */
