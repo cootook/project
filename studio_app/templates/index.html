@@ -48,12 +48,19 @@ Liza Nail Studio
       modal.find('#year_input').val(year_modal)
       modal.find('#time_book').text(modal_time_full)
 
-
+      document.getElementById("submit_booking_btn").disabled = true
       console.log("index# $")
     })
   })
 
+  function disable_submit_book() {
+    document.getElementById("submit_booking_btn").disabled = true    
+  }
 
+  function enable_submit_book(respond) {
+    document.getElementById("submit_booking_btn").disabled = false
+    console.log(respond)
+  }
 
 
 </script>
@@ -94,12 +101,17 @@ Liza Nail Studio
             <textarea class="form-control" id="message-text" name="message-text"></textarea>
           </div>
       </div>
+      <div class="g-recaptcha" data-sitekey="6LcAhk0pAAAAADEntGbuUrciamFKU4bQFO_mqokV" data-callback="enable_submit_book" data-expired-callback="disable_submit_book"></div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary g-recaptcha" 
+        <button 
+          type="submit" 
+          class="btn btn-primary g-recaptcha" 
+          id="submit_booking_btn"
           data-sitekey="6LexJEspAAAAAFMN458y0nNX21V0de7a-DATAJzo" 
           data-callback='onSubmit' 
-          data-action='submit'>
+          data-action='submit' 
+          disabled>
           Request appointment
         </button>
       </div>

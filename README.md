@@ -59,6 +59,7 @@ MAIL_USERNAME=*
 MAIL_APP_KEY=*
 MAIL_DEFAULT_SENDER=*
 SECRET_KEY=*
+SECRET_RECAPTCHA=*
 ```
 #####
 set user as admin  in *db.db* manualy *users.is_admin = 1*
