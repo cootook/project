@@ -1,4 +1,7 @@
+import os
 import re
+import requests
+import json
 from flask import redirect, render_template, session
 from werkzeug.security import check_password_hash
 from functools import wraps
@@ -95,6 +98,26 @@ def not_loged_only(f):
 def page_not_found(e):
   error_message  = "404 - page not fond"
   return render_template('apology.html', error_message = error_message), 404
+
+def validate_recaptcha (token):
+    try:
+        url = "https://www.google.com/recaptcha/api/siteverify"
+        params = {
+        "secret": os.environ.get('SECRET_RECAPTCHA'),
+        "response": token
+        }
+
+        recaptcha = requests.post(url, params)
+        recaptcha_respond_dict = json.loads(recaptcha.text)
+
+        if not recaptcha_respond_dict['success']:
+            return False
+        else: 
+            return True
+    except Exception as er:
+        print("#helpers.validate_recaptchs ---recaptcha request")
+        print(er)
+        return  False
 
 def validate_password (password):
     is_lower = re.search("[a-z]", password) != None

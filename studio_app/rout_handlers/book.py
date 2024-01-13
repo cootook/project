@@ -5,6 +5,7 @@ import json
 
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
+from ..helpers import validate_recaptcha
 
 def book():
     if request.method == "POST":
@@ -24,26 +25,10 @@ def book():
             print("##/book/ --request.form.get")
             print(er)
             return  render_template("apology.html", error_message="Something went wrong") 
-        try:
-            url = "https://www.google.com/recaptcha/api/siteverify"
-            params = {
-            "secret": os.environ.get('SECRET_RECAPTCHA'),
-            "response": token
-            }
 
-            recaptcha = requests.post(url, params)
-            recaptcha_respond_dict = json.loads(recaptcha.text)
+        if not validate_recaptcha(token):
+            return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot, maybe reCaptcha that you have just checked expired. Please, try arain.")
 
-            if not recaptcha_respond_dict['success']:
-                print("##/book/ --recaptcha_respond_dict")
-                print("recaptcha responded False")
-                return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot, maybe reCaptcha that you have just checked expired. Please, try arain.") 
-            else: 
-                print("#book: reCaptcha passed", recaptcha_respond_dict)
-        except Exception as er:
-            print("##/book/ ---recaptcha")
-            print(er)
-            return  render_template("apology.html", error_message="Something went wrong, try again please")
         try:            
             #calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
             #appointments (id INTEGER PRIMARY KEY, user_id INT, pedicure INT, manicure INT, message TEXT, slot_id INT, amount_time_min INT, slots_in TEXT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
