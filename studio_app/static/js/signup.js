@@ -1,4 +1,4 @@
-window.addEventListener("load", () => {
+
     
     const ok = document.createElement("b");
     ok.classList.add("status_pic");
@@ -28,6 +28,19 @@ window.addEventListener("load", () => {
     var is_number = false;
     var is_length = false;
     var is_same = false;
+    var is_recaptcha = false;
+
+    function set_is_recaptcha_false() {
+        is_recaptcha = false;
+        validate_pass()
+        console.log("recaptcha false")    
+    }
+    
+    function set_is_recaptcha_true() {
+        is_recaptcha = true;
+        validate_pass()
+        console.log("recaptcha true")
+    }
 
     //validate password and confirmation are not the same
 
@@ -51,7 +64,8 @@ window.addEventListener("load", () => {
                 is_capital &&
                 is_number &&
                 is_length &&
-                is_same) {
+                is_same &&
+                is_recaptcha) {
                     el.disabled = false;
                 } else {
                     el.disabled = true;
@@ -104,5 +118,5 @@ window.addEventListener("load", () => {
     // When the user starts to type something inside the password field
     myInput.onkeyup = validate_pass;
     confirmation.onkeyup = validate_pass;
-})
+
 
