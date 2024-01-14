@@ -1,10 +1,6 @@
 import sqlite3
-import os
-import requests
-import json
 
-from flask import Flask, flash, redirect, render_template, request, session
-from flask_session import Session
+from flask import flash, redirect, render_template, request, session
 from ..helpers import validate_recaptcha
 
 def book():
