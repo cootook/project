@@ -385,7 +385,19 @@ def signup():
             is_login_ok = (re.fullmatch(regex_email, login) != None)
 
             if not is_pass_ok or not is_instagram_ok or not is_tel_ok or not is_login_ok:
-                return render_template("apology.html", error_message="Something went wrong. Try again or contact us. SignUp")
+                return render_template("apology.html", error_message='''
+                                       Password must contain:</br>
+                                       - a lowercase letter</br>
+                                       - a capital (uppercase) letter</br>
+                                       - a number</br>
+                                       - minimum 6 characters.</br>
+                                       </br>
+                                       Instagramm name should be valid.</br>
+                                        </br>
+                                       Telephone at leats 10 digits.</br>
+                                        </br>
+                                       Email adress.</br>
+                                       ''')
         else:
             return render_template("signup.html")
     except Exception as er:
