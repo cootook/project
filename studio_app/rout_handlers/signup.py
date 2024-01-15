@@ -9,11 +9,15 @@ def signup():
 
     try:
         if request.method == "POST":
+            token = request.form.get("g-recaptcha-response")
             instagram = request.form.get("instagram")
             tel_number = request.form.get("tel_number")
             login = request.form.get("login")
             password = request.form.get("password")
             confirmation = request.form.get("confirmation")
+
+            if not validate_recaptcha(token):
+                return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot, maybe reCaptcha that you have just checked expired. Please, try arain.")
 
             is_pass_ok = (password == confirmation) and validate_password(password)
             is_instagram_ok = len(instagram) >= 3
