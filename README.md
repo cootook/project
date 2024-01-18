@@ -65,8 +65,8 @@ set user as admin  in *db.db* manualy *users.is_admin = 1*
 #####
 ### Create data base file in the root directory, name it "db.db"
 ### Database structure
-* ```CREATE TABLE users (id INTEGER PRIMARY KEY, is_admin INT, is_clerck INT ,  name TEXT, email TEXT, lang TEXT, instagram TEXT, tel TEXT, is_subscribed_promo INT, avatar TEXT);```
-* ```CREATE TABLE login (user_id INTEGER PRIMARY KEY, hash TEXT, fb TEXT, google TEXT, FOREIGN KEY(user_id) REFERENCES users(id));```
-* ```CREATE TABLE calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);```
-* ```CREATE TABLE appointments (id INTEGER PRIMARY KEY, user_id INT, pedicure INT, manicure INT, message TEXT, slot_id INT, amount_time_min INT, slots_in TEXT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));``` 
+* ```CREATE TABLE users (id INTEGER PRIMARY KEY, is_admin INT, is_editor INT, name TEXT, email TEXT, lang TEXT, instagram TEXT, tel TEXT, is_subscribed_promo INT, is_instagram_notification INT, is_email_notification INT, is_text_notification INT, avatar TEXT);```
+* ```CREATE TABLE login (user_id INTEGER PRIMARY KEY, hash TEXT, stay_logedin INT, date_registered TEXT, last_login TEXT, count_atempts INT, FOREIGN KEY(user_id) REFERENCES users(id));```
+* ```CREATE TABLE calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, day INT, hour INT, minute INT, is_open INT, is_occupaied INT);```
+* ```CREATE TABLE appointments (id INTEGER PRIMARY KEY, user_id INT, pedicure INT, manicure INT, message TEXT, slot_id INT, amount_time_min INT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));``` 
 * ```CREATE TABLE sessions (rowid INTEGER PRIMARY KEY, user_id INT, from_route TEXT, to_route TEXT,  year INT, month INT, day INT, hour INT, minute INT, second INT, type TEXT, data TEXT, FOREIGN KEY (user_id) REFERENCES users(id));```
