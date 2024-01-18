@@ -33,13 +33,11 @@
     function set_is_recaptcha_false() {
         is_recaptcha = false;
         validate_pass()
-        console.log("recaptcha false")    
     }
     
     function set_is_recaptcha_true() {
         is_recaptcha = true;
         validate_pass()
-        console.log("recaptcha true")
     }
 
     //validate password and confirmation are not the same
@@ -80,9 +78,6 @@
 
         // Validate the same
         is_same = myInput.value == confirmation.value;
-        console.log(is_same)
-        console.log(myInput.value)
-        console.log(confirmation.value)
         set_valid_invalid(pass_same, is_same, [btn]);
     
         // Validate lowercase letters

@@ -205,7 +205,6 @@ def _book():
 
 @app.route("/cancel_appointment/", methods = ["POST"])
 @login_required
-@admin_only
 def _cancel_appointment():
     return cancel_appointment.cancel_appointment()
 
