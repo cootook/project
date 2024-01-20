@@ -5,7 +5,6 @@ Change role
 {% endblock %}
 
 {% block custom_styles %} 
-  <!-- Custom styles for this template -->
   <style>
     .my-table-hover { cursor: pointer; }
     table { overflow: scroll; }
@@ -23,7 +22,6 @@ Change role
       </tr>
     </thead>
     <tbody class="text-white">
-<!-- [{'id': 1, 'name': '-', 'instagram': 'cootook', 'is_admin': 0, 'is_editor': 0}] -->
         {% for client in clients %}        
             <tr>
                 <th scope="row">{{client["id"]}}</th>
