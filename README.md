@@ -21,6 +21,7 @@ This is a final project of **[Harvard CS50](https://pll.harvard.edu/course/cs50-
 * make it possible to edit windows (open/close time slots) withot refreshing page (stay on the same element after editing)
 * refactor: split webapp.py into multiple files
 * add atempt limit to login table in db
+###
 **features:**
 * optimized for small screens
 * session uses filesystem (instead of signed cookies)
