@@ -59,9 +59,11 @@ MAIL_APP_KEY=*
 MAIL_DEFAULT_SENDER=*
 SECRET_KEY=*
 SECRET_RECAPTCHA=*
+KEY_CHANGE_ROLE_LIST=*
+KEY_CHANGE_ROLE=*
 ```
 #####
-set user as admin  in *db.db* manualy *users.is_admin = 1*
+To change role of any user go to route "/change_role?key=*KEY_CHANGE_ROLE_LIST*". Than hit the button, enter *KEY_CHANGE_ROLE*, pass reCAPTCHA.
 #####
 ### Create data base file in the root directory, name it "db.db"
 ### Database structure

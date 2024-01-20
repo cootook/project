@@ -209,6 +209,12 @@ def _cancel_appointment():
     return cancel_appointment.cancel_appointment()
 
 
+@app.route("/change_role/", methods = ["GET","POST"])
+@login_required
+def _change_role():
+    return change_role.change_role()
+
+
 @app.route("/clients/", methods=["GET", "POST"])
 @login_required
 @admin_only
@@ -341,7 +347,6 @@ def pricing():
 def signin():
     if request.method == "POST":
         try:
-
             login = request.form.get("login")
             password = request.form.get("password")
             remember = request.form.get("remember")

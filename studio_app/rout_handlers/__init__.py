@@ -9,5 +9,6 @@ __all__ = [
     'confirm_appointment',
     'done_appointment',
     'cancel_appointment',
-    'signup'
+    'signup',
+    'change_role'
 ]

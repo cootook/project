@@ -59,9 +59,10 @@ def log_user_in(login, password, cursor):
     if is_password_correct:
         user = cursor.execute("SELECT * FROM users WHERE email=?", (login,)).fetchone()
         #seve user info 
-        session["user_id"] = user_id[0] #rows[0]["id"]
+        # id, is_admin INT, is_editor INT, name TEXT, email TEXT, lang TEXT, instagram TEXT, tel TEXT, is_subscribed_promo INT, is_instagram_notification INT, is_email_notification INT, is_text_notification INT, avatar TEXT
+        session["user_id"] = user_id[0] 
         session["is_admin"] = user[1]
-        session["is_clerck"] = user[2]
+        session["is_editor"] = user[2]
         session["name"] = user[3]
         session["login"] = login
         session["lang"] = user[5]

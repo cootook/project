@@ -54,7 +54,7 @@ def signup():
                 con.close()
                 return render_template("apology.html", error_message=error_message)
             #insert new user to db
-            cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
+            cur.execute("INSERT INTO users (is_admin, is_editor, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
             user_id = cur.execute("SELECT id FROM users WHERE email=?", (login,)).fetchone()[0]
             password_hash = generate_password_hash(password)
             cur.execute("INSERT INTO login (user_id, hash) VALUES (?, ?)", (user_id, password_hash))
