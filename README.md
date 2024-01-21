@@ -15,12 +15,7 @@ This is a final project of **[Harvard CS50](https://pll.harvard.edu/course/cs50-
 * google reCAPTCHA
 ###
 **planing canges (to do list):**
-* add more settings of notification to user table of db
-* make it possible to delete account forever
-* add pic to user profile
-* make it possible to edit windows (open/close time slots) withot refreshing page (stay on the same element after editing)
-* refactor: split webapp.py into multiple files
-* add atempt limit to login table in db
+take a look at issues (GitHub)
 ###
 **features:**
 * optimized for small screens
@@ -44,7 +39,7 @@ This is a final project of **[Harvard CS50](https://pll.harvard.edu/course/cs50-
 * sign up with Google
 * instagram bot
 * admin can add articles
-* add user *clerk* to manage *articles* and *about* 
+* add user *editor* to manage *articles* and *about* 
 * create Android app
 * create iOS app
 ###
