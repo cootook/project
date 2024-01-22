@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block title %}
+{{ message_title}}
+{% endblock %}
+{% block content %}
+<h1 style="text-align: center">{{ message_header }}</h1>
+<p  style="text-align: center">
+    {{ message_text | safe}}
+</p>
+<a style="text-align: center" href="{{ message_link }}"><h2>{{ message_link_text }}</h2></a>
+{% endblock %}
