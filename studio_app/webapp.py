@@ -209,7 +209,13 @@ def _cancel_appointment():
     return cancel_appointment.cancel_appointment()
 
 
-@app.route("/change_role/", methods = ["GET","POST"])
+@app.route("/change_password/", methods = ["GET", "POST"])
+@login_required
+def _change_password():
+    return change_password.change_password()
+
+
+@app.route("/change_role/", methods = ["GET", "POST"])
 @login_required
 def _change_role():
     return change_role.change_role()
