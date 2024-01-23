@@ -32,13 +32,19 @@ def change_password():
                                         ''')
             
             password_hash = generate_password_hash(new_password)
+
+            old_hash = cur.execute("SELECT hash FROM login WHERE user_id=?", (session.get("user_id"),)).fetchone()[0]
+            print(old_hash)
             cur.execute("UPDATE login SET hash=? WHERE user_id=?", (password_hash, session.get("user_id")))
             con.commit()
             
             if not log_user_in(session.get("login"), new_password, cur):
-                print("### password NOT changed", session.get("user_id"))
+                print("### password was NOT changed", session.get("user_id"))
+                cur.execute("UPDATE login SET hash=? WHERE user_id=?", (old_hash, session.get("user_id")))
                 con.close()
-                return render_template("apology.html", error_message="Something went wrong. Try again or contact administrator if it is not working.")
+                return render_template("apology.html", error_message='''Something went wrong. 
+                                                                        Your password was not changed.
+                                                                        Try again or contact administrator if it is not working.''')
             else:
                 print("### password changed", session.get("user_id"))
                 con.close()
