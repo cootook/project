@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Clients
+{% endblock %}
+
+{% block custom_styles %} 
+  <!-- Custom styles for this template -->
+  <style>
+    .my-table-hover { cursor: pointer; }
+    table { overflow: scroll; }
+  </style>
+{% endblock %}
+
+{% block content %}
+<table class="table">
+    <thead>
+      <tr class="text-danger">
+        <th scope="col">Name</th>
+        <th scope="col">Instagram</th>
+        <th scope="col">Tel</th>
+        <th scope="col">Email</th>
+      </tr>
+    </thead>
+    <tbody class="text-white">
+
+        {% for client in clients %}        
+            <tr class="my-table-hover" onclick="window.location='/account/?user={{client[4]}}';">
+                <th scope="row"><a  class="link-light  link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="/account/?user={{client[4]}}">{{client[0]}}</a></th>
+                <td>{{client[1]}}</td>
+                <td>{{client[2]}}</td>
+                <td>{{client[3]}}</td>
+            </tr>               
+        {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

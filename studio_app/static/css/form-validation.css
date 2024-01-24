@@ -1,0 +1,8 @@
+.container {
+  max-width: 500px;
+  margin-top: 1em;
+}
+
+.col-lg-8 {
+  width: 100%;
+}

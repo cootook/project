@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block title %}
+apology
+{% endblock %}
+{% block content %}
+<h1 style="text-align: center">error</h1>
+<p  style="text-align: center">
+    {{ error_message | safe}}
+</p>
+<a style="text-align: center" href="/"><h2>Home</h2></a>
+{% endblock %}

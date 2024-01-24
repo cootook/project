@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+{% block title %}
+Accoutn
+{% endblock %}
+{% block custom_styles %}
+<style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+
+    .b-example-divider {
+      height: 3rem;
+      background-color: rgba(0, 0, 0, .1);
+      border: solid rgba(0, 0, 0, .15);
+      border-width: 1px 0;
+      box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+    }
+
+    .b-example-vr {
+      flex-shrink: 0;
+      width: 1.5rem;
+      height: 100vh;
+    }
+
+    .bi {
+      vertical-align: -.125em;
+      fill: currentColor;
+    }
+
+    .nav-scroller {
+      position: relative;
+      z-index: 2;
+      height: 2.75rem;
+      overflow-y: hidden;
+    }
+
+    .nav-scroller .nav {
+      display: flex;
+      flex-wrap: nowrap;
+      padding-bottom: 1rem;
+      margin-top: -1px;
+      overflow-x: auto;
+      text-align: center;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .form-control:disabled {
+        opacity: .6;
+    }
+</style>  
+<!-- Custom styles for this template -->
+<link href="{{ url_for('static', filename='/css/form-validation.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- ['-', 'matveising@ya.ru', 'en', 'cootook', '6465191763', 1, '-'] -->
+<div class="container">
+      
+        <div class="col-md-7 col-lg-8">
+          <form class="needs-validation" action="/account/" method="post" novalidate>
+            {% if is_admin==1 %}
+            <input type="hidden" name="user_id" id="user_id" value={{user_id}}>
+            {% endif %}
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="client_name" class="form-label">Name</label>
+                <input type="text" class="form-control" name="client_name" id="client_name" placeholder="" value="{{user[0]}}" required disabled>
+                <div class="invalid-feedback">
+                  Valid name is required.
+                </div>
+              </div>
+  
+              <div class="col-12">
+                <label for="username" class="form-label">Username</label>
+                <div class="input-group has-validation">
+                  <span class="input-group-text">@</span>
+                  <input type="text" class="form-control" name="username" id="username" placeholder="Username" value={{user[3]}} required disabled>
+                <div class="invalid-feedback">
+                    Your instagram username is required.
+                  </div>
+                </div>
+              </div>
+  
+              <div class="col-12">
+                <label for="email" class="form-label">Email <span class="text-muted">(You can not change email)</span></label>
+                <input type="email" class="form-control" id="email" placeholder="you@example.com" value={{user[1]}} disabled>
+                <div class="invalid-feedback">
+                  Please enter a valid email address.
+                </div>
+              </div>
+  
+              <div class="col-12">
+                <label for="tel" class="form-label">Telephone number</label>
+                <input type="text" class="form-control" name="tel" id="tel" placeholder="625-172-3788" value={{user[4]}} required disabled>
+                <div class="invalid-feedback">
+                  Please enter your phone number.
+                </div>
+              </div> 
+              
+            </div>
+  
+            <hr class="my-6">
+  
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="subscribtion" name="subscribtion"
+              {% if user[5]==1 %}
+               checked 
+              {% endif %}
+              disabled
+              >
+              <label class="form-check-label" for="subscribtion">Subscribe for promo</label>
+            </div>
+  
+            <div class="form-check" hidden>
+              <input type="checkbox" class="form-check-input" id="notification" name="notification"
+              {% if not user[5]==0 %}
+              checked 
+             {% endif %}
+             disabled
+              >
+              <label class="form-check-label" for="notification">Notify me via email</label>
+            </div>
+  
+            <hr class="my-6">
+  
+            <button class="w-100 btn btn-primary btn-lg" type="submit" id="savet_btn" hidden>Save</button>
+            <button class="w-100 btn btn-primary btn-lg" id="edit_btn">Edit information</button>
+
+          </form>
+          <a class="w-100 btn btn-primary btn-lg mt-3" href="/change_password/">Change password</a>
+        </div>
+      </div>
+
+  </div>
+  
+  
+<script src="{{ url_for('static', filename='/js/form-validation.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/account.js') }}"></script>
+{% endblock %}
