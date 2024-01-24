@@ -1,12 +1,5 @@
 {% block custom_styles %}
-<style>
-    .nav-link {
-        transition: font-weight .3s;
-    }
-    .nav-link:hover {
-        font-weight: 400;
-    }
-</style>
+<link href="{{ url_for('static', filename='/css/header_navbar.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% if session.get("user_id") %}
