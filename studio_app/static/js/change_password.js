@@ -7,15 +7,15 @@
     not_ok.classList.add("status_pic");
     not_ok.innerHTML = "&#10006;"
 
-    const myInput = document.getElementById("password");
-    const confirmation = document.getElementById("confirmation");
+    const myInput = document.getElementById("new_password");
+    const confirmation = document.getElementById("new_confirmation");
     const letter = document.getElementById("letter");
     const capital = document.getElementById("capital");
     const number = document.getElementById("number");
     const length = document.getElementById("length");
     const pass_same = document.getElementById("pass_same");
-    const submit = document.getElementById("form_signup");
-    const btn = document.getElementById("signup_submit");
+    const submit = document.getElementById("form_change_password");
+    const btn = document.getElementById("seve_btn");
 
     letter.prepend(not_ok.cloneNode(true));
     capital.prepend(not_ok.cloneNode(true));
@@ -29,18 +29,6 @@
     var is_length = false;
     var is_same = false;
     var is_recaptcha = false;
-
-    function set_is_recaptcha_false() {
-        is_recaptcha = false;
-        validate_pass()
-    }
-    
-    function set_is_recaptcha_true() {
-        is_recaptcha = true;
-        validate_pass()
-    }
-
-    //validate password and confirmation are not the same
 
     function set_valid_invalid (element, is_valid, to_disable) {
         if (is_valid) {
@@ -62,8 +50,8 @@
                 is_capital &&
                 is_number &&
                 is_length &&
-                is_same &&
-                is_recaptcha) {
+                is_same 
+                ) {
                     el.disabled = false;
                 } else {
                     el.disabled = true;

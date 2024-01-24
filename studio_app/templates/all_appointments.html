@@ -17,27 +17,7 @@
 Appointsments
 {% endblock %}
 {% block content %}
-<script>var user_appoint = {{user_appoint | safe}}; console.log(user_appoint); </script>
-<!-- [
-0    "Not admin Dmitrii",
-1    6,
-2    "combo",
-3    404,
-4    0,
-5    0,
-6    0,
-7    120,
-8    2024,
-9    1,
-10    10,
-11    11,
-12    30,
-13    "hi!",
-14    "zibubu",
-15    "1763"
-16    "Sun 31 Dec - 10:00 AM"
-17    1
-] -->
+<script>var user_appoint = {{user_appoint | safe}};</script>
 
 {% for appointment in user_appoint %}
 <div class="container py-2 bg-transparent">
@@ -244,9 +224,6 @@ Appointsments
             var service_cancel = button.data('service')
             var name_cancel = button.data('client')
             var cancel_message = button.data('message')
-            console.log(user_id_cancel, booking_id_cancel, date_cancel, service_cancel, name_cancel)// Extract info from data-* attributes
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
             var modal = $(this)            
             modal.find('#user_id_cancel').val(user_id_cancel)
             modal.find('#booking_id_cancel').val(booking_id_cancel)
@@ -279,10 +256,8 @@ Appointsments
             modal.find('#client_edit').text(name_edit)
             modal.find('#new_time').val(time_edit)
             modal.find('#new_date').val(date_picker_format_edit)
-            console.log(date_picker_format_edit)
             modal.find('#new_duration').val(duration_edit)
             modal.find('#new_message').val(message_edit)
-            console.log(service_edit)
             if (service_edit == "manicure") {
               modal.find('#new_manicure').attr('checked', true)
               modal.find('#new_pedicure').attr('checked', false)
@@ -291,7 +266,6 @@ Appointsments
               modal.find('#new_pedicure').attr('checked', true)
               modal.find('#new_manicure').attr('checked', false)
             } else if (service_edit == "combo") {
-              console.log("combo")
               modal.find('#new_manicure').attr('checked', true)
               modal.find('#new_pedicure').attr('checked', true)
             }
@@ -304,9 +278,6 @@ Appointsments
             var date_confirm = button.data('date')
             var service_confirm = button.data('service')
             var name_confirm = button.data('client')
-            console.log(user_id_confirm, booking_id_confirm, date_confirm, service_confirm, name_confirm)// Extract info from data-* attributes
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
             var modal = $(this)            
             modal.find('#user_id_confirm').val(user_id_confirm)
             modal.find('#booking_id_confirm').val(booking_id_confirm)
@@ -322,9 +293,6 @@ Appointsments
             var date_done = button.data('date')
             var service_done = button.data('service')
             var name_done = button.data('client')
-            console.log(user_id_done, booking_id_done, date_done, service_done, name_done)// Extract info from data-* attributes
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
             var modal = $(this)            
             modal.find('#user_id_done').val(user_id_done)
             modal.find('#booking_id_done').val(booking_id_done)

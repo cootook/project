@@ -5,30 +5,30 @@ Sign Up
 {% endblock %}
 
 {% block content %}
-<script src="{{ url_for('static', filename='/js/signup.js') }}"></script>
+
 <div class="signin-container">
     <div id="gap-1"></div>
         <form class="form-signin" id="form_signup" action="/signup/" method="POST">
             
             
             <div class="form_input">
-                <input type="text" class="form-control" id="instagram" name="instagram" placeholder="kika.nails.nails" minlength="3">
+                <input type="text" class="form-control" id="instagram" name="instagram" placeholder="kika.nails.nails" minlength="3" required>
                 <label for="name">Your Instagramm name</label>
             </div>
             <div class="form_input">
-                <input type="text" class="form-control" id="tel_number" name="tel_number" placeholder="646-591-71-36" minlength="10">
+                <input type="text" class="form-control" id="tel_number" name="tel_number" placeholder="646-591-71-36" minlength="10" required>
                 <label for="tel_number">Your telephone number</label>
             </div>
             <div class="form_input">
-                <input type="email" class="form-control" id="login" name="login" placeholder="name@example.com">
+                <input type="email" class="form-control" id="login" name="login" placeholder="name@example.com" required>
                 <label for="login">Email address</label>
             </div>
             <div class="form_input">
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" required>
                 <label for="password">Password</label>
             </div>
             <div class="form_input">
-                <input type="password" class="form-control" id="confirmation" name="confirmation" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
+                <input type="password" class="form-control" id="confirmation" name="confirmation" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" required>
                 <label for="confirmation">Password</label>
             </div>
         
@@ -54,11 +54,11 @@ Sign Up
 
                     Passwords are <b>the same</b>
                 </p>
-              </div>
-
+            </div>
+            <div class="g-recaptcha" data-sitekey="6LcAhk0pAAAAADEntGbuUrciamFKU4bQFO_mqokV" data-callback="set_is_recaptcha_true" data-expired-callback="set_is_recaptcha_false"></div>
             <button class="w-100 btn btn-lg btn-primary" id="signup_submit" type="submit" disabled>Sign Up</button>
         </form>
 </div>
-
-
+<div id="emty_block_400px"></div>
+<script src="{{ url_for('static', filename='/js/signup.js') }}"></script>
 {% endblock %}
