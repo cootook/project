@@ -6,9 +6,9 @@ The main part of this is to create real-world-like environment for learners.
 
 Everybody welcome!
 
-If you are going to participate we assume you are accepting [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md) .
+If you are going to participate we assume you are accepting [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](/CODE_OF_CONDUCT.md) .
 
-Also take a look at [Contributing.md](contributing.md) to get info about installation.
+Also take a look at [Contributing.md](/CONTRIBUTING.md) to get info about installation.
 
 # project
 ## create a nail studio booking app
