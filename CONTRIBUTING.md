@@ -41,23 +41,73 @@ It is SQLite. Python has a [module](https://docs.python.org/3/library/sqlite3.ht
 ### Database schema
 #####
 ```
-CREATE TABLE users (id INTEGER PRIMARY KEY, is_admin INT, is_editor INT, name TEXT, email TEXT, lang TEXT, instagram TEXT, tel TEXT, is_subscribed_promo INT, is_instagram_notification INT, is_email_notification INT, is_text_notification INT, avatar TEXT);
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY, 
+    is_admin INT, is_editor INT, 
+    name TEXT, email TEXT, 
+    lang TEXT, instagram TEXT, 
+    tel TEXT, 
+    is_subscribed_promo INT, 
+    is_instagram_notification INT, 
+    is_email_notification INT, 
+    is_text_notification INT, 
+    avatar TEXT);
 ```
 #####
 ```
-CREATE TABLE login (user_id INTEGER PRIMARY KEY, hash TEXT, stay_logedin INT, date_registered TEXT, last_login TEXT, count_atempts INT, FOREIGN KEY(user_id) REFERENCES users(id));
+CREATE TABLE login (
+    user_id INTEGER PRIMARY KEY, 
+    hash TEXT, 
+    stay_logedin INT, 
+    date_registered TEXT, 
+    last_login TEXT, 
+    count_atempts INT, 
+    FOREIGN KEY(user_id) REFERENCES users(id));
 ```
 #####
 ```
-CREATE TABLE calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, day INT, hour INT, minute INT, is_open INT, is_occupaied INT);
+CREATE TABLE calendar (
+    slot_id INTEGER PRIMARY KEY, 
+    year INT, 
+    month INT, 
+    day INT, 
+    hour INT, 
+    minute INT, 
+    is_open INT, 
+    is_occupaied INT);
 ```
 #####
 ```
-CREATE TABLE appointments (id INTEGER PRIMARY KEY, user_id INT, pedicure INT, manicure INT, message TEXT, slot_id INT, amount_time_min INT, is_seen INT, is_aproved INT, is_canceled INT, FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), FOREIGN KEY (user_id) REFERENCES users(id));
+CREATE TABLE appointments (
+    id INTEGER PRIMARY KEY, 
+    user_id INT, 
+    pedicure INT, 
+    manicure INT, 
+    message TEXT, 
+    slot_id INT, 
+    amount_time_min INT, 
+    is_seen INT, 
+    is_aproved INT, 
+    is_canceled INT, 
+    FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), 
+    FOREIGN KEY (user_id) REFERENCES users(id));
 ``` 
 #####
 ```
-CREATE TABLE sessions (rowid INTEGER PRIMARY KEY, user_id INT, from_route TEXT, to_route TEXT,  year INT, month INT, day INT, hour INT, minute INT, second INT, type TEXT, data TEXT, FOREIGN KEY (user_id) REFERENCES users(id));
+CREATE TABLE sessions (
+    rowid INTEGER PRIMARY KEY, 
+    user_id INT, 
+    from_route TEXT, 
+    to_route TEXT,  
+    year INT, 
+    month INT, 
+    day INT, 
+    hour INT, 
+    minute INT, 
+    second INT, 
+    type TEXT, 
+    data TEXT, 
+    FOREIGN KEY (user_id) REFERENCES users(id));
 ```
 #####
 To change role of any user go to route "/change_role?key=*KEY_CHANGE_ROLE_LIST*". Than hit the button, enter *KEY_CHANGE_ROLE*, pass reCAPTCHA.
