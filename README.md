@@ -2,7 +2,10 @@
 #### Description: web app to manage appointments for manicure or pedicure in nail studio.  
 #### Each client has an account. Clients can book or cancel appointments and edit their information (name, telephone, etc.). Administrators can confirm, edit, cancel, or mark appointments as done. They can also edit client information and manage available time in the calendar by adding or removing slots.
 ###
-This is a final project of **[Harvard CS50](https://pll.harvard.edu/course/cs50-introduction-computer-science)** course. 
+This was a final project of **[Harvard CS50](https://pll.harvard.edu/course/cs50-introduction-computer-science)** course.
+Now it is learn-by-dooing project.
+If you are going to participate take a look at /docs/
+
 ###
 **Technologies:**
 * flask (jinja)
@@ -14,8 +17,13 @@ This is a final project of **[Harvard CS50](https://pll.harvard.edu/course/cs50-
 * JavaScript 
 * google reCAPTCHA
 ###
-**planing canges (to do list):**
-take a look at issues (GitHub)
+**some plans:**
+* get rid of jQuery and moment.js
+* rebuild app with Django
+* deploy project
+take a look at issues (GitHub) or related project
+**[Kanban](https://github.com/users/cootook/projects/1/views/1)**
+
 ###
 **features:**
 * optimized for small screens
@@ -39,7 +47,6 @@ take a look at issues (GitHub)
 * sign up with Google
 * instagram bot
 * admin can add articles
-* add user *editor* to manage *articles* and *about* 
 * create Android app
 * create iOS app
 ###
