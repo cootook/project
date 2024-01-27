@@ -41,15 +41,16 @@ It logs all atempts in database before returning.
 If applied, this commit will *\<your subject line here\>*
 
 ### Use folowing prefixes for summary:
-feat: - when some new features added 
-refactor: 
-fix: - when fixing or deleting commented and unused code
-docs: - when README, files in /docs/ or usefull comments added (edited)
-init: - the first commit
-debug: - when code added for debugging
 db: - when data base related code changed/adde that is not part of app logic
-test: 
+debug: - when code added for debugging
+docs: - when README, files in /docs/ or usefull comments added (edited)
+feat: - when some new features added 
+fix: - when fixing or deleting commented and unused code
+git: 
+init: - the first commit
+refactor: 
 style: - when styles only are edited
+test: 
 
 ### Rules for a great git commit message style
 * Separate subject from body with a blank line
