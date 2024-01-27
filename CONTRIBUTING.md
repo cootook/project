@@ -18,7 +18,7 @@ In my mind [dev](https://github.com/cootook/project/tree/dev) is beta, and [main
 Python should be installed, virtual environment created and activated.
 #####
 *requirements.txt* contains info about modules and extensions to be installed for this app.
-[Install](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#using-a-requirements-file) modules.
+[Install](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#using-a-requirements-file){:target="_blank"} modules.
 #####
 Configure *.env* for setting environment variables:
 ```
@@ -35,7 +35,7 @@ KEY_CHANGE_ROLE=*
 ```
 #####
 ### Create data base file in the root directory, name it "db.db"
-It is SQLite. Python has a [module](https://docs.python.org/3/library/sqlite3.html) for this already.
+It is SQLite. Python has a [module](https://docs.python.org/3/library/sqlite3.html){:target="_blank"} for this already.
 #####
 
 ### Database schema

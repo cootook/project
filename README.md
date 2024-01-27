@@ -1,6 +1,6 @@
 # *learn-by-doing* project
 #####
-### This was a final project of **[Harvard CS50](https://pll.harvard.edu/course/cs50-introduction-computer-science)** course.
+### This was a final project of **[Harvard CS50](https://pll.harvard.edu/course/cs50-introduction-computer-science){:target="_blank"}** course.
 Now it is learn-by-doing project. The goal is to bridge the gap between learning how to code and launching a success career.
 The main part of this is to create real-world-like environment for learners. 
 

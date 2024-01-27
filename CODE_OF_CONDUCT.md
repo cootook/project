@@ -114,16 +114,16 @@ community.
 
 ## Attribution
 
-This Code of Conduct is adapted from the [Contributor Covenant][homepage],
+This Code of Conduct is adapted from the [Contributor Covenant][homepage]{:target="_blank"},
 version 2.1, available at
-[https://www.contributor-covenant.org/version/2/1/code_of_conduct.html][v2.1].
+[https://www.contributor-covenant.org/version/2/1/code_of_conduct.html][v2.1]{:target="_blank"}.
 
 Community Impact Guidelines were inspired by
-[Mozilla's code of conduct enforcement ladder][Mozilla CoC].
+[Mozilla's code of conduct enforcement ladder][Mozilla CoC]{:target="_blank"}.
 
 For answers to common questions about this code of conduct, see the FAQ at
-[https://www.contributor-covenant.org/faq][FAQ]. Translations are available at
-[https://www.contributor-covenant.org/translations][translations].
+[https://www.contributor-covenant.org/faq][FAQ]{:target="_blank"}. Translations are available at
+[https://www.contributor-covenant.org/translations][translations]{:target="_blank"}.
 
 [homepage]: https://www.contributor-covenant.org
 [v2.1]: https://www.contributor-covenant.org/version/2/1/code_of_conduct.html
