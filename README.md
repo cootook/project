@@ -28,9 +28,9 @@ Also take a look at [Contributing.md](/CONTRIBUTING.md) to get info about instal
 #####
 **some plans:**
 * get rid of jQuery and moment.js
+* use Flask Security Too
 * rebuild app with Django
 * deploy project
-take a look at issues (GitHub) or related project
 #####
 **features:**
 * optimized for small screens
