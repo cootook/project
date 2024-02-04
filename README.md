@@ -40,6 +40,7 @@ Also take a look at [Contributing.md](/CONTRIBUTING.md) to get info about how to
 
 #### Description: 
 Web app to manage appointments, client's info, content. Current version is for manicure or pedicure in nail studio of one nail technician. In the future we are going to make it editable via admin panel. So the app can be adapted for any purpose.
+
 ![home page](/docs/images/calendar.png)
 
 #### What the app has now:
