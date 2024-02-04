@@ -36,14 +36,34 @@ If you are going to participate we assume you are accepting [![Contributor Coven
 
 Also take a look at [Contributing.md](/CONTRIBUTING.md) to get info about how to participate.
 
-# project
-### create a booking app
+### we create a booking app
 
 #### Description: 
 Web app to manage appointments, client's info, content. Current version is for manicure or pedicure in nail studio of one nail technician. In the future we are going to make it editable via admin panel. So the app can be adapted for any purpose.
+![home page](/docs/images/calendar.png)
 
 #### What the app has now:
-Each client has an account. Clients can book or cancel appointments and edit their information (name, telephone, etc.). Administrators can confirm, edit, cancel, or mark appointments as done. They can also edit client information and manage available time in the calendar by adding or removing slots.
+Each client has an account.
+
+![creating account](/docs/images/signup.png)
+
+![creating account](/docs/images/signup_filled.png)
+
+![account](/docs/images/account.png)
+
+Clients can book or cancel appointments and edit their information (name, telephone, etc.). 
+
+![request for an appointment](/docs/images/request.png)
+
+![appointment](/docs/images/appointment.png)
+
+Administrators can confirm, edit, cancel, or mark appointments as done. They can also edit client information and manage available time in the calendar by adding or removing slots.
+
+![make admin](/docs/images/make_admin.png)
+
+![windows](/docs/images/windows.png)
+
+![admin view of appointments](/docs/images/apointment_admin_view.png)
 
 #### What would be good to add:
 * content management system for editing articles
@@ -84,7 +104,7 @@ Each client has an account. Clients can book or cancel appointments and edit the
 * protected from bots with Google reCAPTCHA
 * email sender (Python mail)
 
-##### **future features:**
+#### **future features:**
 * email notification and confirmation
 * HTTPS
 * write logs into db
@@ -98,5 +118,11 @@ Each client has an account. Clients can book or cancel appointments and edit the
 * create Android app
 * create iOS app
 
+### **Documentations**
+* rules of the community: [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](/CODE_OF_CONDUCT.md)
+* guide how to participate: [Contributing.md](/CONTRIBUTING.md)
+* how to write commit message: [commit](/docs/commit_message_format.md)
+* app functions docs: [helpers](/docs/helpers_functions.md), [route_handlers](/docs/route_handlers.md)
+* license MIT: [LICENSE](/LICENSE)
 
 ##### This project is not deployed yet. 

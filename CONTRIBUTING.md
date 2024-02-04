@@ -37,15 +37,20 @@ KEY_CHANGE_ROLE_LIST=*
 KEY_CHANGE_ROLE=*
 ```
 
-Create data base file in the root directory, name it "db.db"
+Create data base file in the root directory, name it "db.db". Or you can copy and rename file [_db.db](/docs/files/_db.db) where all tables exist, also there are two users:
+* admin: login ```admin@name.name``` password ```Newuser12345```
+* user: login ```admin@name.name``` password ```Newuser12345```
+
 It is SQLite. Python has a [module](https://docs.python.org/3/library/sqlite3.html) for this already. Odds aer we will use SQL Alchemy in the future.
+To read database file you can use VScode extension [SQLite Viewer](https://marketplace.visualstudio.com/items?itemName=qwtel.sqlite-viewer).
 
 ### Database schema
 
 ```
 CREATE TABLE users (
     id INTEGER PRIMARY KEY, 
-    is_admin INT, is_editor INT, 
+    is_admin INT, 
+    is_editor INT, 
     name TEXT, email TEXT, 
     lang TEXT, instagram TEXT, 
     tel TEXT, 
@@ -112,7 +117,7 @@ CREATE TABLE sessions (
     FOREIGN KEY (user_id) REFERENCES users(id));
 ```
 
-To change role of any user go to route "/change_role?key=```KEY_CHANGE_ROLE_LIST```*. Than hit the button, enter ```KEY_CHANGE_ROLE```, pass reCAPTCHA.
+To change role of any user go to route "/change_role?key=```KEY_CHANGE_ROLE_LIST```". Than hit the button, enter ```KEY_CHANGE_ROLE```, pass reCAPTCHA.
 
 
 ### **ATTENTION**
