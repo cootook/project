@@ -1,19 +1,20 @@
 ## hello there!
 ####
-This is a learning project, so any roles are welcome
+This is a learning project, so any contributors are welcome
 ####
 It would be great if you share some knowledge and experience.
 Feel free to expose your ideas.
 If you are experienced dev please show the right direction for our efforts, roast our mistakes.
 #####
 [Here](https://github.com/users/cootook/projects/1/views/1) is kanban for this project.
-You can pick up something or make a review. Also you can add something via [issues](https://github.com/cootook/project/issues) .
+You can pick up something or make a review. Also you can add something via [issues](https://github.com/cootook/project/issues) using templates.
 #####
 ## get started
 For vast majority of issues (tickets) we create a branch. 
 All PR are merging into [dev](https://github.com/cootook/project/tree/dev) branch, after testing this branch merges into [main](https://github.com/cootook/project/tree/main) branch. So [main](https://github.com/cootook/project/tree/main) is the last working version. 
 When really big changes are made we create a new branch from [main](https://github.com/cootook/project/tree/main) for previous version. 
-In my mind [dev](https://github.com/cootook/project/tree/dev) is beta, and [main](https://github.com/cootook/project/tree/main) is alfa.
+In my mind [dev](https://github.com/cootook/project/tree/dev) is beta, and [main](https://github.com/cootook/project/tree/main) is a release candidate. Any other branch is OLD VERSION or alfa.
+There is no such thing as testing in this project yet. 
 #####
 Python should be installed, virtual environment created and activated.
 #####
@@ -111,6 +112,10 @@ CREATE TABLE sessions (
 ```
 #####
 To change role of any user go to route "/change_role?key=*KEY_CHANGE_ROLE_LIST*". Than hit the button, enter *KEY_CHANGE_ROLE*, pass reCAPTCHA.
+
+#####
+### **ATTENTION**
+When you are switching branches ignored by git files can be lost. So keep a copy of them somewhere. If you know how to automate this proses or to do it other way share please.
 
 ## while doing
 #####
