@@ -182,9 +182,7 @@
         //var slot_time = day
         day.hour(slot[0])
         //var slot_time = 
-        day.minute(slot[1])
-        console.log(day.format('h:mm a'))
-        
+        day.minute(slot[1])        
 
         var div = createElement('div', 'event');
         var square = createElement('div', 'event-category yellow');
@@ -340,8 +338,7 @@
                 // modal_button.setAttribute("value", ev.date.format('h:mm a'))
                 modal_button.innerText = ev.date.format('llll')
                 div.appendChild(modal_button);
-                console.log("##modal")
-                console.log(modal_button)}
+                }
         else if (action_path == "/windows/") {
           
         var form = createElement('form');
@@ -472,16 +469,12 @@
   }();
   
   !function() {
-    // [ [title, calendar, color, date] ]
-    // "SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=? AND month>=? AND hour>=?"
-    filtered_slots = []
-    console.log(moment().month())
+    filtered_slots = []    
     slots.forEach((slot) => {
       if (slot[1] < moment().year()) {
         
         return
-      } else if (slot[1] == moment().year() && slot[2] < moment().month()+1) {
-        console.log(slot)
+      } else if (slot[1] == moment().year() && slot[2] < moment().month()+1) {        
         return
       } else if (slot[1] == moment().year() && slot[2] == moment().month()+1 && slot[3] < moment().date()) {
         return

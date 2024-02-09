@@ -1,0 +1,157 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Change role
+{% endblock %}
+
+{% block custom_styles %} 
+  <style>
+    .my-table-hover { cursor: pointer; }
+    table { overflow: scroll; }
+  </style>
+{% endblock %}
+
+{% block content %}
+<table class="table">
+    <thead>
+      <tr class="text-danger">
+        <th scope="col">ID</th>
+        <th scope="col">User</th>
+        <th scope="col">Admin</th>
+        <th scope="col">Editor</th>
+      </tr>
+    </thead>
+    <tbody class="text-white">
+        {% for client in clients %}        
+            <tr>
+                <th scope="row">{{client["id"]}}</th>
+                <td>{{client["name"]}} <small> {{client["instagram"]}}</small></td>
+                <td>
+                    {% if client["is_admin"] == 0 %}
+                        <button type="button" 
+                            class="m-1 w-100 btn btn-lg btn-warning py-1 mb-1" 
+                            data-toggle="modal" 
+                            data-target="#role_modal" 
+                            data-id="{{client["id"]}}" 
+                            data-name="{{client["name"]}}" 
+                            data-instagram="{{client["instagram"]}}"
+                            data-action="make_admin"
+                        >
+                            make admin
+                        </button>
+                    {% else %}
+                        <button type="button" 
+                        class="m-1 w-100 btn btn-lg btn-danger py-1 mb-1" 
+                        data-toggle="modal" 
+                        data-target="#role_modal" 
+                        data-id="{{client["id"]}}" 
+                        data-name="{{client["name"]}}" 
+                        data-instagram="{{client["instagram"]}}"
+                        data-action="discard_admin"
+                        >
+                            discard admin
+                        </button>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if client["is_editor"] == 0 %}
+                        <button type="button" 
+                            class="m-1 w-100 btn btn-lg btn-warning py-1 mb-1" 
+                            data-toggle="modal" 
+                            data-target="#role_modal" 
+                            data-id="{{client["id"]}}" 
+                            data-name="{{client["name"]}}" 
+                            data-instagram="{{client["instagram"]}}"
+                            data-action="make_editor"
+                        >
+                            make editor
+                        </button>
+                    {% else %}
+                        <button type="button" 
+                        class="m-1 w-100 btn btn-lg btn-danger py-1 mb-1" 
+                        data-toggle="modal" 
+                        data-target="#role_modal" 
+                        data-id="{{client["id"]}}" 
+                        data-name="{{client["name"]}}" 
+                            data-instagram="{{client["instagram"]}}"
+                        data-action="discard_editor"
+                        >
+                            discard editor
+                        </button>
+                    {% endif %}
+                </td>
+            </tr>               
+        {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="modal fade" id="role_modal" tabindex="-1" role="dialog" aria-labelledby="book_confirm_modal_lable" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <form id="role_form" action="/change_role/" method="post">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title" id="role_modal_lable">Confirm change </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+                    
+            <input type="hidden" name="user_id" id="user_id" value="">
+            <input type="hidden" name="action" id="action" value="">
+            <div class="m-3">
+                <span>Action: </span><span id="action_info"></span>
+                <div  id="user_info"></div>
+            </div>
+
+            
+            <div class="m-3">
+                <input type="text" name="key" id="key" required>
+                <label class="form-check-label" for="key">enter KEY_CHANGE_ROLE</label>
+            </div>
+            
+        </div>
+        <div class="g-recaptcha" data-sitekey="6LcAhk0pAAAAADEntGbuUrciamFKU4bQFO_mqokV" data-callback="enable_submit_change" data-expired-callback="disable_submit_change"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            id="submit_change_btn"
+            disabled>
+            Confirm
+          </button>
+        </div>
+      </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function disable_submit_change() {
+        document.getElementById("submit_change_btn").disabled = true    
+    }
+    
+    function enable_submit_change() {
+        document.getElementById("submit_change_btn").disabled = false
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        $('#role_modal').on('show.bs.modal', function (event) {
+          var user_to_change = $(event.relatedTarget) // Button that triggered the modal
+          var user_id_modal = user_to_change.data('id')
+          var user_action_modal = user_to_change.data('action')
+          var user_name_modal = user_to_change.data('name')
+          var user_instagram_modal = user_to_change.data('instagram')
+
+          var modal = $(this)
+          modal.find('#user_id').val(user_id_modal)
+          modal.find('#action').val(user_action_modal)
+          modal.find('#user_info').text(" " + user_name_modal + " " + user_instagram_modal)
+          modal.find('#action_info').text(user_action_modal)
+    
+          document.getElementById("submit_change_btn").disabled = true
+        })
+    })
+  </script>
+{% endblock %}

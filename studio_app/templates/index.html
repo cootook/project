@@ -16,7 +16,7 @@ Liza Nail Studio
 {% include 'calendar.html' %}
 <div class="modal fade" id="book_confirm_modal" tabindex="-1" role="dialog" aria-labelledby="book_confirm_modal_lable" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <form action="/book/" method="post">
+    <form id="book_form" action="/book/" method="post">
     <div class="modal-content bg-dark">
       <div class="modal-header">
         <h5 class="modal-title" id="book_confirm_modal_lable">Confirm request</h5>
@@ -49,9 +49,16 @@ Liza Nail Studio
             <textarea class="form-control" id="message-text" name="message-text"></textarea>
           </div>
       </div>
+      <div class="g-recaptcha" data-sitekey="6LcAhk0pAAAAADEntGbuUrciamFKU4bQFO_mqokV" data-callback="enable_submit_book" data-expired-callback="disable_submit_book"></div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Request appointment</button>
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          id="submit_booking_btn"
+          disabled>
+          Request appointment
+        </button>
       </div>
     </div>
     </form>

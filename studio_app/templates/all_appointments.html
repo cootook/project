@@ -8,27 +8,7 @@
 Appointsments
 {% endblock %}
 {% block content %}
-<script>var user_appoint = {{user_appoint | safe}}; console.log(user_appoint); </script>
-<!-- [
-0    "Not admin Dmitrii",
-1    6,
-2    "combo",
-3    404,
-4    0,
-5    0,
-6    0,
-7    120,
-8    2024,
-9    1,
-10    10,
-11    11,
-12    30,
-13    "hi!",
-14    "zibubu",
-15    "1763"
-16    "Sun 31 Dec - 10:00 AM"
-17    1
-] -->
+<script>var user_appoint = {{user_appoint | safe}};</script>
 
 {% for appointment in user_appoint %}
 <div class="container py-2 bg-transparent">
@@ -223,6 +203,5 @@ Appointsments
     </div>
   </div>
   <script src="{{ url_for('static', filename='/js/all_appointments.js') }}"></script>
-
 
 {% endblock %}

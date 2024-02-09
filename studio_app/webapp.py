@@ -1,7 +1,11 @@
+import os
 import re
 import sqlite3
 import datetime
+import smtplib, ssl
 
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from calendar import monthrange
 from datetime import timedelta, date
 from flask import Flask, flash, redirect, render_template, request, session
@@ -9,6 +13,7 @@ from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
 from .rout_handlers import *
+# from flask_mail import Mail, Message
 
 app = Flask(
                 __name__,
@@ -22,6 +27,15 @@ app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
 app.config['SESSION_FILE_THRESHOLD'] = 250
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=90)
+
+app.config['MAIL_SERVER'] = 'smtp.yandex.com'
+app.config['MAIL_PORT'] = 465
+# app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_APP_KEY')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
+# mail = Mail(app)
+
 Session(app)
 
 app.register_error_handler(404, page_not_found)
@@ -45,6 +59,92 @@ def inject_navbar_items_not_loged_in():
 @app.context_processor
 def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
+
+# @app.route("/test_mail/", methods=["GET", "POST"])
+# @login_required
+# def test_mail():
+#     recipient = "cootook@gmail.com"
+#     msg = Message('Test Email', recipients=[recipient])
+#     msg.body = ('Congratulations! You have sent a test email with '
+#                 'Yandex')
+#     msg.html = ('<h1>Test Email</h1>'
+#                 '<p>Congratulations! You have sent a test email with '
+#                 '<b>Yandex</b>!</p>')
+#     mail.send(msg)
+#     flash(f'A test message was sent to {recipient}.')
+#     return redirect("/")
+
+
+@app.route("/test_mail_py/", methods=["GET", "POST"])
+@login_required
+def test_mail_py():
+    mail_server = os.environ.get('MAIL_SERVER')
+    receiver = "cootook@gmail.com"
+    sender = "matveising@ya.ru"
+    port = os.environ.get('MAIL_PORT')
+    username = os.environ.get('MAIL_USERNAME')
+    password = os.environ.get('MAIL_APP_KEY')
+    message = MIMEMultipart("alternative")
+    # message.set_content("This message is sent from Python.")
+    message['Subject'] = 'Test of sending via Python'
+    message['To'] = "cootook@gmail.con"
+    message['From'] = "Liza nail studio <matveising@ya.ru>"
+
+    text = """\
+    Hi,
+    This is a plain text.
+    """
+    html = """\
+    <html>
+    <body>
+        <p>Hi,<br>
+        This is HTML<br>
+        <a href="https://github.com/cootook">my GitHub</a> 
+        </p>
+    </body>
+    </html>
+    """
+
+    part1 = MIMEText(text, "plain")
+    part2 = MIMEText(html, "html")
+
+    message.attach(part1)
+    message.attach(part2)
+
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL("smtp.yandex.com", port, context=context) as server:
+        server.login(username, password)
+        server.sendmail(sender, receiver, message.as_string())
+
+    # msg = EmailMessage()
+    # msg.set_content("test message python")
+
+    # # me == the sender's email address
+    # # you == the recipient's email address
+    # msg['Subject'] = f'Test of sending'
+    # msg['From'] = "cootook@gmail.con"
+    # msg['To'] = "matveising@ya.ru"
+
+    # # Send the message via our own SMTP server.
+    # s = smtplib.SMTP("127.0.0.1")
+
+    # username = os.environ.get('MAIL_USERNAME')
+    # password = os.environ.get('MAIL_APP_KEY')
+    # server = smtplib.SMTP('smtp.yandex.com:465')
+    # server.ehlo()
+    # server.starttls()
+    # server.login(username,password)
+    # server.sendmail(fromaddr, toaddrs, msg)
+    # server.quit()
+
+    # s.send_message(msg)
+    # s.quit()
+
+
+    flash(f'A test message was sent to {receiver}.')
+    return redirect("/")
+
 
 @app.route("/")
 def home():
@@ -105,9 +205,20 @@ def _book():
 
 @app.route("/cancel_appointment/", methods = ["POST"])
 @login_required
-@admin_only
 def _cancel_appointment():
     return cancel_appointment.cancel_appointment()
+
+
+@app.route("/change_password/", methods = ["GET", "POST"])
+@login_required
+def _change_password():
+    return change_password.change_password()
+
+
+@app.route("/change_role/", methods = ["GET", "POST"])
+@login_required
+def _change_role():
+    return change_role.change_role()
 
 
 @app.route("/clients/", methods=["GET", "POST"])
@@ -242,7 +353,6 @@ def pricing():
 def signin():
     if request.method == "POST":
         try:
-
             login = request.form.get("login")
             password = request.form.get("password")
             remember = request.form.get("remember")
@@ -268,53 +378,67 @@ def signin():
 
 @app.route("/signup/", methods = ["GET", "POST"])
 @not_loged_only
-def signup():
+def _signup():
+    return signup.signup()
+# def signup():
 
-    try:
-        if request.method == "POST":
-            instagram = request.form.get("instagram")
-            tel_number = request.form.get("tel_number")
-            login = request.form.get("login")
-            password = request.form.get("password")
-            confirmation = request.form.get("confirmation")
+#     try:
+#         if request.method == "POST":
+#             instagram = request.form.get("instagram")
+#             tel_number = request.form.get("tel_number")
+#             login = request.form.get("login")
+#             password = request.form.get("password")
+#             confirmation = request.form.get("confirmation")
 
-            is_pass_ok = (password == confirmation) and validate_password(password)
-            is_instagram_ok = len(instagram) >= 3
-            is_tel_ok = len(tel_number) >= 10
-            regex_email = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-            is_login_ok = (re.fullmatch(regex_email, login) != None)
+#             is_pass_ok = (password == confirmation) and validate_password(password)
+#             is_instagram_ok = len(instagram) >= 3
+#             is_tel_ok = len(tel_number) >= 10
+#             regex_email = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+#             is_login_ok = (re.fullmatch(regex_email, login) != None)
 
-            if not is_pass_ok or not is_instagram_ok or not is_tel_ok or not is_login_ok:
-                return render_template("apology.html", error_message="Something went wrong. Try again or contact us. SignUp")
-        else:
-            return render_template("signup.html")
-    except Exception as er:
-        print("### ERROR signup: request.form, validation")
-        print(er)
-        return render_template("apology.html", error_message="Something went wrong.")
-    else:   
-        try:       
-            con = sqlite3.connect("./db.db") 
-            cur = con.cursor()
-            if does_user_exist(login, cur):            
-                error_message = "Email " + login + " already registred, try restore password instead."
-                con.close()
-                return render_template("apology.html", error_message=error_message)
-            #insert new user to db
-            cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
-            user_id = cur.execute("SELECT id FROM users WHERE email=?", (login,)).fetchone()[0]
-            password_hash = generate_password_hash(password)
-            cur.execute("INSERT INTO login (user_id, hash) VALUES (?, ?)", (user_id, password_hash))
-        except Exception as er:
-            print("###/signup/ --insert new user to db")
-            print(er)
-            con.close()
-            return render_template("apology.html", error_message="Something went wrong. Try again or contact us.") 
-        else:
-            log_user_in(login, password, cur)
-            con.commit()
-            con.close()            
-            return redirect("/")
+#             if not is_pass_ok or not is_instagram_ok or not is_tel_ok or not is_login_ok:
+#                 return render_template("apology.html", error_message='''
+#                                        Password must contain:</br>
+#                                        - a lowercase letter</br>
+#                                        - a capital (uppercase) letter</br>
+#                                        - a number</br>
+#                                        - minimum 6 characters.</br>
+#                                        </br>
+#                                        Instagramm name should be valid.</br>
+#                                         </br>
+#                                        Telephone at leats 10 digits.</br>
+#                                         </br>
+#                                        Email adress.</br>
+#                                        ''')
+#         else:
+#             return render_template("signup.html")
+#     except Exception as er:
+#         print("### ERROR signup: request.form, validation")
+#         print(er)
+#         return render_template("apology.html", error_message="Something went wrong.")
+#     else:   
+#         try:       
+#             con = sqlite3.connect("./db.db") 
+#             cur = con.cursor()
+#             if does_user_exist(login, cur):            
+#                 error_message = "Email " + login + " already registred, try restore password instead."
+#                 con.close()
+#                 return render_template("apology.html", error_message=error_message)
+#             #insert new user to db
+#             cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
+#             user_id = cur.execute("SELECT id FROM users WHERE email=?", (login,)).fetchone()[0]
+#             password_hash = generate_password_hash(password)
+#             cur.execute("INSERT INTO login (user_id, hash) VALUES (?, ?)", (user_id, password_hash))
+#         except Exception as er:
+#             print("###/signup/ --insert new user to db")
+#             print(er)
+#             con.close()
+#             return render_template("apology.html", error_message="Something went wrong. Try again or contact us.") 
+#         else:
+#             log_user_in(login, password, cur)
+#             con.commit()
+#             con.close()            
+#             return redirect("/")
     
 @app.route("/logout/")
 @login_required
