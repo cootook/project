@@ -6,10 +6,7 @@ Clients
 
 {% block custom_styles %} 
   <!-- Custom styles for this template -->
-  <style>
-    .my-table-hover { cursor: pointer; }
-    table { overflow: scroll; }
-  </style>
+  <link href="{{ url_for('static', filename='/css/clients.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
