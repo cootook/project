@@ -63,7 +63,7 @@ It is registered
 ```
 app.register_error_handler(404, page_not_found)
 ```
-It uses existing template ```[apology.html](../studio_app/templates/apology.html)``` to show error "404 - page not fond".
+It uses existing template [apology.html](../studio_app/templates/apology.html) to show error "404 - page not fond".
 
 ### *validate_recaptcha (token)*:
 It validates Google reCAPTCHA v.2, returns ```True``` if reCAPTCHA passed successfully or ```False``` if not. 
