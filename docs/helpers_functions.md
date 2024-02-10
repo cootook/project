@@ -54,43 +54,28 @@ As long as [Flask-Session](https://flask-session.readthedocs.io/en/latest/) exte
 The data that is required to be saved in the Session is stored in a temporary directory on the server.
 
 ### log_user_out():
-    session["user_id"] = None
-
-
-
+Clears current Session.
 
 
 ### page_not_found(e):
-  error_message  = "404 - page not fond"
-  return render_template('apology.html', error_message = error_message), 404
+It is a error handler for error ```404```
+It is registered 
+```
+app.register_error_handler(404, page_not_found)
+```
+It uses existing template ```[apology.html](../studio_app/templates/apology.html)``` to show error "404 - page not fond".
 
 ### validate_recaptcha (token):
-    try:
-        url = "https://www.google.com/recaptcha/api/siteverify"
-        params = {
-        "secret": os.environ.get('SECRET_RECAPTCHA'),
-        "response": token
-        }
-
-        recaptcha = requests.post(url, params)
-        recaptcha_respond_dict = json.loads(recaptcha.text)
-
-        if not recaptcha_respond_dict['success']:
-            return False
-        else: 
-            return True
-    except Exception as er:
-        print("#helpers.validate_recaptchs ---recaptcha request")
-        print(er)
-        return  False
+It validates Google reCAPTCHA v.2, returns ```True``` if reCAPTCHA passed successfully or ```False``` if not. 
+It gets one parameter ```token```.
+Token comes with submitted form where reCAPTCHA was exposed.
+The function requests ```secret``` from environment:
+```
+os.environ.get('SECRET_RECAPTCHA')
+```
+SECRET_RECAPTCHA variable is declared in ```.env``` file.
 
 ### validate_password (password):
-    is_lower = re.search("[a-z]", password) != None
-    is_capital = re.search("[A-Z]", password) != None
-    is_number = re.search("[0-9]", password) != None
-    is_length = len(password) >= 6
-    if is_lower and is_capital and is_number and is_length:
-        return True
-    else:
-        return False
-
+It checks if the ```password``` string contains all required symbols and is proper length.
+It gets one parameter ```password```, string.
+It returns ```True``` if validation passed or ```False``` if not.
