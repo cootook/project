@@ -5,7 +5,7 @@
 ### *admin_only*:
 ```admin_only``` goes before route handler function and prevent access for users that are not administrators, redirects to home page if not admin tries to view the route.
     
-### login_required:
+### *login_required*:
 ```login_required``` goes before route handler function and prevent access of not logged in visitors to the route, redirects to ```/signin``` if not logged in.
 
 ### *not_loged_only(f)*:
