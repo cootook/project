@@ -26,6 +26,16 @@
       height: 90%;
       overflow: hidden;
     }
+
+    .btn-calendar {
+      background-color: lightgreen;
+      color: black;
+      height: 2em;
+      vertical-align: middle;
+      padding-left: 1em;
+      padding-right: 1em;
+      padding-top: 0.2em;
+    }
     
     .header {
       height: 50px;

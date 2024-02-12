@@ -78,6 +78,7 @@ def log_user_in(login, password, cursor):
 
 def log_user_out():
     session["user_id"] = None
+    session.clear()
 
 def login_required(f):
     @wraps(f)

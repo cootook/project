@@ -1,0 +1,6 @@
+.nav-link {
+    transition: font-weight .3s;
+}
+.nav-link:hover {
+    font-weight: 400;
+}
