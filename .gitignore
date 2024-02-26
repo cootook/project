@@ -2,6 +2,7 @@ studio_app/__pycache__/
 flask_session/
 .env
 db.db
+db_v2.db
 project.code-workspace
 .vscode
 .venv
