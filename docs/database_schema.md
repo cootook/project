@@ -13,17 +13,17 @@ Table appointment {
   service_id integer [not null, ref: <> service.id]
   at datetime [not null]
   price float 
-  deposit_needed bool [not null]
+  deposit_needed bool [not null, default: false]
   deposit float
   slot_id integer [ref: <> slot.id]
-  amount_time_min integer [not null]
-  done bool [not null]
+  amount_time_min integer [not null, default: 90]
+  done bool [not null, default: false]
   done_by integer [ref: <> user.id] 
   done_at datetime 
-  approved bool [not null]
+  approved bool [not null, default: false]
   approved_by integer [ref: <> user.id]
   approved_at datetime 
-  canceled bool [not null]
+  canceled bool [not null, default: false]
   canceled_by integer [ref: <> user.id]
   canceled_at datetime
   lust_update_at datetime
@@ -37,7 +37,13 @@ Table booking_message {
   author_id integer [not null, ref: <> user.id]
   at datetime [not null]
   edited_at datetime
-  deleted bool [not null]
+  deleted bool [not null, default: false]
+}
+
+Table language {
+  id integer [primary key]
+  name string [not null, unique]
+  description string
 }
 
 Table notification_type {
@@ -51,7 +57,7 @@ Table payment {
   method_id integer [not null, ref: <> payment_method.id]
   type_id integer [not null, ref: <> payment_type.id]
   amount float [not null]
-  payed bool [not null]
+  payed bool [not null, default: false]
   status_id integer [ref: <> payment_status.id]
   accepted_by integer [not null, ref: <> user.id]
   payed_by integer [not null, ref: <> user.id]
@@ -100,10 +106,10 @@ Table service_role {
 Table slot {
   id integer [primary key] 
   date_time datetime [not null]
-  open bool [not null]
+  open bool [not null, default: false]
   opened_by integer [not null, ref: <> user.id]
   opened_at datetime [not null]
-  occupied bool [not null]
+  occupied bool [not null, default: false]
   occupied_by_appoint integer [ref: <> appointment.id]
 }
 
@@ -120,12 +126,14 @@ Table user {
   current_login_ip string
   login_count integer
   mf_recovery_codes list
-  name string [not null]
-  lang string [not null]
+  name string [not null]  
   instagram string [not null]
   tel string [not null]
+  language_id integer [ref: <> language.id]
   internal_description string
   picture_path string
+  lust_update_at datetime
+  lust_update_by integer [ref: <> user.id]
 }
 
 Table user_notification {
@@ -141,5 +149,4 @@ Table user_role {
   set_by integer [not null, ref: <> user.id]
   set_at datetime [not null]
 }
-
 ```
