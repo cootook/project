@@ -17,8 +17,10 @@ from studio_app.helpers import log_user_in, log_user_out, login_required, valida
 from .rout_handlers import *
 
 # flask security
-from sqlalchemy import Integer, String, ForeignKey
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+import sqlalchemy as sa
+
+# from sqlalchemy import Integer, String, ForeignKey
+# from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 app = Flask(
                 __name__,
@@ -68,13 +70,42 @@ def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
 
 # classes
-class Base(DeclarativeBase):
+class Base(sa.orm.DeclarativeBase):
     pass
 
-class User(Base):
-    __tablename__ = "users"
+class Appointment(Base):
+    __tablename__ = "appointment"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    user_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    service_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
+    price: sa.orm.Mapped[float]
+    deposit_needed: sa.orm.Mapped[bool] = sa.orm.mapped_column(server_default=False)
+    deposit: sa.orm.Mapped[float] = sa.orm.mapped_column(nullable = True)
+    slot_id: sa.orm.Mapped[float]
+    amount_time_min: sa.orm.Mapped[int] = sa.orm.mapped_column(server_default = 90, nullable = False)
+    done: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
+    done_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True) 
+    done_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
+    approved: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
+    approved_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True)
+    approved_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
+    canceled: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
+    canceled_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True)
+    canceled_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True)
+    lust_update_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True)
+    lust_update_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True)
+    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "")
 
-    
+class Booking_message:
+  __tablename__ = "booking_message"
+#   id integer [primary key]
+#   appoint_id integer [not null, ref: <> appointment.id]
+#   author_id integer [not null, ref: <> user.id]
+#   at datetime [not null]
+#   edited_at datetime
+#   deleted bool [not null, default: false]
+
 
 
 @app.route("/test_mail_py/", methods=["GET", "POST"])

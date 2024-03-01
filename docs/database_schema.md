@@ -1,4 +1,4 @@
-# Databsse schema
+# Database schema
 
 Here is a description of db_v2.db
 
