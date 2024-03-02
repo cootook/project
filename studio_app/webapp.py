@@ -79,11 +79,11 @@ class Appointment(Base):
     user_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
     service_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
     at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
-    price: sa.orm.Mapped[float]
-    deposit_needed: sa.orm.Mapped[bool] = sa.orm.mapped_column(server_default=False)
+    price: sa.orm.Mapped[float] = sa.orm.mapped_column(nullable = True)
+    deposit_needed: sa.orm.Mapped[bool] = sa.orm.mapped_column(default=False)
     deposit: sa.orm.Mapped[float] = sa.orm.mapped_column(nullable = True)
-    slot_id: sa.orm.Mapped[float]
-    amount_time_min: sa.orm.Mapped[int] = sa.orm.mapped_column(server_default = 90, nullable = False)
+    slot_id: sa.orm.Mapped[float] = sa.orm.mapped_column(nullable = False)
+    amount_time_min: sa.orm.Mapped[int] = sa.orm.mapped_column(default = 90, nullable = False)
     done: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
     done_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True) 
     done_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
@@ -95,17 +95,73 @@ class Appointment(Base):
     canceled_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True)
     lust_update_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True)
     lust_update_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True)
-    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "")
+    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
 
 class Booking_message:
-  __tablename__ = "booking_message"
-#   id integer [primary key]
-#   appoint_id integer [not null, ref: <> appointment.id]
-#   author_id integer [not null, ref: <> user.id]
-#   at datetime [not null]
-#   edited_at datetime
-#   deleted bool [not null, default: false]
+    __tablename__ = "booking_message"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    appoint_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    author_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
+    edited_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True)
+    deleted: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
 
+class Language:
+    __tablename__ = "language"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
+    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+
+class Notification_type:
+    __tablename__ = "notification_type"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
+    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+
+class Payment:
+    __tablename__ = "payment"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    method_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    type_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    amount: sa.orm.Mapped[float] = sa.orm.mapped_column(nullable = False)
+    payed: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
+    status_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    accepted_by integer [not null, ref: <> user.id]
+    payed_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    at datetime [not null]
+    lust_update_at datetime
+    lust_update_by integer [ref: <> user.id]
+    description string
+
+class Payment_method:
+    __tablename__ = "payment_method"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
+    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+
+class Payment_status:
+    __tablename__ = "payment_status"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
+    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+
+class Payment_type:
+    __tablename__ = "payment_type"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
+    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+
+class Role:
+    __tablename__ = "role"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
+    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+
+class Service:
+    __tablename__ = "service"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
+    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
 
 
 @app.route("/test_mail_py/", methods=["GET", "POST"])

@@ -58,11 +58,11 @@ Table payment {
   type_id integer [not null, ref: <> payment_type.id]
   amount float [not null]
   payed bool [not null, default: false]
-  status_id integer [ref: <> payment_status.id]
+  status_id integer [ref: <> payment_status.id]     ### not null
   accepted_by integer [not null, ref: <> user.id]
   payed_by integer [not null, ref: <> user.id]
   at datetime [not null]
-  lust_update_at datetime
+  lust_update_at datetime                           ### nullable
   lust_update_by integer [ref: <> user.id]
   description string
 }
