@@ -112,6 +112,14 @@ class Language:
     name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
     description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
 
+class Mf_recovery_code:
+    __tablename__ = "mf_recovery_code"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
+    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+    user_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    user: sa.orm.Mapped["User"] = sa.orm.relationship(back_populates = "mf_recovery_codes")
+
 class Notification_type:
     __tablename__ = "notification_type"
     id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
@@ -126,12 +134,12 @@ class Payment:
     amount: sa.orm.Mapped[float] = sa.orm.mapped_column(nullable = False)
     payed: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
     status_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
-    accepted_by integer [not null, ref: <> user.id]
+    accepted_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
     payed_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
-    at datetime [not null]
-    lust_update_at datetime
-    lust_update_by integer [ref: <> user.id]
-    description string
+    at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
+    lust_update_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True)
+    lust_update_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True)
+    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
 
 class Payment_method:
     __tablename__ = "payment_method"
@@ -163,6 +171,61 @@ class Service:
     name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
     description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
 
+class Service_role:
+    __tablename__ = "service_role"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    service_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    role_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+
+class Slot:
+    __tablename__ = "slot"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    date_time: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
+    opened: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False)
+    opened_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    opened_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
+    occupied: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False)
+    occupied_by_appoint: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+
+class User:
+    _tablename__ = "user"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    email: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False, unique = True)
+    password: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = True) 
+    active: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False, default = True)
+    fs_uniquifier: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False, unique = True) 
+    confirmed_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
+    last_login_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
+    current_login_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
+    last_login_ip: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False) 
+    current_login_ip: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False) 
+    login_count: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False) 
+    mf_recovery_codes: sa.orm.Mapped[sa.List["Mf_recovery_code"]] = sa.orm.relationship(back_populates = "user")
+    name: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False)   
+    instagram: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False) 
+    tel: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = True) 
+    language_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False) ]
+    internal_description: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False, unique = True) 
+    picture_path: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False, unique = True) 
+    lust_update_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False) 
+    lust_update_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True)
+    deleted: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
+    deleted_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
+    deleted_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True)
+
+class User_notification:
+    __tablename__ = "user_notification"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    user_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    type_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+
+class User_role:
+    __tablename__ = "user_role"
+    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
+    user_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    role_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    set_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+    set_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
 
 @app.route("/test_mail_py/", methods=["GET", "POST"])
 @login_required

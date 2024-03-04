@@ -46,6 +46,14 @@ Table language {
   description string
 }
 
+Table    { #######
+  id integer [primary key]
+  name string [not null, unique]
+  description string
+  user_id integer
+  user object
+}
+
 Table notification_type {
   id integer [primary key]
   name string [not null, unique]
@@ -106,16 +114,16 @@ Table service_role {
 Table slot {
   id integer [primary key] 
   date_time datetime [not null]
-  open bool [not null, default: false]
+  opened bool [not null, default: false] #############
   opened_by integer [not null, ref: <> user.id]
   opened_at datetime [not null]
   occupied bool [not null, default: false]
-  occupied_by_appoint integer [ref: <> appointment.id]
+  occupied_by_appoint integer [ref: <> appointment.id] ### not null
 }
 
 Table user {
   id integer [primary key] 
-  email string[320] [not null, unique]
+  email string [not null, unique] ###
   password string
   active bool [not null, default: false]
   fs_uniquifier string [not null, unique, note: "64 bytes"] 
@@ -134,6 +142,9 @@ Table user {
   picture_path string
   lust_update_at datetime
   lust_update_by integer [ref: <> user.id]
+      deleted: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
+    deleted_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
+    deleted_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True)
 }
 
 Table user_notification {
