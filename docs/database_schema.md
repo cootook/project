@@ -10,6 +10,7 @@ Here is a description of db_v2.db
 Table appointment {
   id integer [primary key]
   user_id integer [not null, ref: <> user.id]
+  user object [note: "relates to user table, SQLAlchemy links these tables"]
   service_id integer [not null, ref: <> service.id]
   at datetime [not null]
   price float 
