@@ -3,8 +3,10 @@ import re
 import secrets
 import sqlite3
 import datetime
+import studio_app.db_classes as db_class
 import smtplib, ssl
 
+# from db_classes import Role
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from calendar import monthrange
@@ -17,11 +19,11 @@ from studio_app.helpers import log_user_in, log_user_out, login_required, valida
 from .rout_handlers import *
 
 # flask security
-import sqlalchemy as sa
-from typing import List
+# import sqlalchemy as sa
+# from typing import List, Optional
 
 # from sqlalchemy import Integer, String, ForeignKey
-# from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+# from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 app = Flask(
                 __name__,
@@ -71,164 +73,170 @@ def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
 
 # classes
-class Base(sa.orm.DeclarativeBase):
-    pass
+# class Base(DeclarativeBase):
+#     pass
 
-class Appointment(Base):
-    __tablename__ = "appointment"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    user_id = sa.orm.mapped_column(sa.ForeignKey("user.id"))
-    user = sa.orm.relationship(back_populates="appointment")
-    service_id = sa.orm.mapped_column(sa.ForeignKey("service.id"))
-    at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
-    price: sa.orm.Mapped[float] = sa.orm.mapped_column(nullable = True)
-    deposit_needed: sa.orm.Mapped[bool] = sa.orm.mapped_column(default=False)
-    deposit: sa.orm.Mapped[float] = sa.orm.mapped_column(nullable = True)
-    slot_id = sa.orm.mapped_column(sa.ForeignKey("slot.id"))
-    amount_time_min: sa.orm.Mapped[int] = sa.orm.mapped_column(default = 90, nullable = False)
-    done: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
-    done_by = sa.orm.mapped_column(sa.ForeignKey("user.id")) 
-    done_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
-    approved: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
-    approved_by = sa.orm.mapped_column(sa.ForeignKey("user.id"))
-    approved_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
-    canceled: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
-    canceled_by = sa.orm.mapped_column(sa.ForeignKey("user.id"))
-    canceled_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True)
-    lust_update_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True)
-    lust_update_by = sa.orm.mapped_column(sa.ForeignKey("user.id"))
-    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+# class Appointment(Base):
+#     __tablename__ = "appointment"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     user_id = mapped_column(ForeignKey("user.id"))
+#     user: Mapped["User"] = relationship(back_populates="appointment")
+#     service_id = mapped_column(ForeignKey("service.id"))
+#     at: Mapped[datetime.datetime]
+#     price: Mapped[Optional[float]]
+#     deposit_needed: Mapped[bool] = mapped_column(default=False)
+#     deposit: Mapped[Optional[float]]
+#     slot_id = mapped_column(ForeignKey("slot.id"))
+#     amount_time_min: Mapped[int] = mapped_column(default = 90)
+#     done: Mapped[bool] = mapped_column(default = False)
+#     done_by = mapped_column(ForeignKey("user.id")) 
+#     done_at: Mapped[Optional[datetime.datetime]]
+#     approved: Mapped[bool] = mapped_column(default = False)
+#     approved_by = mapped_column(ForeignKey("user.id"))
+#     approved_at: Mapped[Optional[datetime.datetime]] 
+#     canceled: Mapped[bool] = mapped_column(default = False)
+#     canceled_by = mapped_column(ForeignKey("user.id"))
+#     canceled_at: Mapped[Optional[datetime.datetime]]
+#     lust_update_at: Mapped[Optional[datetime.datetime]]
+#     lust_update_by = mapped_column(ForeignKey("user.id"))
+#     description: Mapped[str] = mapped_column(default = "")
 
-class Booking_message:
-    __tablename__ = "booking_message"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    appoint_id = sa.orm.mapped_column(sa.ForeignKey("appointment.id"))
-    author_id = sa.orm.mapped_column(sa.ForeignKey("user.id"))
-    at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
-    edited_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True)
-    deleted: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
+# class Booking_message:
+#     __tablename__ = "booking_message"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     appoint_id = mapped_column(ForeignKey("appointment.id"))
+#     author_id = mapped_column(ForeignKey("user.id"))
+#     at: Mapped[datetime.datetime]
+#     edited_at: Mapped[Optional[datetime.datetime]]
+#     deleted: Mapped[bool] = mapped_column(default = False)
 
-class Language:
-    __tablename__ = "language"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
-    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+# class Language:
+#     __tablename__ = "language"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     name: Mapped[str] = mapped_column(unique = True)
+#     description: Mapped[str] = mapped_column(default = "")
 
-class Mf_recovery_code:
-    __tablename__ = "mf_recovery_code"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
-    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
-    user_id = sa.orm.mapped_column(sa.ForeignKey("user.id"))
-    user: sa.orm.Mapped["User"] = sa.orm.relationship(back_populates = "mf_recovery_codes")
+# class Mf_recovery_code:
+#     __tablename__ = "mf_recovery_code"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     name: Mapped[str] = mapped_column(unique = True)
+#     description: Mapped[str] = mapped_column(default = "")
+#     user_id = mapped_column(ForeignKey("user.id"))
+#     user: Mapped["User"] = relationship(back_populates = "mf_recovery_codes")
 
-class Notification_type:
-    __tablename__ = "notification_type"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
-    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+# class Notification_type:
+#     __tablename__ = "notification_type"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     name: Mapped[str] = mapped_column(unique = True)
+#     description: Mapped[str] = mapped_column(default = "")
 
-class Payment:
-    __tablename__ = "payment"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    method_id = sa.orm.mapped_column(sa.ForeignKey("payment_method.id"))
-    type_id = sa.orm.mapped_column(sa.ForeignKey("payment_type.id"))
-    amount: sa.orm.Mapped[float] = sa.orm.mapped_column(nullable = False)
-    payed: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
-    status_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
-    accepted_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
-    payed_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
-    at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
-    lust_update_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True)
-    lust_update_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True)
-    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+# class Payment:
+#     __tablename__ = "payment"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     method_id = mapped_column(ForeignKey("payment_method.id"))
+#     type_id = mapped_column(ForeignKey("payment_type.id"))
+#     amount: Mapped[float]
+#     payed: Mapped[bool] = mapped_column(default = False)
+#     status_id: Mapped[int]
+#     accepted_by: Mapped[int]
+#     payed_by: Mapped[int]
+#     at: Mapped[datetime.datetime]
+#     lust_update_at: Mapped[Optional[datetime.datetime]]
+#     lust_update_by: Mapped[Optional[int]]
+#     description: Mapped[str] = mapped_column(default = "")
 
-class Payment_method:
-    __tablename__ = "payment_method"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
-    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+# class Payment_method:
+#     __tablename__ = "payment_method"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     name: Mapped[str] = mapped_column(unique = True)
+#     description: Mapped[str] = mapped_column(default = "")
 
-class Payment_status:
-    __tablename__ = "payment_status"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
-    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+# class Payment_status:
+#     __tablename__ = "payment_status"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     name: Mapped[str] = mapped_column(unique = True)
+#     description: Mapped[str] = mapped_column(default = "")
 
-class Payment_type:
-    __tablename__ = "payment_type"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
-    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+# class Payment_type:
+#     __tablename__ = "payment_type"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     name: Mapped[str] = mapped_column(unique = True)
+#     description: Mapped[str] = mapped_column(default = "")
 
-class Role:
-    __tablename__ = "role"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
-    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+# class Role:
+#     __tablename__ = "role"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     name: Mapped[str] = mapped_column(unique = True)
+#     description: Mapped[str] = mapped_column(default = "")
 
-class Service:
-    __tablename__ = "service"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    name: sa.orm.Mapped[str] = sa.orm.mapped_column(unique = True, nullable = False)
-    description: sa.orm.Mapped[str] = sa.orm.mapped_column(default = "", nullable = False)
+# class Service:
+#     __tablename__ = "service"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     name: Mapped[str] = mapped_column(unique = True)
+#     description: Mapped[str] = mapped_column(default = "")
 
-class Service_role:
-    __tablename__ = "service_role"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    service_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
-    role_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+# class Service_role:
+#     __tablename__ = "service_role"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     service_id: Mapped[int]
+#     role_id: Mapped[int]
 
-class Slot:
-    __tablename__ = "slot"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    date_time: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
-    opened: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False)
-    opened_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
-    opened_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
-    occupied: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False)
-    occupied_by_appoint: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+# class Slot:
+#     __tablename__ = "slot"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     date_time: Mapped[datetime.datetime]
+#     opened: Mapped[bool]
+#     opened_by = mapped_column(ForeignKey("user.id"))
+#     opened_at: Mapped[datetime.datetime]
+#     occupied: Mapped[bool]
+#     occupied_by_appoint = mapped_column(ForeignKey("appointment.id"))
 
-class User:
-    _tablename__ = "user"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    email: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False, unique = True)
-    password: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = True) 
-    active: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False, default = True)
-    fs_uniquifier: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False, unique = True) 
-    confirmed_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
-    last_login_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
-    current_login_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
-    last_login_ip: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False) 
-    current_login_ip: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False) 
-    login_count: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False) 
-    mf_recovery_codes: sa.orm.Mapped[List["Mf_recovery_code"]] = sa.orm.relationship(back_populates = "user")
-    name: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False)   
-    instagram: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False) 
-    tel: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = True) 
-    language_id = sa.orm.mapped_column(sa.ForeignKey("language.id")) 
-    internal_description: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False, unique = True) 
-    picture_path: sa.orm.Mapped[str] = sa.orm.mapped_column(nullable = False, unique = True) 
-    appointment = sa.orm.Mapped[List["Appointment"]] = sa.relationship(back_populates = "user")
-    lust_update_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False) 
-    lust_update_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True)
-    deleted: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
-    deleted_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
-    deleted_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True)
+# class User:
+#     _tablename__ = "user"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     email: Mapped[str] = mapped_column(unique = True)
+#     password: Mapped[Optional[str]]
+#     active: Mapped[str] = mapped_column(default = True)
+#     fs_uniquifier: Mapped[str] = mapped_column(unique = True) 
+#     confirmed_at: Mapped[Optional[datetime.datetime]]
+#     last_login_at: Mapped[Optional[datetime.datetime]]
+#     current_login_at: Mapped[Optional[datetime.datetime]]
+#     last_login_ip: Mapped[str] 
+#     current_login_ip: Mapped[str] 
+#     login_count: Mapped[int] 
+#     mf_recovery_codes: Mapped[List["Mf_recovery_code"]] = relationship(back_populates = "user")
+#     name: Mapped[str]   
+#     instagram: Mapped[str] 
+#     tel: Mapped[Optional[str]]
+#     language_id = mapped_column(ForeignKey("language.id")) 
+#     internal_description: Mapped[str] = mapped_column(unique = True) 
+#     picture_path: Mapped[str] = mapped_column(unique = True) 
+#     appointment: Mapped[List["Appointment"]] = relationship(back_populates = "user")
+#     role: Mapped[List["User_role"]] = relationship(back_populates = "user")
+#     lust_update_at: Mapped[datetime.datetime] 
+#     lust_update_by = mapped_column(ForeignKey("user.id"))
+#     deleted: Mapped[bool] = mapped_column(default = False)
+#     deleted_at: Mapped[Optional[datetime.datetime]]
+#     deleted_by = mapped_column(ForeignKey("user.id"))
 
-class User_notification:
-    __tablename__ = "user_notification"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    user_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
-    type_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
+# class User_notification:
+#     __tablename__ = "user_notification"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     user_id = mapped_column(ForeignKey("user.id"))
+#     type_id = mapped_column(ForeignKey("notification_type"))
 
-class User_role:
-    __tablename__ = "user_role"
-    id: sa.orm.Mapped[int] = sa.orm.mapped_column(primary_key=True)
-    user_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
-    role_id: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
-    set_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = False)
-    set_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = False)
+# class User_role:
+#     __tablename__ = "user_role"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     user_id = mapped_column(ForeignKey("user.id"))
+#     user: Mapped["User"] = relationship(back_populates = "role")
+#     role_id = mapped_column(ForeignKey("role.id"))
+#     set_by = mapped_column(ForeignKey("user.id"))
+#     set_at: Mapped[datetime.datetime]
+
+new_role = db_class.Role()
+new_role.name = "test"
+print(new_role.name)
 
 @app.route("/test_mail_py/", methods=["GET", "POST"])
 @login_required

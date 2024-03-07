@@ -141,6 +141,8 @@ Table user {
   language_id integer [ref: <> language.id]
   internal_description string
   picture_path string
+  appointment list
+  role list
   lust_update_at datetime
   lust_update_by integer [ref: <> user.id]
       deleted: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
@@ -157,6 +159,7 @@ Table user_notification {
 Table user_role {
   id integer [primary key]
   user_id integer [not null, ref: <> user.id]
+  user object
   role_id integer [not null, ref: <> role.id]
   set_by integer [not null, ref: <> user.id]
   set_at datetime [not null]
