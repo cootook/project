@@ -6,3 +6,4 @@ db_v2.db
 project.code-workspace
 .vscode
 .venv
+venv
