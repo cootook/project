@@ -5,3 +5,4 @@ db.db
 project.code-workspace
 .vscode
 .venv
+venv
