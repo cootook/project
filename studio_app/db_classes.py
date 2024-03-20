@@ -1,10 +1,8 @@
 import datetime
-
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer, String, ForeignKey
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from typing import List, Optional
-
 
 class Base(DeclarativeBase):
     pass
@@ -15,7 +13,7 @@ class Appointment(db_base.Model):
     __tablename__ = "appointment"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id = mapped_column(ForeignKey("user.id"))
-    user: Mapped["User"] = relationship(back_populates="appointment", foreign_keys=user_id)
+    user: Mapped["User"] = relationship(foreign_keys=user_id)
     service_id = mapped_column(ForeignKey("service.id"))
     service = relationship("Service", foreign_keys=[service_id])
     at: Mapped[datetime.datetime]
@@ -127,10 +125,12 @@ class Slot(db_base.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     date_time: Mapped[datetime.datetime]
     opened: Mapped[bool]
-    opened_by = mapped_column(ForeignKey("user.id"))
+    opened_by_id = mapped_column(ForeignKey("user.id", use_alter=True), nullable=True)
+    open_by = relationship("User", foreign_keys=[opened_by_id])
     opened_at: Mapped[datetime.datetime]
     occupied: Mapped[bool]
-    occupied_by_appoint = mapped_column(ForeignKey("appointment.id"))
+    occupied_by_appoint_id = mapped_column(ForeignKey("appointment.id", use_alter=True), nullable=True)
+    occupied_by_appoint = relationship("Appointment", foreign_keys=[occupied_by_appoint_id])
 
 class User(db_base.Model):
     _tablename__ = "user"
@@ -142,20 +142,20 @@ class User(db_base.Model):
     confirmed_at: Mapped[Optional[datetime.datetime]]
     last_login_at: Mapped[Optional[datetime.datetime]]
     current_login_at: Mapped[Optional[datetime.datetime]]
-    last_login_ip: Mapped[str] 
-    current_login_ip: Mapped[str] 
+    last_login_ip: Mapped[Optional[str]] 
+    current_login_ip: Mapped[Optional[str]] 
     login_count: Mapped[int] 
     mf_recovery_codes: Mapped[List["Mf_recovery_code"]] = relationship(back_populates = "user")
     name: Mapped[str]   
     instagram: Mapped[str] 
     tel: Mapped[Optional[str]]
-    language_id = mapped_column(ForeignKey("language.id"))
+    language_id = mapped_column(ForeignKey("language.id"), nullable=True)
     language = relationship("Language", foreign_keys=[language_id]) 
-    internal_description: Mapped[str] = mapped_column(unique = True) 
-    picture_path: Mapped[str] = mapped_column(unique = True) 
-    appointment_id: Mapped[List[int]] = re
-    appointment: Mapped[List["Appointment"]] = relationship(back_populates = "user", foreign_keys=[appointment_id])
-    role: Mapped[List["User_role"]] = relationship(back_populates = "user")
+    internal_description: Mapped[Optional[str]]  
+    picture_path: Mapped[Optional[str]] = mapped_column(unique = True) 
+    # appointment_id: Mapped[List[int]] = relationship(List[])
+    # appointment: Mapped[List["Appointment"]] = relationship(back_populates = "user", foreign_keys=[appointment_id])
+    # role: Mapped[List["User_role"]] = relationship(back_populates = "user")
     lust_update_at: Mapped[datetime.datetime] 
     lust_update_by_id = mapped_column(ForeignKey("user.id"))
     lust_update_by = relationship("User", foreign_keys=[lust_update_by_id])
@@ -174,7 +174,11 @@ class User_role(db_base.Model):
     __tablename__ = "user_role"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id = mapped_column(ForeignKey("user.id"))
-    user: Mapped["User"] = relationship(back_populates = "role")
+    user: Mapped["User"] = relationship(foreign_keys=[user_id])
     role_id = mapped_column(ForeignKey("role.id"))
-    set_by = mapped_column(ForeignKey("user.id"))
+    role: Mapped["Role"] = relationship(foreign_keys=[role_id])
+    set_by_id = mapped_column(ForeignKey("user.id"))
+    set_by: Mapped["User"] = relationship(foreign_keys=[set_by_id])
     set_at: Mapped[datetime.datetime]
+
+

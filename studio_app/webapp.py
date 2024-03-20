@@ -5,7 +5,6 @@ import sqlite3
 import datetime
 import smtplib, ssl
 
-# from db_classes import Role
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from calendar import monthrange
@@ -13,24 +12,14 @@ from datetime import timedelta, date
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from sqlalchemy import create_engine
+from sqlalchemy import select
 from studio_app.db_classes import db_base
 from studio_app.db_classes import Appointment, Booking_message, Language, Mf_recovery_code, Notification_type, Payment, Payment_method, Payment_status, Payment_type, Role, Service, Service_role, Slot, User, User_notification, User_role
 from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
 from .rout_handlers import *
 
 # flask security
-# import sqlalchemy as sa
-# from typing import List, Optional
-
-# from sqlalchemy import Integer, String, ForeignKey
-# from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-
-# Flask-SQLAlchemy
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from typing import List, Optional
+from typing import List
 
 app = Flask(
                 __name__,
@@ -45,7 +34,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 app.config['SESSION_FILE_THRESHOLD'] = 250
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=90)
 
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", 'pf9Wkove4IKEAXvy-cQkeDPhv9Cb3Ag-wyJILbq_dFw')
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 
 app.config['MAIL_SERVER'] = 'smtp.yandex.com'
 app.config['MAIL_PORT'] = 465
@@ -56,13 +45,15 @@ app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
 # mail = Mail(app)
 
 # flask-sqlalchemy
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('SQLALCHEMY_DATABASE_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
 
 Session(app)
 
 db_base.init_app(app)
 
-# engine = create_engine(os.environ.get('DB_PATH'), echo=True)
+with app.app_context():
+    db_base.drop_all()
+    db_base.create_all()
 
 app.register_error_handler(404, page_not_found)
 
@@ -83,11 +74,6 @@ def inject_navbar_items_not_loged_in():
 @app.context_processor
 def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
-
-with app.app_context():
-    db_base.create_all()
-
-new_user = User()
 
 
 @app.route("/test_mail_py/", methods=["GET", "POST"])
