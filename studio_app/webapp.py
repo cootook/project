@@ -9,7 +9,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from calendar import monthrange
 from datetime import timedelta, date
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, render_template_string
+from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
@@ -47,6 +48,19 @@ app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
 # flask-sqlalchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
 
+# have session and remember cookie be samesite (flask/flask_login)
+app.config["REMEMBER_COOKIE_SAMESITE"] = "strict"
+app.config["SESSION_COOKIE_SAMESITE"] = "strict"
+
+# As of Flask-SQLAlchemy 2.4.0 it is easy to pass in options directly to the
+# underlying engine. This option makes sure that DB connections from the
+# pool are still valid. Important for entire application since
+# many DBaaS options automatically close idle connections.
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_pre_ping": True,
+}
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 Session(app)
 
 db_base.init_app(app)
@@ -54,6 +68,10 @@ db_base.init_app(app)
 with app.app_context():
     db_base.drop_all()
     db_base.create_all()
+
+# Setup Flask-Security
+user_datastore = SQLAlchemyUserDatastore(db_base, User, Role)
+app.security = Security(app, user_datastore)
 
 app.register_error_handler(404, page_not_found)
 
@@ -146,6 +164,11 @@ def test_mail_py():
     flash(f'A test message was sent to {receiver}.')
     return redirect("/")
 
+
+@app.route("/test/")
+@auth_required()
+def test():
+    return render_template_string("Hello {{ current_user.email }}")
 
 @app.route("/")
 def home():

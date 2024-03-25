@@ -1,5 +1,6 @@
 import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_security.models import fsqla_v3 as fsqla
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from typing import List, Optional
@@ -8,6 +9,8 @@ class Base(DeclarativeBase):
     pass
 
 db_base = SQLAlchemy(model_class=Base)
+
+fsqla.FsModels.set_db_info(db_base)
 
 class Appointment(db_base.Model):
     __tablename__ = "appointment"
@@ -102,7 +105,7 @@ class Payment_type(db_base.Model):
     name: Mapped[str] = mapped_column(unique = True)
     description: Mapped[str] = mapped_column(default = "")
 
-class Role(db_base.Model):
+class Role(db_base.Model, fsqla.FsRoleMixin):
     __tablename__ = "role"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique = True)
@@ -132,20 +135,20 @@ class Slot(db_base.Model):
     occupied_by_appoint_id = mapped_column(ForeignKey("appointment.id", use_alter=True), nullable=True)
     occupied_by_appoint = relationship("Appointment", foreign_keys=[occupied_by_appoint_id])
 
-class User(db_base.Model):
+class User(db_base.Model, fsqla.FsUserMixin):
     _tablename__ = "user"
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(unique = True)
     password: Mapped[Optional[str]]
     active: Mapped[str] = mapped_column(default = True)
-    fs_uniquifier: Mapped[str] = mapped_column(unique = True) 
+    # fs_uniquifier: Mapped[str] = mapped_column(unique = True) 
     confirmed_at: Mapped[Optional[datetime.datetime]]
     last_login_at: Mapped[Optional[datetime.datetime]]
     current_login_at: Mapped[Optional[datetime.datetime]]
     last_login_ip: Mapped[Optional[str]] 
     current_login_ip: Mapped[Optional[str]] 
     login_count: Mapped[int] 
-    mf_recovery_codes: Mapped[List["Mf_recovery_code"]] = relationship(back_populates = "user")
+    # mf_recovery_codes: Mapped[List["Mf_recovery_code"]] = relationship(back_populates = "user")
     name: Mapped[str]   
     instagram: Mapped[str] 
     tel: Mapped[Optional[str]]
