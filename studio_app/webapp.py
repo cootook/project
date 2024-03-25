@@ -15,7 +15,7 @@ from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
 from studio_app.db_classes import db_base
-from studio_app.db_classes import Appointment, Booking_message, Language, Mf_recovery_code, Notification_type, Payment, Payment_method, Payment_status, Payment_type, Role, Service, Service_role, Slot, User, User_notification, User_role
+from studio_app.db_classes import Appointment, Booking_message, Language, Notification_type, Payment, Payment_method, Payment_status, Payment_type, Role, Service, Service_role, Slot, User, User_notification, User_role
 from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
 from .rout_handlers import *
 
@@ -47,6 +47,9 @@ app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
 
 # flask-sqlalchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
+
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+app.config['SECURITY_PASSWORD_SALT'] = os.environ.get("SECURITY_PASSWORD_SALT")
 
 # have session and remember cookie be samesite (flask/flask_login)
 app.config["REMEMBER_COOKIE_SAMESITE"] = "strict"

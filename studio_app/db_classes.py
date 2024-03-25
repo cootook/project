@@ -58,13 +58,13 @@ class Language(db_base.Model):
     name: Mapped[str] = mapped_column(unique = True)
     description: Mapped[str] = mapped_column(default = "")
 
-class Mf_recovery_code(db_base.Model):
-    __tablename__ = "mf_recovery_code"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(unique = True)
-    description: Mapped[str] = mapped_column(default = "")
-    user_id = mapped_column(ForeignKey("user.id"))
-    user: Mapped["User"] = relationship(back_populates = "mf_recovery_codes")
+# class Mf_recovery_code(db_base.Model):
+#     __tablename__ = "mf_recovery_code"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     name: Mapped[str] = mapped_column(unique = True)
+#     description: Mapped[str] = mapped_column(default = "")
+#     user_id = mapped_column(ForeignKey("user.id"))
+#     user: Mapped["User"] = relationship(back_populates = "mf_recovery_codes")
 
 class Notification_type(db_base.Model):
     __tablename__ = "notification_type"
