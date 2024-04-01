@@ -4,6 +4,7 @@ import secrets
 import sqlite3
 import datetime
 import smtplib, ssl
+import flask_security
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -14,6 +15,7 @@ from flask_security import Security, SQLAlchemyUserDatastore, auth_required, has
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
+from studio_app.config import ProductionConfig, DevelopmentConfig, TestingConfig
 from studio_app.db_classes import db_base
 from studio_app.db_classes import Appointment, Booking_message, Language, Notification_type, Payment, Payment_method, Payment_status, Payment_type, Role, Service, Service_role, Slot, User, User_notification, User_role
 from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
@@ -25,44 +27,13 @@ from typing import List
 app = Flask(
                 __name__,
                 static_url_path='', 
-                static_folder='../studio_app/static/',
-                template_folder='../studio_app/templates/'
+                static_folder = os.environ.get('FLASK_STATIC_FOLDER'),
+                template_folder = os.environ.get('FLASK_TEMPLATE_FOLDER')
                 )
-
-# Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_PERMANENT"] = True
-app.config["SESSION_TYPE"] = "filesystem"
-app.config['SESSION_FILE_THRESHOLD'] = 250
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=90)
-
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-
-app.config['MAIL_SERVER'] = 'smtp.yandex.com'
-app.config['MAIL_PORT'] = 465
-# app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_APP_KEY')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
-# mail = Mail(app)
-
-# flask-sqlalchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
-
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-app.config['SECURITY_PASSWORD_SALT'] = os.environ.get("SECURITY_PASSWORD_SALT")
-
-# have session and remember cookie be samesite (flask/flask_login)
-app.config["REMEMBER_COOKIE_SAMESITE"] = "strict"
-app.config["SESSION_COOKIE_SAMESITE"] = "strict"
-
-# As of Flask-SQLAlchemy 2.4.0 it is easy to pass in options directly to the
-# underlying engine. This option makes sure that DB connections from the
-# pool are still valid. Important for entire application since
-# many DBaaS options automatically close idle connections.
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_pre_ping": True,
-}
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+### configuration selection
+# app.config.from_object(ProductionConfig)
+app.config.from_object(DevelopmentConfig)
+# app.config.from_object(TestingConfig)
 
 Session(app)
 
@@ -169,7 +140,7 @@ def test_mail_py():
 
 
 @app.route("/test/")
-@auth_required()
+# @auth_required()
 def test():
     return render_template_string("Hello {{ current_user.email }}")
 
