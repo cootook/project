@@ -2,6 +2,10 @@
 
 Here is a description of db_v2.db
 
+SQLAlchemy ORM is in use. 
+Classes implementation are in [db_classes.py](../studio_app/db_classes.py).
+Some fields of the database are not implemented directly but exist because of using [Mixins](https://flask-security-too.readthedocs.io/en/stable/models.html) while creating Models.
+
 ![schema](./images/db_schema.png)
 
 [diagram online editor](https://dbdiagram.io/d/project-65da6aad5cd0412774bb423c)
