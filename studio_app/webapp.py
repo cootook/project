@@ -11,6 +11,7 @@ from email.mime.multipart import MIMEMultipart
 from calendar import monthrange
 from datetime import timedelta, date
 from flask import Flask, flash, redirect, render_template, request, session, render_template_string
+from flask_mailman import Mail
 from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -30,12 +31,14 @@ app = Flask(
                 static_folder = os.environ.get('FLASK_STATIC_FOLDER'),
                 template_folder = os.environ.get('FLASK_TEMPLATE_FOLDER')
                 )
+
 ### configuration selection
 # app.config.from_object(ProductionConfig)
 app.config.from_object(DevelopmentConfig)
 # app.config.from_object(TestingConfig)
 
 Session(app)
+mail = Mail(app)
 
 db_base.init_app(app)
 
@@ -72,11 +75,13 @@ def inject_navbar_items_admin():
 @login_required
 def test_mail_py():
     mail_server = os.environ.get('MAIL_SERVER')
+
     receiver = "cootook@gmail.com"
     sender = "matveising@ya.ru"
-    port = os.environ.get('MAIL_PORT')
+    port = int(os.environ.get('MAIL_PORT'))
     username = os.environ.get('MAIL_USERNAME')
     password = os.environ.get('MAIL_APP_KEY')
+
     message = MIMEMultipart("alternative")
     # message.set_content("This message is sent from Python.")
     message['Subject'] = 'Test of sending via Python'
@@ -91,6 +96,7 @@ def test_mail_py():
     <html>
     <body>
         <p>Hi,<br>
+        Second one
         This is HTML<br>
         <a href="https://github.com/cootook">my GitHub</a> 
         </p>
@@ -106,34 +112,9 @@ def test_mail_py():
 
     context = ssl.create_default_context()
 
-    with smtplib.SMTP_SSL("smtp.yandex.com", port, context=context) as server:
+    with smtplib.SMTP_SSL(mail_server, port, context=context) as server:
         server.login(username, password)
         server.sendmail(sender, receiver, message.as_string())
-
-    # msg = EmailMessage()
-    # msg.set_content("test message python")
-
-    # # me == the sender's email address
-    # # you == the recipient's email address
-    # msg['Subject'] = f'Test of sending'
-    # msg['From'] = "cootook@gmail.con"
-    # msg['To'] = "matveising@ya.ru"
-
-    # # Send the message via our own SMTP server.
-    # s = smtplib.SMTP("127.0.0.1")
-
-    # username = os.environ.get('MAIL_USERNAME')
-    # password = os.environ.get('MAIL_APP_KEY')
-    # server = smtplib.SMTP('smtp.yandex.com:465')
-    # server.ehlo()
-    # server.starttls()
-    # server.login(username,password)
-    # server.sendmail(fromaddr, toaddrs, msg)
-    # server.quit()
-
-    # s.send_message(msg)
-    # s.quit()
-
 
     flash(f'A test message was sent to {receiver}.')
     return redirect("/")
@@ -143,6 +124,10 @@ def test_mail_py():
 # @auth_required()
 def test():
     return render_template_string("Hello {{ current_user.email }}")
+
+@app.route('/register', methods=['GET'])
+def register():
+    return render_template('security/register_user.html')
 
 @app.route("/")
 def home():
