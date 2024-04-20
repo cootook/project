@@ -1,11 +1,22 @@
+{# djlint:off H030,H031 #}
+{% block doc -%}
 <!doctype html>
-<html lang="en">
+<html lang="en" {% block html_attribs %}{% endblock html_attribs %}>
+  {%- block html %}
   <head>
+    {%- block head %}
+
+    {%- block metas %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Liza studio: booking.">
     <meta name="author" content="">
     <meta name="generator" content="v0.1">
+    {%- endblock metas %}
+
+    {%- block head_scripts %}
+    {%- endblock head_scripts %}
+
     <title>
       Liza Nail Studio - {% block title %}{% endblock %}
     </title>
@@ -20,9 +31,10 @@
     {% block custom_styles %}
     {% endblock %}
     
-
+    {%- endblock head %}
   </head>
-  <body>
+  <body {% block body_attribs %}{% endblock body_attribs %}>
+    {% block body -%}
         <header>
           <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
             <div class="container-fluid">
@@ -52,5 +64,10 @@
         </footer>  
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>  </body>
-</html>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>  
+        
+        {%- endblock body %}
+      </body>
+      {%- endblock html %}
+        </html>
+{% endblock doc -%}

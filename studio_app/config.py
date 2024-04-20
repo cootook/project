@@ -19,6 +19,8 @@ class Config(object):
 
     SECURITY_REGISTERABLE = True
     SECURITY_CONFIRMABLE = True
+    SECURITY_RECOVERABLE = True
+    SECURITY_USERNAME_ENABLE = False
     
     MAIL_SERVER = os.getenv("MAIL_SERVER")
     MAIL_PORT = os.getenv("MAIL_PORT")

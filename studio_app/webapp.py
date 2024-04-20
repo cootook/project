@@ -13,7 +13,9 @@ from datetime import timedelta, date
 from flask import Flask, flash, redirect, render_template, request, session, render_template_string
 from flask_mailman import Mail
 from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password
+from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
+from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
 from studio_app.config import ProductionConfig, DevelopmentConfig, TestingConfig
@@ -48,7 +50,7 @@ with app.app_context():
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db_base, User, Role)
-app.security = Security(app, user_datastore)
+app.security = Security(app, user_datastore, confirm_register_form=ExtendedRegisterForm)
 
 app.register_error_handler(404, page_not_found)
 

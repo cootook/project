@@ -132,7 +132,7 @@ body {
   position: relative;
 }
 
-#name, #login, #password, #confirmation, #floatingInput, #floatingPassword, #tel_number, #instagram {
+#name, #login, #password, #confirmation, #floatingInput, #floatingPassword, #tel_number, #instagram, #email, #submit, #tel {
   width: 90%;
 }
 
