@@ -1,6 +1,5 @@
 {% if security.registerable or security.recoverable or security.confirmable or security.unified_signin or security.two_factor or security.webauthn %}
 <div class="signin-container">
-<h2>{{ _fsdomain('Menu') }}</h2>
   <ul>
     {% if _fs_is_user_authenticated(current_user) %}
       {# already authenticated user #}

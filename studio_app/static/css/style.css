@@ -112,7 +112,7 @@ body {
   row-gap: 0;
   justify-content: center;
   grid-template-columns: auto;
- 
+  
 }
 
 .form_input {
@@ -120,12 +120,14 @@ body {
 }
 
 .form-signin {
-  grid-column-start: 1;
-  grid-column-end: 2;
+  /* grid-column-start: 1; */
+  /* grid-column-end: 2; */
   display: grid;
   grid-template-columns: auto;
+  align-content: stretch;
   gap: 50px;
   width: 330px;
+  height: 30em;
 }
 
 #message {

@@ -159,12 +159,12 @@ class User(db_base.Model, fsqla.FsUserMixin):
     # appointment_id: Mapped[List[int]] = relationship(List[])
     # appointment: Mapped[List["Appointment"]] = relationship(back_populates = "user", foreign_keys=[appointment_id])
     # role: Mapped[List["User_role"]] = relationship(back_populates = "user")
-    lust_update_at: Mapped[datetime.datetime] 
-    lust_update_by_id = mapped_column(ForeignKey("user.id"))
+    lust_update_at: Mapped[Optional[datetime.datetime]] 
+    lust_update_by_id = mapped_column(ForeignKey("user.id"), nullable=True)
     lust_update_by = relationship("User", foreign_keys=[lust_update_by_id])
     deleted: Mapped[bool] = mapped_column(default = False)
     deleted_at: Mapped[Optional[datetime.datetime]]
-    deleted_by_id = mapped_column(ForeignKey("user.id"))
+    deleted_by_id = mapped_column(ForeignKey("user.id"), nullable=True)
     deleted_by = relationship("User", foreign_keys=[deleted_by_id])
 
 class User_notification(db_base.Model):

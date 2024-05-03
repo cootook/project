@@ -45,7 +45,8 @@ mail = Mail(app)
 db_base.init_app(app)
 
 with app.app_context():
-    db_base.drop_all()
+    # db_base.drop_all()
+
     db_base.create_all()
 
 # Setup Flask-Security
@@ -127,8 +128,25 @@ def test_mail_py():
 def test():
     return render_template_string("Hello {{ current_user.email }}")
 
-@app.route('/register', methods=['GET'])
+@app.route('/register', methods=['GET', 'POST'])
+# @register_view
 def register():
+    if request.method == 'POST':
+    # email: Mapped[str] = mapped_column(unique = True)
+    # password: Mapped[Optional[str]]
+    # login_count: Mapped[int] 
+    # name: Mapped[str]   
+    # instagram: Mapped[str] 
+    # tel: Mapped[Optional[str]]
+        email = request.form.get('email')
+        password = request.form.get('password')
+        login_count = 0
+        name = request.form.get('name')
+        instagram = request.form.get('instagram')
+        tel = request.form.get('tel')
+        
+        user_datastore.create_user(email = email, password = hash_password(password))
+        db_base.commit()
     return render_template('security/register_user.html')
 
 @app.route("/")
