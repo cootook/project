@@ -112,7 +112,7 @@ body {
   row-gap: 0;
   justify-content: center;
   grid-template-columns: auto;
- 
+  
 }
 
 .form_input {
@@ -120,19 +120,21 @@ body {
 }
 
 .form-signin {
-  grid-column-start: 1;
-  grid-column-end: 2;
+  /* grid-column-start: 1; */
+  /* grid-column-end: 2; */
   display: grid;
   grid-template-columns: auto;
+  align-content: stretch;
   gap: 50px;
   width: 330px;
+  height: 30em;
 }
 
 #message {
   position: relative;
 }
 
-#name, #login, #password, #confirmation, #floatingInput, #floatingPassword, #tel_number, #instagram {
+#name, #login, #password, #confirmation, #floatingInput, #floatingPassword, #tel_number, #instagram, #email, #submit, #tel {
   width: 90%;
 }
 

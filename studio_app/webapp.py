@@ -1,46 +1,59 @@
 import os
 import re
+import secrets
 import sqlite3
 import datetime
 import smtplib, ssl
+import flask_security
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from calendar import monthrange
 from datetime import timedelta, date
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, render_template_string
+from flask_mailman import Mail
+from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password
+from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
+from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy import select
+from studio_app.config import ProductionConfig, DevelopmentConfig, TestingConfig
+from studio_app.db_classes import db_base
+from studio_app.db_classes import Appointment, Booking_message, Language, Notification_type, Payment, Payment_method, Payment_status, Payment_type, Role, Service, Service_role, Slot, User, User_notification, User_role
 from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
 from .rout_handlers import *
-# from flask_mail import Mail, Message
+
+# flask security
+from typing import List
 
 app = Flask(
                 __name__,
                 static_url_path='', 
-                static_folder='../studio_app/static/',
-                template_folder='../studio_app/templates/'
+                static_folder = os.environ.get('FLASK_STATIC_FOLDER'),
+                template_folder = os.environ.get('FLASK_TEMPLATE_FOLDER')
                 )
 
-# Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_PERMANENT"] = True
-app.config["SESSION_TYPE"] = "filesystem"
-app.config['SESSION_FILE_THRESHOLD'] = 250
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=90)
-
-app.config['MAIL_SERVER'] = 'smtp.yandex.com'
-app.config['MAIL_PORT'] = 465
-# app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_APP_KEY')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
-# mail = Mail(app)
+### configuration selection
+# app.config.from_object(ProductionConfig)
+app.config.from_object(DevelopmentConfig)
+# app.config.from_object(TestingConfig)
 
 Session(app)
+mail = Mail(app)
+
+db_base.init_app(app)
+
+with app.app_context():
+    # db_base.drop_all()
+
+    db_base.create_all()
+
+# Setup Flask-Security
+user_datastore = SQLAlchemyUserDatastore(db_base, User, Role)
+app.security = Security(app, user_datastore, confirm_register_form=ExtendedRegisterForm)
 
 app.register_error_handler(404, page_not_found)
-
-
 
 # Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "History", "Account", "Contact", "LogOut"]
@@ -60,30 +73,18 @@ def inject_navbar_items_not_loged_in():
 def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
 
-# @app.route("/test_mail/", methods=["GET", "POST"])
-# @login_required
-# def test_mail():
-#     recipient = "cootook@gmail.com"
-#     msg = Message('Test Email', recipients=[recipient])
-#     msg.body = ('Congratulations! You have sent a test email with '
-#                 'Yandex')
-#     msg.html = ('<h1>Test Email</h1>'
-#                 '<p>Congratulations! You have sent a test email with '
-#                 '<b>Yandex</b>!</p>')
-#     mail.send(msg)
-#     flash(f'A test message was sent to {recipient}.')
-#     return redirect("/")
-
 
 @app.route("/test_mail_py/", methods=["GET", "POST"])
 @login_required
 def test_mail_py():
     mail_server = os.environ.get('MAIL_SERVER')
+
     receiver = "cootook@gmail.com"
     sender = "matveising@ya.ru"
-    port = os.environ.get('MAIL_PORT')
+    port = int(os.environ.get('MAIL_PORT'))
     username = os.environ.get('MAIL_USERNAME')
     password = os.environ.get('MAIL_APP_KEY')
+
     message = MIMEMultipart("alternative")
     # message.set_content("This message is sent from Python.")
     message['Subject'] = 'Test of sending via Python'
@@ -98,6 +99,7 @@ def test_mail_py():
     <html>
     <body>
         <p>Hi,<br>
+        Second one
         This is HTML<br>
         <a href="https://github.com/cootook">my GitHub</a> 
         </p>
@@ -113,38 +115,39 @@ def test_mail_py():
 
     context = ssl.create_default_context()
 
-    with smtplib.SMTP_SSL("smtp.yandex.com", port, context=context) as server:
+    with smtplib.SMTP_SSL(mail_server, port, context=context) as server:
         server.login(username, password)
         server.sendmail(sender, receiver, message.as_string())
-
-    # msg = EmailMessage()
-    # msg.set_content("test message python")
-
-    # # me == the sender's email address
-    # # you == the recipient's email address
-    # msg['Subject'] = f'Test of sending'
-    # msg['From'] = "cootook@gmail.con"
-    # msg['To'] = "matveising@ya.ru"
-
-    # # Send the message via our own SMTP server.
-    # s = smtplib.SMTP("127.0.0.1")
-
-    # username = os.environ.get('MAIL_USERNAME')
-    # password = os.environ.get('MAIL_APP_KEY')
-    # server = smtplib.SMTP('smtp.yandex.com:465')
-    # server.ehlo()
-    # server.starttls()
-    # server.login(username,password)
-    # server.sendmail(fromaddr, toaddrs, msg)
-    # server.quit()
-
-    # s.send_message(msg)
-    # s.quit()
-
 
     flash(f'A test message was sent to {receiver}.')
     return redirect("/")
 
+
+@app.route("/test/")
+# @auth_required()
+def test():
+    return render_template_string("Hello {{ current_user.email }}")
+
+@app.route('/register', methods=['GET', 'POST'])
+# @register_view
+def register():
+    if request.method == 'POST':
+    # email: Mapped[str] = mapped_column(unique = True)
+    # password: Mapped[Optional[str]]
+    # login_count: Mapped[int] 
+    # name: Mapped[str]   
+    # instagram: Mapped[str] 
+    # tel: Mapped[Optional[str]]
+        email = request.form.get('email')
+        password = request.form.get('password')
+        login_count = 0
+        name = request.form.get('name')
+        instagram = request.form.get('instagram')
+        tel = request.form.get('tel')
+        
+        user_datastore.create_user(email = email, password = hash_password(password))
+        db_base.commit()
+    return render_template('security/register_user.html')
 
 @app.route("/")
 def home():

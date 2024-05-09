@@ -46,6 +46,9 @@ To read database file you can use VScode extension [SQLite Viewer](https://marke
 
 ### Database schema
 
+integrating Flask-security-too is in progress, for that purpose new database created. File of db is created automatically.
+**[NEW DATABASE SCHEMA](./docs/database_schema.md)**
+
 ```
 CREATE TABLE users (
     id INTEGER PRIMARY KEY, 
