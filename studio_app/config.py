@@ -16,10 +16,11 @@ class Config(object):
     SESSION_TYPE = os.environ.get('FLASK_SESSION_TYPE')
     SESSION_FILE_THRESHOLD = int(os.environ.get('FLASK_SESSION_FILE_THRESHOLD'))
     PERMANENT_SESSION_LIFETIME = timedelta(days = int(os.environ.get('FLASK_SESSION_LIFETIME_DAYS')))
-
-    SECURITY_REGISTERABLE = True
+    
     SECURITY_CONFIRMABLE = True
     SECURITY_RECOVERABLE = True
+    SECURITY_REGISTERABLE = True
+    SECURITY_TRACKABLE = True
     SECURITY_USERNAME_ENABLE = False
     
     MAIL_SERVER = os.getenv("MAIL_SERVER")
