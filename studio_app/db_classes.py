@@ -126,12 +126,13 @@ class Service_role(db_base.Model):
 class Slot(db_base.Model):
     __tablename__ = "slot"
     id: Mapped[int] = mapped_column(primary_key=True)
-    date_time: Mapped[datetime.datetime]
-    opened: Mapped[bool]
+    date: Mapped[datetime.date]
+    time: Mapped[datetime.time]
+    opened: Mapped[bool] = mapped_column(default = False)
     opened_by_id = mapped_column(ForeignKey("user.id", use_alter=True), nullable=True)
     open_by = relationship("User", foreign_keys=[opened_by_id])
-    opened_at: Mapped[datetime.datetime]
-    occupied: Mapped[bool]
+    opened_at: Mapped[datetime.datetime] = mapped_column(nullable=True)
+    occupied: Mapped[bool] = mapped_column(nullable=True)
     occupied_by_appoint_id = mapped_column(ForeignKey("appointment.id", use_alter=True), nullable=True)
     occupied_by_appoint = relationship("Appointment", foreign_keys=[occupied_by_appoint_id])
 
@@ -166,6 +167,26 @@ class User(db_base.Model, fsqla.FsUserMixin):
     deleted_at: Mapped[Optional[datetime.datetime]]
     deleted_by_id = mapped_column(ForeignKey("user.id"), nullable=True)
     deleted_by = relationship("User", foreign_keys=[deleted_by_id])
+
+# #### USE CLASS USER_AS_WORKER WHEN MORE THAN ONE WORKER, UPDATE SLOT GENERATION 
+
+# class User_as_worker(db_base.Model):
+#     __tablename__ = "user_as_worker"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     user_id = mapped_column(ForeignKey("user.id"))
+#     time_slot_duration_minutes: Mapped[Optional[int]]
+#     qualification: Mapped[Optional[str]]
+#     description: Mapped[Optional[str]]
+#     created_at: Mapped[Optional[datetime.datetime]] 
+#     created_by_id = mapped_column(ForeignKey("user.id"), nullable=True)
+#     created_by = relationship("User", foreign_keys=[created_by_id])
+#     lust_update_at: Mapped[Optional[datetime.datetime]] 
+#     lust_update_by_id = mapped_column(ForeignKey("user.id"), nullable=True)
+#     lust_update_by = relationship("User", foreign_keys=[lust_update_by_id])
+#     deleted: Mapped[bool] = mapped_column(default = False)
+#     deleted_at: Mapped[Optional[datetime.datetime]]
+#     deleted_by_id = mapped_column(ForeignKey("user.id"), nullable=True)
+#     deleted_by = relationship("User", foreign_keys=[deleted_by_id])
 
 class User_notification(db_base.Model):
     __tablename__ = "user_notification"

@@ -1,11 +1,14 @@
+import atexit
 import os
 import re
 import secrets
 import sqlite3
 import datetime
 import smtplib, ssl
+import time
 import flask_security
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from calendar import monthrange
@@ -45,7 +48,7 @@ mail = Mail(app)
 db_base.init_app(app)
 
 with app.app_context():
-    # db_base.drop_all()
+    # db_base.drop_all()  
 
     db_base.create_all()
 
@@ -72,6 +75,78 @@ def inject_navbar_items_not_loged_in():
 @app.context_processor
 def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
+
+
+def create_slots():
+    print("##### create slots")
+    print(datetime.datetime.now())
+    with app.app_context():
+        how_many_days_for_advance_to_populate_slot_table = 20
+        service_duration_hours = 2
+        service_timedelta = timedelta(hours=service_duration_hours)
+        starting_time = datetime.time(9, 30)
+        ending_time = datetime.time(16, 00)
+         
+        for x in reversed(range(how_many_days_for_advance_to_populate_slot_table + 1)):
+            date_to_create_slots = datetime.date.today() + timedelta(days=x)
+            stmt_to_check_slots_at_that_day = Slot.query.filter(Slot.date == date_to_create_slots)
+            slots_of_that_day = db_base.session.execute(stmt_to_check_slots_at_that_day).all()
+
+            if len(slots_of_that_day) == 0:
+                temp_time = starting_time
+                while temp_time <= ending_time:
+                    new_slot = Slot(date=date_to_create_slots, time=temp_time)
+                    temp_time = (datetime.datetime.combine(datetime.date(1, 1, 1), temp_time) + service_timedelta).time()
+                    db_base.session.add(new_slot)
+                    db_base.session.commit()
+                    print(new_slot)
+                    print("#", slots_of_that_day)
+                    
+            print("@", len(slots_of_that_day))
+        
+        # for i in result:
+        #     print(i[0].date_time.year,)
+    return True
+
+create_slots()
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=create_slots, trigger="interval", hours=24)
+scheduler.start()
+
+# Shut down the scheduler when exiting the app
+atexit.register(lambda: scheduler.shutdown())
+
+# populate Slots table for testing functions
+@app.route("/slots/", methods=["GET"])
+def slots():
+
+
+    with app.app_context():
+        date1 = datetime.date(2024, 5, 25)
+        time1 = datetime.time(10, 30)
+        slot1 = Slot(date=date1, time=time1)
+
+        date1 = datetime.date(2024, 5, 25)
+        time2 = datetime.time(12, 30)
+        slot2 = Slot(date=date1, time=time2)
+
+        date1 = datetime.date(2024, 6, 10)
+        time3 = datetime.time(15, 0)
+        slot3 = Slot(date=date1, time=time3, opened=True)
+
+        date1 = datetime.date(2024, 6, 10)
+        time4 = datetime.time(17, 0)
+        slot4 = Slot(date=date1, time=time4)
+
+        date1 = datetime.date(2024, 6, 25)
+        time5 = datetime.time(9, 0)
+        slot5 = Slot(date=date1, time=time5, opened=True)
+
+        db_base.session.add_all([slot1, slot2, slot3, slot4, slot5])
+        db_base.session.commit()
+    
+    return redirect("/")
+
 
 
 @app.route("/test_mail_py/", methods=["GET", "POST"])
@@ -383,65 +458,6 @@ def signin():
 @not_loged_only
 def _signup():
     return signup.signup()
-# def signup():
-
-#     try:
-#         if request.method == "POST":
-#             instagram = request.form.get("instagram")
-#             tel_number = request.form.get("tel_number")
-#             login = request.form.get("login")
-#             password = request.form.get("password")
-#             confirmation = request.form.get("confirmation")
-
-#             is_pass_ok = (password == confirmation) and validate_password(password)
-#             is_instagram_ok = len(instagram) >= 3
-#             is_tel_ok = len(tel_number) >= 10
-#             regex_email = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-#             is_login_ok = (re.fullmatch(regex_email, login) != None)
-
-#             if not is_pass_ok or not is_instagram_ok or not is_tel_ok or not is_login_ok:
-#                 return render_template("apology.html", error_message='''
-#                                        Password must contain:</br>
-#                                        - a lowercase letter</br>
-#                                        - a capital (uppercase) letter</br>
-#                                        - a number</br>
-#                                        - minimum 6 characters.</br>
-#                                        </br>
-#                                        Instagramm name should be valid.</br>
-#                                         </br>
-#                                        Telephone at leats 10 digits.</br>
-#                                         </br>
-#                                        Email adress.</br>
-#                                        ''')
-#         else:
-#             return render_template("signup.html")
-#     except Exception as er:
-#         print("### ERROR signup: request.form, validation")
-#         print(er)
-#         return render_template("apology.html", error_message="Something went wrong.")
-#     else:   
-#         try:       
-#             con = sqlite3.connect("./db.db") 
-#             cur = con.cursor()
-#             if does_user_exist(login, cur):            
-#                 error_message = "Email " + login + " already registred, try restore password instead."
-#                 con.close()
-#                 return render_template("apology.html", error_message=error_message)
-#             #insert new user to db
-#             cur.execute("INSERT INTO users (is_admin, is_clerck, email, lang, instagram, tel, is_subscribed_promo) values (?, ?, ?, ?, ?, ?, ?)", (0, 0, login, "en", instagram, tel_number, 1))
-#             user_id = cur.execute("SELECT id FROM users WHERE email=?", (login,)).fetchone()[0]
-#             password_hash = generate_password_hash(password)
-#             cur.execute("INSERT INTO login (user_id, hash) VALUES (?, ?)", (user_id, password_hash))
-#         except Exception as er:
-#             print("###/signup/ --insert new user to db")
-#             print(er)
-#             con.close()
-#             return render_template("apology.html", error_message="Something went wrong. Try again or contact us.") 
-#         else:
-#             log_user_in(login, password, cur)
-#             con.commit()
-#             con.close()            
-#             return redirect("/")
     
 @app.route("/logout/")
 @login_required
