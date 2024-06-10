@@ -76,79 +76,6 @@ def inject_navbar_items_not_loged_in():
 def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
 
-
-def create_slots():
-    print("##### create slots")
-    print(datetime.datetime.now())
-    with app.app_context():
-        how_many_days_for_advance_to_populate_slot_table = 20
-        service_duration_hours = 2
-        service_timedelta = timedelta(hours=service_duration_hours)
-        starting_time = datetime.time(9, 30)
-        ending_time = datetime.time(16, 00)
-         
-        for x in reversed(range(how_many_days_for_advance_to_populate_slot_table + 1)):
-            date_to_create_slots = datetime.date.today() + timedelta(days=x)
-            stmt_to_check_slots_at_that_day = Slot.query.filter(Slot.date == date_to_create_slots)
-            slots_of_that_day = db_base.session.execute(stmt_to_check_slots_at_that_day).all()
-
-            if len(slots_of_that_day) == 0:
-                temp_time = starting_time
-                while temp_time <= ending_time:
-                    new_slot = Slot(date=date_to_create_slots, time=temp_time)
-                    temp_time = (datetime.datetime.combine(datetime.date(1, 1, 1), temp_time) + service_timedelta).time()
-                    db_base.session.add(new_slot)
-                    db_base.session.commit()
-                    print(new_slot)
-                    print("#", slots_of_that_day)
-                    
-            print("@", len(slots_of_that_day))
-        
-        # for i in result:
-        #     print(i[0].date_time.year,)
-    return True
-
-create_slots()
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=create_slots, trigger="interval", hours=24)
-scheduler.start()
-
-# Shut down the scheduler when exiting the app
-atexit.register(lambda: scheduler.shutdown())
-
-# populate Slots table for testing functions
-@app.route("/slots/", methods=["GET"])
-def slots():
-
-
-    with app.app_context():
-        date1 = datetime.date(2024, 5, 25)
-        time1 = datetime.time(10, 30)
-        slot1 = Slot(date=date1, time=time1)
-
-        date1 = datetime.date(2024, 5, 25)
-        time2 = datetime.time(12, 30)
-        slot2 = Slot(date=date1, time=time2)
-
-        date1 = datetime.date(2024, 6, 10)
-        time3 = datetime.time(15, 0)
-        slot3 = Slot(date=date1, time=time3, opened=True)
-
-        date1 = datetime.date(2024, 6, 10)
-        time4 = datetime.time(17, 0)
-        slot4 = Slot(date=date1, time=time4)
-
-        date1 = datetime.date(2024, 6, 25)
-        time5 = datetime.time(9, 0)
-        slot5 = Slot(date=date1, time=time5, opened=True)
-
-        db_base.session.add_all([slot1, slot2, slot3, slot4, slot5])
-        db_base.session.commit()
-    
-    return redirect("/")
-
-
-
 @app.route("/test_mail_py/", methods=["GET", "POST"])
 @login_required
 def test_mail_py():
@@ -511,3 +438,15 @@ def windows():
             print(er)
             return  render_template("apology.html", error_message="Something went wrong")
         return render_template("windows.html", slots=slots)
+
+
+with app.app_context():
+    Slot.delete_old_empty()
+    Slot.create_n_days_upfront(35)
+    Slot.create(2023, 10, 5, 11, 30)
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(func=create_slots_n_days_upfront, trigger="interval", hours=24)
+# scheduler.start()
+
+# Shut down the scheduler when exiting the app
+# atexit.register(lambda: scheduler.shutdown())
