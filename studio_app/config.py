@@ -4,9 +4,6 @@ from datetime import timedelta
 
 class Config(object):
     """Base config."""
-    TESTING = False
-    FLASK_ENV = 'production'
-    FLASK_DEBUG = False 
 
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SECURITY_PASSWORD_SALT = os.environ.get("SECURITY_PASSWORD_SALT")
@@ -47,12 +44,15 @@ class Config(object):
 
 class ProductionConfig(Config):
     """Uses production database server."""
+    TESTING = False
     FLASK_ENV = 'production'
     FLASK_DEBUG = False 
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
 
 class DevelopmentConfig(Config):
+    TESTING = False
+
     FLASK_ENV='development'
     FLASK_DEBUG=True
 
