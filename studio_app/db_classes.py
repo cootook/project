@@ -112,6 +112,37 @@ class Role(db_base.Model, fsqla.FsRoleMixin):
     name: Mapped[str] = mapped_column(unique = True)
     description: Mapped[str] = mapped_column(default = "")
 
+    def create_role(role_name: str, role_description: str):
+        print("     # create new role")
+        if len(Role.query.filter(Role.name == role_name).first()) == 1:
+            print("      - role ", role_name, " already exists")
+            return False
+        new_role = Role(name = role_name, description = role_description)
+        db_base.session.add(new_role)
+        db_base.session.commit()
+        new_role_check = Role.query.filter(Role.name == role_name).first()
+        if len(new_role_check) == 1:
+            print("      - role ", role_name, " created")
+            return True
+        else:
+            print("      - new role creating failed")
+        return False
+    
+    def set_for_user_role(user_id: int, role_id: int, set_by_id: int):
+        set_at = datetime.datetime.now()
+        new_user_role = User_role(user_id = user_id, 
+                                  role_id = role_id, 
+                                  set_by_id = set_by_id, 
+                                  set_at = datetime.datetime.now)
+    # id: Mapped[int] = mapped_column(primary_key=True)
+    # user_id = mapped_column(ForeignKey("user.id"))
+    # user: Mapped["User"] = relationship(foreign_keys=[user_id])
+    # role_id = mapped_column(ForeignKey("role.id"))
+    # role: Mapped["Role"] = relationship(foreign_keys=[role_id])
+    # set_by_id = mapped_column(ForeignKey("user.id"))
+    # set_by: Mapped["User"] = relationship(foreign_keys=[set_by_id])
+    # set_at: Mapped[datetime.datetime]
+
 class Service(db_base.Model):
     __tablename__ = "service"
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -127,6 +158,8 @@ class Service_role(db_base.Model):
 class Slot(db_base.Model):
     __tablename__ = "slot"
     id: Mapped[int] = mapped_column(primary_key=True)
+    own_by_id = mapped_column(ForeignKey("user.id", use_alter=True))
+    own_by = relationship("User", foreign_keys=[own_by_id])
     date: Mapped[datetime.date]
     time: Mapped[datetime.time]
     opened: Mapped[bool] = mapped_column(default = False)

@@ -48,7 +48,7 @@ mail = Mail(app)
 db_base.init_app(app)
 
 with app.app_context():
-    # db_base.drop_all()  
+    db_base.drop_all()  
 
     db_base.create_all()
 
