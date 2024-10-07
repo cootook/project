@@ -12,7 +12,7 @@ def cancel_appointment():
             print("##/cancel_appointment/ --Access denied. User # ", session.get("user_id"))
             return  render_template("apology.html", error_message="Access denied.")
         else:
-            print(f"#canceling for \nuser #{user_id_cancel} \nbooking id #{booking_id_cancel} \nwith msg: '{cancel_message}',\n by #{session.get("user_id")} is admin - {session.get("is_admin")}")
+            print(f"#canceling for \nuser #{user_id_cancel} \nbooking id #{booking_id_cancel} \nwith msg: '{cancel_message}',\n by #{session.get('user_id')} is admin - {session.get('is_admin')}")
         
     except Exception as er:
         print("##/cancel_appointment/ --form request")
