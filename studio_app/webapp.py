@@ -19,6 +19,7 @@ from flask_security import Security, SQLAlchemyUserDatastore, auth_required, has
 from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
 from jinja2 import Environment as jinja2_env
+from .helpers import validate_recaptcha
 from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
@@ -365,21 +366,26 @@ def pricing():
 def signin():
     if request.method == "POST":
         try:
+            token = request.form.get("g-recaptcha-response")
             login = request.form.get("login")
             password = request.form.get("password")
             remember = request.form.get("remember")
+
+            if not validate_recaptcha(token):
+                return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot protection. Please, try again or contact us.")
+
 
             con = sqlite3.connect("./db.db") 
             cur = con.cursor()
             print("###remember")
             print(remember)
             if not log_user_in(login, password, cur):
-                return render_template("apology.html", error_message="wrong login or passwor")                
+                return render_template("apology.html", error_message="wrong login or password")                
 
         except Exception as er:
             print("### ERROR signin: request.form, db")
             print(er)
-            return render_template("apology.html", error_message="Soomething went wrong")
+            return render_template("apology.html", error_message="Something went wrong")
 
         con.close()
         return redirect("/")
