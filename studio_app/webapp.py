@@ -18,6 +18,7 @@ from flask_mailman import Mail
 from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password
 from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
+from jinja2 import Environment as jinja2_env
 from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
@@ -63,6 +64,12 @@ navbar_items = ["Appointments", "History", "Account", "Contact", "LogOut"]
 navbar_items_not_loged_in = ["Contact", "SignIn", "SignUp"]
 navbar_items_admin = ["All_appointments", "All_history", "Account", "Clients", "Windows", "Generate_slots", "Contact", "LogOut"]
 days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
+
+jinja2_env.SITE_KEY_RECAPTCHA = os.environ.get('SITE_KEY_RECAPTCHA')
+
+@app.context_processor
+def set_site_key_recaptcha():
+    return {"SITE_KEY_RECAPTCHA": os.environ.get('SITE_KEY_RECAPTCHA')}
 
 @app.context_processor
 def inject_navbar_items():
