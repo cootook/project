@@ -18,6 +18,8 @@ from flask_mailman import Mail
 from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password
 from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
+from jinja2 import Environment as jinja2_env
+from .helpers import validate_recaptcha
 from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
@@ -63,6 +65,12 @@ navbar_items = ["Appointments", "History", "Account", "Contact", "LogOut"]
 navbar_items_not_loged_in = ["Contact", "SignIn", "SignUp"]
 navbar_items_admin = ["All_appointments", "All_history", "Account", "Clients", "Windows", "Generate_slots", "Contact", "LogOut"]
 days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
+
+jinja2_env.SITE_KEY_RECAPTCHA = os.environ.get('SITE_KEY_RECAPTCHA')
+
+@app.context_processor
+def set_site_key_recaptcha():
+    return {"SITE_KEY_RECAPTCHA": os.environ.get('SITE_KEY_RECAPTCHA')}
 
 @app.context_processor
 def inject_navbar_items():
@@ -358,21 +366,26 @@ def pricing():
 def signin():
     if request.method == "POST":
         try:
+            token = request.form.get("g-recaptcha-response")
             login = request.form.get("login")
             password = request.form.get("password")
             remember = request.form.get("remember")
+
+            if not validate_recaptcha(token):
+                return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot protection. Please, try again or contact us.")
+
 
             con = sqlite3.connect("./db.db") 
             cur = con.cursor()
             print("###remember")
             print(remember)
             if not log_user_in(login, password, cur):
-                return render_template("apology.html", error_message="wrong login or passwor")                
+                return render_template("apology.html", error_message="wrong login or password")                
 
         except Exception as er:
             print("### ERROR signin: request.form, db")
             print(er)
-            return render_template("apology.html", error_message="Soomething went wrong")
+            return render_template("apology.html", error_message="Something went wrong")
 
         con.close()
         return redirect("/")
@@ -396,21 +409,45 @@ def logout():
 @login_required
 @admin_only
 def windows():
+    db_v2_slots = Slot.query.filter().all()
+    print(db_v2_slots)
+    slots_to_frontend = []
+    for s in db_v2_slots:
+        print(s.id, s.date.year, s.date.month, s.date.day, s.time.hour, s.time.minute, s.opened )
+        slots_to_frontend.append([s.id, s.date.year, s.date.month, s.date.day, s.time.hour, s.time.minute, 1 if s.opened else 0])
+        # slot_id, year, month, day, hour, minute, is_open
+    print(slots_to_frontend)
     if request.method == "POST":
         try:
+            target_slot_id = int(request.form.get("slot-id"))
             minute = int(request.form.get("minute"))
             hour = int(request.form.get("hour"))
             day = int(request.form.get("date"))
             month = int(request.form.get("month")) + 1 # in calendar.js month range starts from 0
             year = int(request.form.get("year"))
+            target_date = datetime.date(year, month, day)
+            target_time = datetime.time(hour, minute)
 
-            con = sqlite3.connect("./db.db") 
-            cur = con.cursor()
-            slot_to_edit = cur.execute("SELECT slot_id, is_open FROM calendar WHERE year=? AND month=? AND day=? AND hour=? AND minute=?;", (year, month, day, hour, minute)).fetchone()
-            new_is_open = 1 if slot_to_edit[1] == 0 else 0
-            cur.execute("UPDATE calendar SET is_open=? WHERE slot_id=?", (new_is_open, slot_to_edit[0]))
-            con.commit()
-            con.close()
+            # con = sqlite3.connect("./db.db") 
+            # cur = con.cursor()
+            # slot_to_edit = cur.execute("SELECT slot_id, is_open FROM calendar WHERE year=? AND month=? AND day=? AND hour=? AND minute=?;", (year, month, day, hour, minute)).fetchone()
+            # new_is_open = 1 if slot_to_edit[1] == 0 else 0
+            # cur.execute("UPDATE calendar SET is_open=? WHERE slot_id=?", (new_is_open, slot_to_edit[0]))
+            # con.commit()
+            # con.close()
+
+            target_slot = Slot.query.filter(Slot.id == target_slot_id, Slot.date == target_date, Slot.time == target_time).first()
+            print(target_slot.id)
+            if target_slot.opened :
+                target_slot.opened = False
+                target_slot.opened_by_id = None
+                target_slot.opened_at = None
+            else:
+                target_slot.opened = True
+                target_slot.opened_by_id = session["user_id"]
+                target_slot.opened_at = datetime.datetime.now()
+
+            db_base.session.commit()
             return redirect("/windows/")
 
         except Exception as er:
@@ -437,7 +474,7 @@ def windows():
             print("##/windows/")
             print(er)
             return  render_template("apology.html", error_message="Something went wrong")
-        return render_template("windows.html", slots=slots)
+        return render_template("windows.html", slots=slots_to_frontend)
 
 
 with app.app_context():

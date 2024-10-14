@@ -166,8 +166,8 @@ class Slot(db_base.Model):
         """
         print("     # create slots ", how_many_days_for_advance_to_populate_slot_table, " days upfront:")
         print("         -- starting from ", datetime.datetime.now())
-        service_duration_hours = int(os.environ.get("STANDARD_SERVICE_DURATION_HOUR"))
-        service_timedelta = datetime.timedelta(hours=service_duration_hours)
+        time_delta_slots_minutes = int(os.environ.get("TIME_DELTA_SLOTS_MINUTES"))
+        service_timedelta = datetime.timedelta(minutes=time_delta_slots_minutes)
         starting_time = datetime.time(int(os.environ.get("OPEN_AT_TIME_HOUR")), int(os.environ.get("OPEN_AT_TIME_MINUTE")))
         ending_time = datetime.time(int(os.environ.get("CLOSE_AT_TIME_HOUR")), int(os.environ.get("CLOSE_AT_TIME_MINUTE")))
         count_slots_created = 0
