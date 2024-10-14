@@ -217,6 +217,11 @@
         input_year.setAttribute("type", "hidden");
         input_year.setAttribute("name", "year");
         input_year.setAttribute("value", day.year()); 
+
+        var input_slot_id = createElement('input');
+        input_slot_id.setAttribute("type", "hidden");
+        input_slot_id.setAttribute("name", "slot-id");
+        input_slot_id.setAttribute("value", ev.id);
         
         var button = createElement('input', 'open_time');
         button.setAttribute("type", "submit");
@@ -227,6 +232,7 @@
         form.appendChild(input_date);
         form.appendChild(input_month);
         form.appendChild(input_year);
+        form.appendChild(input_slot_id)
         form.appendChild(button)
 
         div.appendChild(square);
@@ -372,6 +378,11 @@
         input_year.setAttribute("type", "hidden");
         input_year.setAttribute("name", "year");
         input_year.setAttribute("value", ev.date.year());
+
+        var input_slot_id = createElement('input');
+        input_slot_id.setAttribute("type", "hidden");
+        input_slot_id.setAttribute("name", "slot-id");
+        input_slot_id.setAttribute("value", ev.id);
  
         
         var button = createElement('input', 'open_time');
@@ -383,7 +394,8 @@
         form.appendChild(input_date);
         form.appendChild(input_month);
         form.appendChild(input_year);
-        form.appendChild(button)
+        form.appendChild(input_slot_id);
+        form.appendChild(button);
         div.appendChild(square);
         div.appendChild(form);
         }        
@@ -392,7 +404,7 @@
   
       if(!events.length) {
         var div = createElement('div', 'event empty');
-        var span = createElement('span', '', 'No avaliable time for booking');
+        var span = createElement('span', '', 'No available time for booking');
   
         div.appendChild(span);
         wrapper.appendChild(div);
@@ -486,9 +498,10 @@
     var data = filtered_slots.map((slot) => {
       slot_status = slot[6] == 1 ? 'Avaliable time' : 'Closed time'
       slot_color  = slot[6] == 1 ? 'green' : 'yellow'
+      slot_id = slot[0]
       slot[5] = (slot[5] < 10) ? ('0' + slot[5]) : slot[5]
       var the_date = moment().minute(slot[5]).hour(slot[4]).date(slot[3]).month(slot[2] - 1).year(slot[1])
-      return { eventName: the_date.format("llll"), calendar: slot_status, color: slot_color, date: the_date}
+      return { eventName: the_date.format("llll"), calendar: slot_status, color: slot_color, date: the_date, id: slot_id}
     });
 
     // var data = [
