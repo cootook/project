@@ -410,13 +410,10 @@ def logout():
 @admin_only
 def windows():
     db_v2_slots = Slot.query.filter().all()
-    print(db_v2_slots)
     slots_to_frontend = []
     for s in db_v2_slots:
-        print(s.id, s.date.year, s.date.month, s.date.day, s.time.hour, s.time.minute, s.opened )
         slots_to_frontend.append([s.id, s.date.year, s.date.month, s.date.day, s.time.hour, s.time.minute, 1 if s.opened else 0])
-        # slot_id, year, month, day, hour, minute, is_open
-    print(slots_to_frontend)
+
     if request.method == "POST":
         try:
             target_slot_id = int(request.form.get("slot-id"))
@@ -425,19 +422,12 @@ def windows():
             day = int(request.form.get("date"))
             month = int(request.form.get("month")) + 1 # in calendar.js month range starts from 0
             year = int(request.form.get("year"))
+
             target_date = datetime.date(year, month, day)
             target_time = datetime.time(hour, minute)
 
-            # con = sqlite3.connect("./db.db") 
-            # cur = con.cursor()
-            # slot_to_edit = cur.execute("SELECT slot_id, is_open FROM calendar WHERE year=? AND month=? AND day=? AND hour=? AND minute=?;", (year, month, day, hour, minute)).fetchone()
-            # new_is_open = 1 if slot_to_edit[1] == 0 else 0
-            # cur.execute("UPDATE calendar SET is_open=? WHERE slot_id=?", (new_is_open, slot_to_edit[0]))
-            # con.commit()
-            # con.close()
-
             target_slot = Slot.query.filter(Slot.id == target_slot_id, Slot.date == target_date, Slot.time == target_time).first()
-            print(target_slot.id)
+
             if target_slot.opened :
                 target_slot.opened = False
                 target_slot.opened_by_id = None
@@ -455,27 +445,8 @@ def windows():
             print(er)
             return render_template("apology.html", error_message="Something went wrong.")
         
+    return render_template("windows.html", slots=slots_to_frontend)
         
-
-    else:
-        today = datetime.datetime.now()
-        try:
-            con = sqlite3.connect("./db.db") 
-            cur = con.cursor()
-            # slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT
-            slots_db = cur.execute("SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=?", (today.year,)).fetchall()
-            slots = []
-            for slot in slots_db:
-                slots.append(list(slot))
-            con.close()
-        except Exception as er:
-            con.close()
-            slots = None
-            print("##/windows/")
-            print(er)
-            return  render_template("apology.html", error_message="Something went wrong")
-        return render_template("windows.html", slots=slots_to_frontend)
-
 
 with app.app_context():
     Slot.delete_old_empty()
