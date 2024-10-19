@@ -163,6 +163,7 @@ def register():
 def home():
     today = datetime.datetime.now()
     try:
+        slots_db_v2 = Slot.query.filter(Slot.opened == True).all()
         con = sqlite3.connect("./db.db") 
         cur = con.cursor()
         # slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT
@@ -177,9 +178,19 @@ def home():
     else:
         con.close()
         slots = []
+        slots_for_frontend_db_v2 = []
         for slot in slots_db:
             slots.append(list(slot))
-        return render_template("index.html", slots=slots)
+        for slot in slots_db_v2:
+            year = slot.date.year
+            month = slot.date.month
+            day = slot.date.day
+            hour = slot.time.hour
+            minute = slot.time.minute
+            is_open = 1 if slot.opened else 0
+            slots_for_frontend_db_v2.append([slot.id, year, month, day, hour, minute, is_open])
+            print([slot.id, year, month, day, hour, minute, is_open])
+        return render_template("index.html", slots=slots_for_frontend_db_v2)
 
 @app.route("/about/")
 def about():    
