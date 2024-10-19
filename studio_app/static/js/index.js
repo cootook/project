@@ -1,3 +1,4 @@
+let recaptcha_checked = false;
 document.addEventListener("DOMContentLoaded", () => {
     $('#book_confirm_modal').on('show.bs.modal', function (event) {
       var slot_to_book = $(event.relatedTarget) // Button that triggered the modal
@@ -7,9 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
       var month_modal = slot_to_book.data('month')
       var year_modal = slot_to_book.data('year')
       var modal_time_full = slot_to_book.data('full')
-      // Extract info from data-* attributes
-      // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-      // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
       var modal = $(this)
       modal.find('#minute_input').val(minute_modal)
       modal.find('#hour_input').val(hour_modal)
@@ -18,7 +16,31 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.find('#year_input').val(year_modal)
       modal.find('#time_book').text(modal_time_full)
 
-
-      console.log("index# $")
+      document.getElementById('manicure').addEventListener('change', enable_submit_book)
+      document.getElementById('pedicure').addEventListener('change', enable_submit_book)
     })
   })
+
+  function submit_btn_active() {
+    let btn = document.getElementById('submit_booking_btn');
+    let checkbox_manicure = document.getElementById('manicure');
+    let checkbox_pedicure = document.getElementById('pedicure');
+
+    if (recaptcha_checked && (checkbox_manicure.checked || checkbox_pedicure.checked)) {
+      btn.disabled = false;
+    } else {
+      btn.disabled = true;
+    }
+  }
+
+  function enable_submit_book() {
+    recaptcha_checked = true;
+    submit_btn_active();
+    return
+  }
+
+  function disable_submit_book() {
+    btn.disabled = true;
+    submit_btn_active();    
+    return
+  }
