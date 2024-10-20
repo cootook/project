@@ -49,7 +49,6 @@ def book():
                     return  render_template("apology.html", error_message="Something went wrong")
         
         except Exception as er:
-
             print("##/book/ -- db query")
             print(er)
             return  render_template("apology.html", error_message="Something went wrong")        

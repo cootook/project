@@ -19,8 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.find('#year_input').val(year_modal)
       modal.find('#time_book').text(modal_time_full)
 
-      document.getElementById('manicure').addEventListener('change', enable_submit_book)
-      document.getElementById('pedicure').addEventListener('change', enable_submit_book)
+      document.getElementById('manicure').addEventListener('change', submit_btn_active)
+      document.getElementById('pedicure').addEventListener('change', submit_btn_active)
     })
   })
 
