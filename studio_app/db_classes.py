@@ -44,6 +44,17 @@ class Appointment(db_base.Model):
     lust_update_by = relationship("User", foreign_keys=[lust_update_by_id])
     description: Mapped[str] = mapped_column(default = "")
 
+    def create(user_id, service, date_time, slot_id, description):
+        # define service id
+        """
+        this should be called via
+        with app.app_context():
+        """
+        new_appointment = Appointment(user_id=user_id, service_id = 1, at=date_time, slot_id=slot_id, description=description )
+        db_base.session.add(new_appointment)
+        db_base.session.commit()
+        return new_appointment
+
 class Booking_message(db_base.Model):
     __tablename__ = "booking_message"
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -118,6 +129,12 @@ class Service(db_base.Model):
     name: Mapped[str] = mapped_column(unique = True)
     description: Mapped[str] = mapped_column(default = "")
 
+    def create(name, description):
+        new_service = Service(name=name, description=description)
+        db_base.session.add(new_service)
+        db_base.session.commit()
+        return new_service
+
 class Service_role(db_base.Model):
     __tablename__ = "service_role"
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -136,6 +153,15 @@ class Slot(db_base.Model):
     occupied: Mapped[bool] = mapped_column(nullable=True)
     occupied_by_appoint_id = mapped_column(ForeignKey("appointment.id", use_alter=True), nullable=True)
     occupied_by_appoint = relationship("Appointment", foreign_keys=[occupied_by_appoint_id])
+    # owned_by_id = mapped_column(ForeignKey("user.id", use_alter=True), nullable=True)
+    # owned_by = relationship("User", foreign_keys=[opened_by_id])
+
+    def book(for_user_id, requested_slot, appointment):
+        requested_slot.opened = False
+        requested_slot.occupied = True
+        requested_slot.occupied_by_appoint_id = appointment.id
+        db_base.session.commit()
+        return True
 
     def delete_old_empty():
         """

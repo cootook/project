@@ -330,11 +330,13 @@
         var div = createElement('div', 'event');
         var square = createElement('div', 'event-category ' + ev.color);
         //var span = createElement('span', '', ev.eventName);
+        console.log(ev)
         if (action_path == "/book/"){
                 // <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Open modal for @mdo</button>
                 var modal_button = createElement('button', 'btn btn-primary btn-calendar')
                 modal_button.setAttribute("data-toggle", "modal")
                 modal_button.setAttribute("data-target", "#book_confirm_modal")
+                modal_button.setAttribute("data-slot_id", ev.id)
                 modal_button.setAttribute("data-minute", ev.date.minute())
                 modal_button.setAttribute("data-hour", ev.date.hour())
                 modal_button.setAttribute("data-date", ev.date.date())

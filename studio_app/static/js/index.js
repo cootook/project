@@ -2,6 +2,8 @@ let recaptcha_checked = false;
 document.addEventListener("DOMContentLoaded", () => {
     $('#book_confirm_modal').on('show.bs.modal', function (event) {
       var slot_to_book = $(event.relatedTarget) // Button that triggered the modal
+      var slot_id_modal = slot_to_book.data('slot_id')
+      console.log(slot_id_modal)
       var minute_modal = slot_to_book.data('minute')
       var hour_modal = slot_to_book.data('hour')
       var date_modal = slot_to_book.data('date')
@@ -9,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
       var year_modal = slot_to_book.data('year')
       var modal_time_full = slot_to_book.data('full')
       var modal = $(this)
+      modal.find('#slot_id_input').val(slot_id_modal)
       modal.find('#minute_input').val(minute_modal)
       modal.find('#hour_input').val(hour_modal)
       modal.find('#date_input').val(date_modal)

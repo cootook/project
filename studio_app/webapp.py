@@ -24,7 +24,7 @@ from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
 from studio_app.config import ProductionConfig, DevelopmentConfig, TestingConfig
-from studio_app.db_classes import db_base
+from studio_app.db_classes import db_base, Service
 from studio_app.db_classes import Appointment, Booking_message, Language, Notification_type, Payment, Payment_method, Payment_status, Payment_type, Role, Service, Service_role, Slot, User, User_notification, User_role
 from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
 from .rout_handlers import *
@@ -83,6 +83,15 @@ def inject_navbar_items_not_loged_in():
 @app.context_processor
 def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
+
+with app.app_context():
+    print(Service.query.filter(Service.name == "manicure").first())
+    manicure_exist = True if not Service.query.filter(Service.name == "manicure").first() == None else False
+    print(manicure_exist)
+    if not manicure_exist:
+        print("creating")
+        new_service = Service.create("manicure", "manicure")
+        print(new_service.id)
 
 @app.route("/test_mail_py/", methods=["GET", "POST"])
 @login_required
@@ -223,7 +232,8 @@ def articles():
 @app.route("/book/", methods=["GET", "POST"])
 @login_required
 def _book():
-    return book.book()
+    with app.app_context():
+        return book.book()
 
 
 
