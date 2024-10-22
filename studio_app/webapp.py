@@ -433,7 +433,7 @@ def windows():
     db_v2_slots = Slot.query.filter().all()
     slots_to_frontend = []
     for s in db_v2_slots:
-        slots_to_frontend.append([s.id, s.date.year, s.date.month, s.date.day, s.time.hour, s.time.minute, 1 if s.opened else 0])
+        slots_to_frontend.append([s.id, s.date.year, s.date.month, s.date.day, s.time.hour, s.time.minute, 1 if s.opened else 0, 1 if s.occupied else 0])
 
     if request.method == "POST":
         try:

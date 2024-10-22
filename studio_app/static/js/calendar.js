@@ -497,8 +497,12 @@
       }
     })
     var data = filtered_slots.map((slot) => {
-      slot_status = slot[6] == 1 ? 'Avaliable time' : 'Closed time'
+      slot_status = slot[6] == 1 ? 'Available time' : 'Closed time'
       slot_color  = slot[6] == 1 ? 'green' : 'yellow'
+      if (slot[7] == 1) {
+        slot_status = 'Used already'
+        slot_color = 'blue'
+      }
       slot_id = slot[0]
       slot[5] = (slot[5] < 10) ? ('0' + slot[5]) : slot[5]
       var the_date = moment().minute(slot[5]).hour(slot[4]).date(slot[3]).month(slot[2] - 1).year(slot[1])
