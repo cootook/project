@@ -322,51 +322,6 @@ def _done_appointment():
 def _edit_appointment():
     return edit_appointment.edit_appointment()
 
-@app.route("/generate_slots/", methods = ["GET", "POST"])
-@login_required
-@admin_only
-def generate_slots():
-    if request.method == "POST":
-        try:
-            month = int(request.form.get("month"))
-            year = int(request.form.get("year"))
-            print("###")
-            print(month, year)
-        except Exception as er:
-            print("##/generate_slots/ request.form")
-            print(er)
-            return  render_template("apology.html", error_message="Something went wrong")        
-
-        try:
-            con = sqlite3.connect("./db.db") 
-            cur = con.cursor()
-        except Exception as er:
-            print("##/generate_slots/ -dbm")
-            print(er)
-            return  render_template("apology.html", error_message="Something went wrong")
-        else:
-            #check if this month generated
-            count_lines = cur.execute("SELECT COUNT(*) FROM calendar WHERE year=? AND month=?", (year, month)).fetchone()[0]
-            if not count_lines == 0:
-                print("#month exists; count != 0")
-                print(count_lines)
-                return redirect("/")
-
-        
-        days_in_month = monthrange(year, month)[1]
-
-        for day in range(1, days_in_month+1):
-            for time in days_slots:
-                # calendar (slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT)
-                cur.execute("INSERT INTO calendar (year, month, day, hour, minute, is_open) VALUES (?, ?, ?, ?, ?, ?)", (year, month, day, time[0], time[1], 0))
-                con.commit()
-        
-        con.close()
-        return redirect("/")
-
-    else:
-        return render_template("generate_slots.html")
-
 @app.route("/history/")
 @login_required
 def _history():
