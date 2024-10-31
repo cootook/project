@@ -1,3 +1,4 @@
+import datetime
 import os
 import re
 import requests
@@ -18,6 +19,26 @@ def admin_only(f):
 
 def does_user_exist(login, db_cursor):
     return db_cursor.execute("SELECT COUNT (id) FROM users WHERE email=?;", (login,)).fetchone()[0] == 1
+
+def get_js_object(object):
+    def convert(obj):
+        for el in obj:
+            if isinstance(obj[el], datetime.datetime):
+                obj.update({el: obj[el].strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + os.environ.get("TIME_UTC_OFFSET")})
+            elif isinstance(obj[el], datetime.date):
+                obj.update({el: obj[el].strftime("%m/%d/%Y")})
+            elif isinstance(obj[el], datetime.time):
+                obj.update({el: obj[el].strftime("%H:%M")})
+
+            return obj
+
+    if isinstance(object, list):
+        for element in object:
+            element = convert(element)
+    else:
+        object = convert(object)
+
+    return json.dumps(object)
 
 def get_service_name(is_manicure, is_pedicure):
     servise_name = ""
