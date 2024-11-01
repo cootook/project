@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block custom_styles %}
+<link href="{{ url_for('static', filename='/css/all_appointments.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block title %}
+Add new service
+{% endblock %}
+{% block content %}
+<table class="table table-dark">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Service</th>
+        <th scope="col">Description</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for service in services_list %}
+        <tr>
+            <th scope="row">{{ service["id"] }}</th>
+            <td>{{ service["name"] }}</td>
+            <td>{{ service["description"] }}</td>
+            <td><button>edit</button> <button>delete</button></td>
+        </tr>
+        {% endfor%}
+    </tbody>
+  </table>
+<div class="form-group mt-3">
+    <form action="/add_service/" method="post">
+        
+        <label for="service">service name</label>
+        <input class="form-control" type="text" id="service" name="service">
+        
+        <label for="description">service description</label>
+        <textarea class="form-control" id="description" name="description"></textarea>
+        <button class="btn btn-primary my-2" type="submit">create</button>
+    
+    </form>
+</div>
+
+{% endblock %}
