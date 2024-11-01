@@ -37,7 +37,6 @@ def all_appointments():
     
 
 
-
     # except Exception as er:
     #     con.close()
     #     print("##/all_appointments/ --db connection")

@@ -223,23 +223,23 @@ document.addEventListener("DOMContentLoaded", () => {
          modal.find('#date_edit').text(date_edit)
          modal.find('#service_edit').text(service_edit)
          modal.find('#client_edit').text(name_edit)
-         modal.find('#new_time').val(time_edit)
+        //  modal.find('#new_time').val(time_edit)
          modal.find('#new_date').val(date_picker_format_edit)
          console.log(date_picker_format_edit)
          modal.find('#new_duration').val(duration_edit)
          modal.find('#new_message').val(message_edit)
          console.log(service_edit)
          if (service_edit == "manicure") {
-           modal.find('#new_manicure').attr('checked', true)
-           modal.find('#new_pedicure').attr('checked', false)
+           modal.find('#manicure').attr('checked', true)
+           modal.find('#pedicure').attr('checked', false)
          } else if (service_edit == "pedicure") {
 
-           modal.find('#new_pedicure').attr('checked', true)
-           modal.find('#new_manicure').attr('checked', false)
+           modal.find('#pedicure').attr('checked', true)
+           modal.find('#manicure').attr('checked', false)
          } else if (service_edit == "combo") {
            console.log("combo")
-           modal.find('#new_manicure').attr('checked', true)
-           modal.find('#new_pedicure').attr('checked', true)
+           modal.find('#manicure').attr('checked', true)
+           modal.find('#pedicure').attr('checked', true)
          }
        })
 

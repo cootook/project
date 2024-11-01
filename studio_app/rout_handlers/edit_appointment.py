@@ -12,23 +12,33 @@ def edit_appointment():
     #     # new_message: 
     #     # user_id_edit: 1
     #     # booking_id_edit: 301
-    #     new_date = request.form.get("new_date")
-    #     new_time = request.form.get("new_time")
-    #     new_duration = int(request.form.get("new_duration"))
-    #     new_manicure = 1 if request.form.get("new_manicure") is not None else 0
-    #     new_pedicure = 1 if request.form.get("new_pedicure") is not None else 0
-    #     new_message = request.form.get("new_message")
-    #     user_id_edit = int(request.form.get("user_id_edit"))
-    #     booking_id_edit = int(request.form.get("booking_id_edit"))
-    #     print("#edit - new_date, new_time, new_duration, new_manicure, new_pedicure, new_message, user_id_edit, booking_id_edit")
-    #     print(new_date, new_time, new_duration, new_manicure, new_pedicure, new_message, user_id_edit, booking_id_edit)
-    #     new_year = int(new_date[0:4])
-    #     new_month = int(new_date[5:7]) 
-    #     new_day = int(new_date[8:10]) 
-    #     new_hour = int(new_time[0:2]) 
-    #     new_minute = int(new_time[3:5]) 
-    #     print("#edit - new_year, new_day, new_month, new_hour, new_minute")
-    #     print(new_year, new_day, new_month, new_hour, new_minute)
+    services = ["manicure", "pedicure", "combo"]
+    services_to_do = []
+    form = request.form
+    for i in form:
+        print(i)
+        if i in services:
+            services_to_do.append(i)
+
+    print(services_to_do)
+    new_date = request.form.get("new_date")
+    new_duration = int(request.form.get("new_duration"))
+    new_manicure = False if request.form.get("new_manicure") == None else True
+    new_pedicure = False if request.form.get("new_pedicure") == None else True
+    new_message = request.form.get("new_message")
+    user_id_edit = int(request.form.get("user_id_edit"))
+    booking_id_edit = int(request.form.get("booking_id_edit"))
+    print(form)
+    print(new_date, new_duration, new_manicure, new_pedicure, new_message, user_id_edit, booking_id_edit,)
+    # print("#edit - new_date, new_time, new_duration, new_manicure, new_pedicure, new_message, user_id_edit, booking_id_edit")
+    # print(new_date, new_time, new_duration, new_manicure, new_pedicure, new_message, user_id_edit, booking_id_edit)
+    # new_year = int(new_date[0:4])
+    # new_month = int(new_date[5:7]) 
+    # new_day = int(new_date[8:10]) 
+    # new_hour = int(new_time[0:2]) 
+    # new_minute = int(new_time[3:5]) 
+    # print("#edit - new_year, new_day, new_month, new_hour, new_minute")
+    # print(new_year, new_day, new_month, new_hour, new_minute)
         
     # except Exception as er:
     #     print("##/edit_appointment/ --form request")

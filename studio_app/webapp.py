@@ -85,6 +85,7 @@ def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
 
 with app.app_context():
+    
     print(Service.query.filter(Service.name == "manicure").first())
     manicure_exist = True if not Service.query.filter(Service.name == "manicure").first() == None else False
     print(manicure_exist)
