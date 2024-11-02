@@ -84,23 +84,6 @@ def inject_navbar_items_not_loged_in():
 def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
 
-# with app.app_context():
-
-#     print(Service.query.filter(Service.name == "manicure").first())
-#     manicure_exist = True if not Service.query.filter(Service.name == "manicure").first() == None else False
-#     print(manicure_exist)
-#     if not manicure_exist:
-#         print("creating")
-#         new_service = Service.create("manicure", "manicure")
-#         print(new_service.id)
-
-#     pedicure_exist = True if not Service.query.filter(Service.name == "pedicure").first() == None else False
-#     print(pedicure_exist)
-#     if not pedicure_exist:
-#         print("creating")
-#         new_service = Service.create("pedicure", "pedicure")
-#         print(new_service.id)
-
 @app.route("/test_mail_py/", methods=["GET", "POST"])
 @login_required
 def test_mail_py():
@@ -149,12 +132,6 @@ def test_mail_py():
     flash(f'A test message was sent to {receiver}.')
     return redirect("/")
 
-
-@app.route("/test/")
-# @auth_required()
-def test():
-    return render_template_string("Hello {{ current_user.email }}")
-
 @app.route('/register', methods=['GET', 'POST'])
 # @register_view
 def register():
@@ -181,23 +158,12 @@ def home():
     today = datetime.datetime.now()
     try:
         slots_db_v2 = Slot.query.filter(Slot.opened == True).all()
-        con = sqlite3.connect("./db.db") 
-        cur = con.cursor()
-        # slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT
-        slots_db = cur.execute("SELECT slot_id, year, month, day, hour, minute, is_open FROM calendar WHERE year>=? AND is_open=1", (today.year,)).fetchall()
-          
     except Exception as er:
-        con.close()
-        slots = None
         print("##/")
         print(er)
         return render_template("apology.html", error_message="Something went wrong.")
     else:
-        con.close()
-        slots = []
         slots_for_frontend_db_v2 = []
-        for slot in slots_db:
-            slots.append(list(slot))
         for slot in slots_db_v2:
             year = slot.date.year
             month = slot.date.month
