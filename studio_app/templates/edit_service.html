@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block custom_styles %}
+<link href="{{ url_for('static', filename='/css/all_appointments.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block title %}
+Edit service
+{% endblock %}
+{% block content %}
+
+<div class="form-group mt-3">
+    <form action="/edit_service/" method="post">
+        
+        <label for="service">New service name</label>
+        <input type="text" hidden value="{{ service_edit['id'] }}" id="service_id" name="service_id">
+        <input class="form-control" type="text" id="service" name="service" value="{{ service_edit['name'] }}">
+        
+        <label for="description">New service description</label>
+        <textarea class="form-control" id="description" name="description" >{{ service_edit['description'] }}</textarea>
+        <button class="btn btn-primary my-2" type="submit">save</button>
+        <a href="/add_service/" class="btn btn-primary my-2" >cancel</a>
+    
+    </form>
+</div>
+
+{% endblock %}

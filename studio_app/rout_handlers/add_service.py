@@ -8,7 +8,6 @@ def add_service():
     services_list = []
     for service in services_bd:
         service = service.__dict__
-        service.pop('_sa_instance_state', None)
         services_list.append(service)
 
     if request.method == "POST":

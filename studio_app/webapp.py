@@ -222,35 +222,6 @@ def _account():
 def _add_service():
     with app.app_context():
         return add_service.add_service()
-# def add_service():
-#     services_bd = db_base.session.scalars(select(Service)).fetchall()
-#     services_list = []
-#     for service in services_bd:
-#         service = service.__dict__
-#         service.pop('_sa_instance_state', None)
-#         services_list.append(service)
-
-#     if request.method == "POST":
-#         service_name = request.form.get("service")
-#         service_description = request.form.get("description")
-#         if service_name == None or service_description == None or service_name == "" or service_description == "":
-#             return render_template("apology.html", error_message="service name and description cannot be empty")
-#         with app.app_context():
-#             existing_stmt = select(Service).where(Service.name == service_name)
-#             existing = db_base.session.execute(existing_stmt).first()
-
-#             if existing == None:
-#                 new_service_db = Service(name = service_name, description = service_description)
-#                 db_base.session.add(new_service_db)
-#                 db_base.session.commit()
-                
-#                 return redirect("/add_service/")
-#             else:
-#                 return render_template("apology.html", error_message="this service already exist")
-#         return redirect("/add_service/")
-#     else:
-#         return render_template("add_service.html", services_list=services_list)
-    
 
 @app.route("/apology/")
 def apology():
@@ -351,6 +322,11 @@ def contact():
 def day():
     return render_template("day.html")
 
+@app.route("/delete_service/", methods=["POST", "GET"])
+def _delete_service():
+    with app.app_context():
+        return delete_service.delete_service()
+
 
 @app.route("/done_appointment/", methods = ["POST"])
 @login_required
@@ -363,6 +339,11 @@ def _done_appointment():
 @admin_only
 def _edit_appointment():
     return edit_appointment.edit_appointment()
+
+@app.route("/edit_service/", methods=["POST", "GET"])
+def _edit_service():
+    with app.app_context():
+        return edit_service.edit_service()
 
 @app.route("/history/")
 @login_required

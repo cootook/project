@@ -12,5 +12,7 @@ __all__ = [
     'signup',
     'change_role',
     'change_password',
-    'add_service'
+    'add_service',
+    'edit_service',
+    'delete_service'
 ]
