@@ -3,7 +3,7 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_security.models import fsqla_v3 as fsqla
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, backref
 from typing import List, Optional
 
 class Base(DeclarativeBase):
@@ -242,7 +242,7 @@ class Slot(db_base.Model):
 class User(db_base.Model, fsqla.FsUserMixin):
     _tablename__ = "user"
     id: Mapped[int] = mapped_column(primary_key=True)
-    email: Mapped[str] = mapped_column(unique = True)
+    email: Mapped[Optional[str]] = mapped_column(unique = True)
     password: Mapped[Optional[str]]
     active: Mapped[str] = mapped_column(default = True)
     # fs_uniquifier: Mapped[str] = mapped_column(unique = True) 
@@ -253,8 +253,8 @@ class User(db_base.Model, fsqla.FsUserMixin):
     current_login_ip: Mapped[Optional[str]] 
     login_count: Mapped[int] 
     # mf_recovery_codes: Mapped[List["Mf_recovery_code"]] = relationship(back_populates = "user")
-    name: Mapped[str]   
-    instagram: Mapped[str] 
+    name: Mapped[Optional[str]]   
+    instagram: Mapped[Optional[str]] 
     tel: Mapped[Optional[str]]
     language_id = mapped_column(ForeignKey("language.id"), nullable=True)
     language = relationship("Language", foreign_keys=[language_id]) 
@@ -270,6 +270,7 @@ class User(db_base.Model, fsqla.FsUserMixin):
     deleted_at: Mapped[Optional[datetime.datetime]]
     deleted_by_id = mapped_column(ForeignKey("user.id"), nullable=True)
     deleted_by = relationship("User", foreign_keys=[deleted_by_id])
+    # roles = relationship("Role", foreign_keys=[])
 
 # #### USE CLASS USER_AS_WORKER WHEN MORE THAN ONE WORKER, UPDATE SLOT GENERATION 
 

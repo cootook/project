@@ -15,7 +15,7 @@ from calendar import monthrange
 from datetime import timedelta, date
 from flask import Flask, flash, redirect, render_template, request, session, render_template_string
 from flask_mailman import Mail
-from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password
+from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password, login_user, verify_and_update_password, logout_user
 from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
 from jinja2 import Environment as jinja2_env
@@ -24,7 +24,7 @@ from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
 from studio_app.config import ProductionConfig, DevelopmentConfig, TestingConfig
-from studio_app.db_classes import db_base, Service
+from studio_app.db_classes import db_base
 from studio_app.db_classes import Appointment, Booking_message, Language, Notification_type, Payment, Payment_method, Payment_status, Payment_type, Role, Service, Service_role, Slot, User, User_notification, User_role
 from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
 from .rout_handlers import *
@@ -49,10 +49,6 @@ mail = Mail(app)
 
 db_base.init_app(app)
 
-with app.app_context():
-    # db_base.drop_all()  
-
-    db_base.create_all()
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db_base, User, Role)
@@ -67,6 +63,55 @@ navbar_items_admin = ["All_appointments", "All_history", "Account", "Clients", "
 days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
 
 jinja2_env.SITE_KEY_RECAPTCHA = os.environ.get('SITE_KEY_RECAPTCHA')
+
+with app.app_context():
+    # db_base.drop_all()  
+    # print("################## db dropped")
+
+    db_base.create_all()
+
+    # seed database with admin and test user
+    if db_base.session.scalar(select(User).where(User.id == 1)) is None:
+        admin_email = os.environ.get('ADMINISTRATOR_EMAIL')
+        admin_password = os.environ.get('ADMINISTRATOR_PASSWORD')
+        admin_name = os.environ.get('ADMINISTRATOR_NAME')
+        admin_phone = os.environ.get('ADMINISTRATOR_US_PHONE')
+        admin = user_datastore.create_user(
+            email = admin_email, 
+            password = hash_password(admin_password), 
+            name = admin_name, 
+            tel = admin_phone, 
+            us_phone_number = admin_phone
+            )
+        db_base.session.add(admin)
+        db_base.session.commit()
+
+    if db_base.session.scalar(select(User).where(User.id == 2)) is None:
+        test_user_email = os.environ.get('TEST_USER_EMAIL')
+        test_user_password = os.environ.get('TEST_USER_PASSWORD')
+        test_user_name = os.environ.get('TEST_USER_NAME')
+        test_user_phone = os.environ.get('TEST_USER_US_PHONE')
+        test_user = user_datastore.create_user(
+            email = test_user_email, 
+            password = hash_password(test_user_password), 
+            name = test_user_name, 
+            tel = test_user_phone, 
+            us_phone_number = test_user_phone
+            )
+        db_base.session.add(test_user)
+        db_base.session.commit()
+
+    role = user_datastore.find_or_create_role("admin")
+    db_base.session.add(role)
+    db_base.session.commit()
+    user_datastore.add_role_to_user(admin, role)
+    db_base.session.commit()
+
+    role_tester = user_datastore.find_or_create_role("tester")
+    db_base.session.add(role_tester)
+    db_base.session.commit()
+    user_datastore.add_role_to_user(test_user, role_tester)
+    db_base.session.commit()
 
 @app.context_processor
 def set_site_key_recaptcha():
@@ -172,7 +217,6 @@ def home():
             minute = slot.time.minute
             is_open = 1 if slot.opened else 0
             slots_for_frontend_db_v2.append([slot.id, year, month, day, hour, minute, is_open])
-            print([slot.id, year, month, day, hour, minute, is_open])
         return render_template("index.html", slots=slots_for_frontend_db_v2)
 
 @app.route("/about/")
@@ -330,30 +374,40 @@ def pricing():
 @not_loged_only
 def signin():
     if request.method == "POST":
-        try:
-            token = request.form.get("g-recaptcha-response")
-            login = request.form.get("login")
-            password = request.form.get("password")
-            remember = request.form.get("remember")
+        # try:
+        token = request.form.get("g-recaptcha-response")
+        login = request.form.get("login")
+        password = request.form.get("password")
+        remember = False if request.form.get("remember") == None else True
 
-            if not validate_recaptcha(token):
-                return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot protection. Please, try again or contact us.")
+        if not validate_recaptcha(token):
+            return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot protection. Please, try again or contact us.")
+        
+        user_to_login = db_base.session.scalar(select(User).where(User.email == login))
+        if user_to_login is None:
+            return render_template("apology.html", error_message="wrong login or password user_to_login")
+        
+        password_ok = verify_and_update_password(password, user_to_login)
+        db_base.session.commit()
+        if password_ok:
 
+            login_user(user_to_login, remember, "password")
+            session["user_id"] = user_to_login.__dict__["id"]
+            session["is_admin"] = 1 if user_to_login.has_role("admin") else 0            
+            session["name"] = user_to_login.__dict__["name"]
+            session["login"] = user_to_login.__dict__["email"]
+            session["instagram"] = user_to_login.__dict__["instagram"]
+            session["tell"] = user_to_login.__dict__["us_phone_number"]
+            return redirect("/")
+        else:
+            return render_template("apology.html", error_message="wrong login or password password_ok")                
 
-            con = sqlite3.connect("./db.db") 
-            cur = con.cursor()
-            print("###remember")
-            print(remember)
-            if not log_user_in(login, password, cur):
-                return render_template("apology.html", error_message="wrong login or password")                
-
-        except Exception as er:
-            print("### ERROR signin: request.form, db")
-            print(er)
-            return render_template("apology.html", error_message="Something went wrong")
-
-        con.close()
+        # except Exception as er:
+        #     print("### ERROR signin: request.form, db")
+        #     print(er)
+        #     return render_template("apology.html", error_message="Something went wrong")
         return redirect("/")
+            
 
     else:
         return render_template("signin.html")
@@ -367,6 +421,7 @@ def _signup():
 @app.route("/logout/")
 @login_required
 def logout():
+    logout_user()
     log_user_out()
     return redirect("/")
 
