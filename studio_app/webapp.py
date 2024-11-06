@@ -86,6 +86,12 @@ with app.app_context():
         db_base.session.add(admin)
         db_base.session.commit()
 
+        role = user_datastore.find_or_create_role("admin")
+        db_base.session.add(role)
+        db_base.session.commit()
+        user_datastore.add_role_to_user(admin, role)
+        db_base.session.commit()
+
     if db_base.session.scalar(select(User).where(User.id == 2)) is None:
         test_user_email = os.environ.get('TEST_USER_EMAIL')
         test_user_password = os.environ.get('TEST_USER_PASSWORD')
@@ -101,17 +107,11 @@ with app.app_context():
         db_base.session.add(test_user)
         db_base.session.commit()
 
-    role = user_datastore.find_or_create_role("admin")
-    db_base.session.add(role)
-    db_base.session.commit()
-    user_datastore.add_role_to_user(admin, role)
-    db_base.session.commit()
-
-    role_tester = user_datastore.find_or_create_role("tester")
-    db_base.session.add(role_tester)
-    db_base.session.commit()
-    user_datastore.add_role_to_user(test_user, role_tester)
-    db_base.session.commit()
+        role_tester = user_datastore.find_or_create_role("tester")
+        db_base.session.add(role_tester)
+        db_base.session.commit()
+        user_datastore.add_role_to_user(test_user, role_tester)
+        db_base.session.commit()
 
 @app.context_processor
 def set_site_key_recaptcha():

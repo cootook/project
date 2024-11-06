@@ -7,7 +7,8 @@ def delete_service():
 
     if request.method == "POST":
         service_id = request.form.get("service_id")
-        db_base.session.execute(delete(Service).where(Service.id == service_id))
+        service = db_base.session.scalar(select(Service).where(Service.id == service_id))
+        service.delete()
         db_base.session.commit()        
         return redirect("/add_service/")
             

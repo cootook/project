@@ -4,7 +4,7 @@ from flask import redirect, render_template, request
 
 
 def add_service():
-    services_bd = db_base.session.scalars(select(Service)).fetchall()
+    services_bd = db_base.session.scalars(select(Service).where(Service.deleted == 0)).fetchall()
     services_list = []
     for service in services_bd:
         service = service.__dict__

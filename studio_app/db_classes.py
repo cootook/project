@@ -2,7 +2,7 @@ import datetime
 import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_security.models import fsqla_v3 as fsqla
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, update
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, backref
 from typing import List, Optional
 
@@ -128,12 +128,18 @@ class Service(db_base.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique = True)
     description: Mapped[str] = mapped_column(default = "")
+    deleted: Mapped[bool] = mapped_column(default = False)
 
-    def create(name, description):
+    def create(self, name, description):
         new_service = Service(name=name, description=description)
         db_base.session.add(new_service)
         db_base.session.commit()
         return new_service
+    
+    def delete(self):
+        db_base.session.execute(update(Service).where(Service.id == self.id).values(deleted = True))
+        db_base.session.commit()
+        return
 
 class Service_role(db_base.Model):
     __tablename__ = "service_role"
