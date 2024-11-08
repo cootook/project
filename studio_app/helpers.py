@@ -29,15 +29,14 @@ def get_js_object(object):
                 obj.update({el: obj[el].strftime("%m/%d/%Y")})
             elif isinstance(obj[el], datetime.time):
                 obj.update({el: obj[el].strftime("%H:%M")})
-
-            return obj
-
-    if isinstance(object, list):
+        return obj
+    
+    if isinstance(object, list):        
         for element in object:
             element = convert(element)
     else:
         object = convert(object)
-
+        
     return json.dumps(object)
 
 def get_service_name(is_manicure, is_pedicure):
