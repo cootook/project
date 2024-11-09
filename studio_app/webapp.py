@@ -114,6 +114,20 @@ with app.app_context():
         db_base.session.commit()
 
 @app.context_processor
+def get_services():
+    services = []
+    services_from_db = db_base.session.scalars(select(Service))
+
+    print(services_from_db)
+    for service in services_from_db:
+        print(service)
+        service_dict = dict(id = service.id, name = service.name, description = service.description, deleted = service.deleted)
+        print(service_dict)
+        services.append(service_dict)
+    print (services)
+    return dict(services=services)
+
+@app.context_processor
 def set_site_key_recaptcha():
     return {"SITE_KEY_RECAPTCHA": os.environ.get('SITE_KEY_RECAPTCHA')}
 

@@ -5,11 +5,10 @@
 {% endblock %}
 
 {% block title %}
-Appointsments
+Appointments
 {% endblock %}
 {% block content %}
 <script>var user_appointments_for_frontend = {{ user_appointments_for_frontend | safe}};</script>
-{{user_appointments_for_frontend}}
 
 <div class="modal fade text-dark" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
   aria-hidden="true">
