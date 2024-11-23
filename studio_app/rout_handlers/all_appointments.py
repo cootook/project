@@ -18,10 +18,10 @@ def all_appointments():
     for aptmt in user_appoint_db_v2:
         tmp = aptmt.__dict__
         tmp.pop('_sa_instance_state', None)
-        # print(tmp, "@@@")
-        service = Service.query.filter(Service.id == Appointment.service_id).first()
-        tmp["service_name"] = service.name
-        tmp["service_description"] = service.description
+        tmp["service"] = json.loads(tmp["service"])
+        # service = Service.query.filter(Service.id == Appointment.service_id).first()
+        # tmp["service"] = tmp.service
+        # tmp["service_description"] = service.description
         user_appointments_for_frontend.append(tmp)
         client = User.query.filter(User.id == Appointment.user_id).first()
         if not client == None:
@@ -34,14 +34,5 @@ def all_appointments():
             tmp["client_description"] = "-"
     user_appointments_for_template = user_appointments_for_frontend    
     user_appointments_for_frontend = get_js_object(user_appointments_for_frontend)
-    
-
-
-    # except Exception as er:
-    #     con.close()
-    #     print("##/all_appointments/ --db connection")
-    #     print(er)
-    #     return  render_template("apology.html", error_message="Something went wrong")
-         
+            
     return render_template("all_appointments.html", user_appointments_for_frontend=user_appointments_for_frontend, user_appointments_for_template=user_appointments_for_template)
-

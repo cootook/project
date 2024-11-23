@@ -49,7 +49,6 @@ mail = Mail(app)
 
 db_base.init_app(app)
 
-
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db_base, User, Role)
 app.security = Security(app, user_datastore, confirm_register_form=ExtendedRegisterForm)
@@ -59,7 +58,7 @@ app.register_error_handler(404, page_not_found)
 # Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "History", "Account", "Contact", "LogOut"]
 navbar_items_not_loged_in = ["Contact", "SignIn", "SignUp"]
-navbar_items_admin = ["All_appointments", "All_history", "Account", "Clients", "Windows", "Generate_slots", "Contact", "LogOut"]
+navbar_items_admin = ["All_appointments", "add_service", "All_history", "Account", "Clients", "Windows", "Contact", "LogOut"]
 days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
 
 jinja2_env.SITE_KEY_RECAPTCHA = os.environ.get('SITE_KEY_RECAPTCHA')
@@ -117,14 +116,9 @@ with app.app_context():
 def get_services():
     services = []
     services_from_db = db_base.session.scalars(select(Service))
-
-    print(services_from_db)
     for service in services_from_db:
-        print(service)
         service_dict = dict(id = service.id, name = service.name, description = service.description, deleted = service.deleted)
-        print(service_dict)
         services.append(service_dict)
-    print (services)
     return dict(services=services)
 
 @app.context_processor

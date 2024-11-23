@@ -35,15 +35,14 @@ Liza Nail Studio
             
            <span id="time_book"> </span>
 
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="manicure" name="manicure">
-            <label class="form-check-label" for="manicure">manicure</label>
-          </div>
-
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="pedicure" name="pedicure">
-            <label class="form-check-label" for="pedicure">pedicure</label>
-          </div>
+           {% for service in services %}
+           {% if service.deleted == False %}
+           <div class="form-check">
+             <input type="checkbox" class="form-check-input service-check" id="{{service.name}}" name="{{service.name}}" value="{{service.name}}">
+             <label class="form-check-label px-2" for="{{service.name}}">{{service.name}}</label>
+           </div>
+           {% endif %}
+           {% endfor %}
 
           <div class="form-group">
             <label for="message-text" class="col-form-label">Message:</label>

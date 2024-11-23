@@ -19,17 +19,26 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.find('#year_input').val(year_modal)
       modal.find('#time_book').text(modal_time_full)
 
-      document.getElementById('manicure').addEventListener('change', submit_btn_active)
-      document.getElementById('pedicure').addEventListener('change', submit_btn_active)
+      service_checkboxes = document.getElementsByClassName("service-check")
+       for (const check of service_checkboxes) {
+        check.addEventListener('change', submit_btn_active)
+       }
+      
     })
   })
 
   function submit_btn_active() {
+    service_check_collection = document.getElementsByClassName("service-check")
     let btn = document.getElementById('submit_booking_btn');
-    let checkbox_manicure = document.getElementById('manicure');
-    let checkbox_pedicure = document.getElementById('pedicure');
+    let at_least_one_checked = false
+    for (const check of service_check_collection) {
+      if (check.checked) {
+        console.log(check.checked)
+        at_least_one_checked = true
+      }
+    }
 
-    if (recaptcha_checked && (checkbox_manicure.checked || checkbox_pedicure.checked)) {
+    if (recaptcha_checked && at_least_one_checked) {
       btn.disabled = false;
     } else {
       btn.disabled = true;

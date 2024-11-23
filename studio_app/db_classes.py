@@ -14,12 +14,14 @@ db_base = SQLAlchemy(model_class=Base)
 fsqla.FsModels.set_db_info(db_base)
 
 class Appointment(db_base.Model):
+    """
+    column 'service' value is list of Service.name converted to JSON
+    """
     __tablename__ = "appointment"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(foreign_keys=user_id)
-    service_id = mapped_column(ForeignKey("service.id"))
-    service = relationship("Service", foreign_keys=[service_id])
+    service: Mapped[str]
     at: Mapped[datetime.datetime]
     price: Mapped[Optional[float]]
     deposit_needed: Mapped[bool] = mapped_column(default=False)
@@ -50,7 +52,7 @@ class Appointment(db_base.Model):
         this should be called via
         with app.app_context():
         """
-        new_appointment = Appointment(user_id=user_id, service_id = 1, at=date_time, slot_id=slot_id, description=description )
+        new_appointment = Appointment(user_id=user_id, service = service, at=date_time, slot_id=slot_id, description=description )
         db_base.session.add(new_appointment)
         db_base.session.commit()
         return new_appointment
@@ -69,14 +71,6 @@ class Language(db_base.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique = True)
     description: Mapped[str] = mapped_column(default = "")
-
-# class Mf_recovery_code(db_base.Model):
-#     __tablename__ = "mf_recovery_code"
-#     id: Mapped[int] = mapped_column(primary_key=True)
-#     name: Mapped[str] = mapped_column(unique = True)
-#     description: Mapped[str] = mapped_column(default = "")
-#     user_id = mapped_column(ForeignKey("user.id"))
-#     user: Mapped["User"] = relationship(back_populates = "mf_recovery_codes")
 
 class Notification_type(db_base.Model):
     __tablename__ = "notification_type"
@@ -159,8 +153,6 @@ class Slot(db_base.Model):
     occupied: Mapped[bool] = mapped_column(nullable=True)
     occupied_by_appoint_id = mapped_column(ForeignKey("appointment.id", use_alter=True), nullable=True)
     occupied_by_appoint = relationship("Appointment", foreign_keys=[occupied_by_appoint_id])
-    # owned_by_id = mapped_column(ForeignKey("user.id", use_alter=True), nullable=True)
-    # owned_by = relationship("User", foreign_keys=[opened_by_id])
 
     def book(for_user_id, requested_slot, appointment):
         requested_slot.opened = False
@@ -251,14 +243,12 @@ class User(db_base.Model, fsqla.FsUserMixin):
     email: Mapped[Optional[str]] = mapped_column(unique = True)
     password: Mapped[Optional[str]]
     active: Mapped[str] = mapped_column(default = True)
-    # fs_uniquifier: Mapped[str] = mapped_column(unique = True) 
     confirmed_at: Mapped[Optional[datetime.datetime]]
     last_login_at: Mapped[Optional[datetime.datetime]]
     current_login_at: Mapped[Optional[datetime.datetime]]
     last_login_ip: Mapped[Optional[str]] 
     current_login_ip: Mapped[Optional[str]] 
     login_count: Mapped[int] 
-    # mf_recovery_codes: Mapped[List["Mf_recovery_code"]] = relationship(back_populates = "user")
     name: Mapped[Optional[str]]   
     instagram: Mapped[Optional[str]] 
     tel: Mapped[Optional[str]]
@@ -266,9 +256,6 @@ class User(db_base.Model, fsqla.FsUserMixin):
     language = relationship("Language", foreign_keys=[language_id]) 
     internal_description: Mapped[Optional[str]]  
     picture_path: Mapped[Optional[str]] = mapped_column(unique = True) 
-    # appointment_id: Mapped[List[int]] = relationship(List[])
-    # appointment: Mapped[List["Appointment"]] = relationship(back_populates = "user", foreign_keys=[appointment_id])
-    # role: Mapped[List["User_role"]] = relationship(back_populates = "user")
     lust_update_at: Mapped[Optional[datetime.datetime]] 
     lust_update_by_id = mapped_column(ForeignKey("user.id"), nullable=True)
     lust_update_by = relationship("User", foreign_keys=[lust_update_by_id])
@@ -314,5 +301,3 @@ class User_role(db_base.Model):
     set_by_id = mapped_column(ForeignKey("user.id"))
     set_by: Mapped["User"] = relationship(foreign_keys=[set_by_id])
     set_at: Mapped[datetime.datetime]
-
-

@@ -1,35 +1,7 @@
 user_appointments_for_frontend.forEach(element => {
   element.at = new Date(element.at)
 });
-console.log(user_appointments_for_frontend)
-// {
-//   "at": "2024-10-30T14:00:00.000Z",
-//   "done_by_id": null,
-//   "lust_update_by_id": null,
-//   "price": null,
-//   "approved": false,
-//   "description": "",
-//   "deposit_needed": false,
-//   "approved_by_id": null,
-//   "deposit": null,
-//   "approved_at": null,
-//   "id": 8,
-//   "slot_id": 326,
-//   "canceled": false,
-//   "amount_time_min": 90,
-//   "canceled_at": null,
-//   "user_id": 1,
-//   "done": false,
-//   "lust_update_at": null,
-//   "service_id": 1,
-//   "done_at": null,
-//   "canceled_by_id": null,
-//   "service_name": "manicure",
-//   "service_description": "manicure",
-//   "client_name": "no name",
-//   "client_tel": "no telephone",
-//   "client_description": "-"
-// }
+
 const options_datetime = {
   weekday: 'long',
   month: 'long',
@@ -39,7 +11,6 @@ const options_datetime = {
   hour: "numeric",
   minute: "2-digit"
 };
-console.log(user_appointments_for_frontend[0].at.toLocaleString("en-US", options_datetime))
 
 function create_card_for_appointment(appointment) {
   let card_container = document.createElement("div")
@@ -95,6 +66,43 @@ function create_card_for_appointment(appointment) {
   card_body.id = card_container.id + "_body"
   card_container.appendChild(card_body)
 
+  let card_info = document.createElement("div")
+  card_info.className = "card_info bg-dark p-2 m-1"
+  card_info.id = card_container.id + "_info"
+
+  let info_service = document.createElement("div")
+  let info_service_text = document.createElement("p")
+  info_service_text.textContent = "Service: " + appointment.service
+  info_service.appendChild(info_service_text)
+  card_info.appendChild(info_service)
+
+  let info_description = document.createElement("div")
+  let info_description_text = document.createElement("p")
+  info_description_text.textContent = "Message: " + appointment.description
+  info_description.appendChild(info_description_text)
+  card_info.appendChild(info_description)
+ 
+  let info_name = document.createElement("div")
+  let info_name_text = document.createElement("p")
+  info_name_text.textContent = "Client name: " + appointment.client_name
+  info_name.appendChild(info_name_text)
+  card_info.appendChild(info_name)
+ 
+  let info_telephone = document.createElement("div")
+  let info_telephone_text = document.createElement("p")
+  info_telephone_text.textContent = "Phone: " + appointment.client_tel
+  info_telephone.appendChild(info_telephone_text)
+  card_info.appendChild(info_telephone)
+
+  let info_about_client = document.createElement("div")
+  let info_about_client_text = document.createElement("p")
+  info_about_client_text.textContent = "About client: " + appointment.client_description
+  info_about_client.appendChild(info_about_client_text)
+  card_info.appendChild(info_about_client)
+
+  card_body.appendChild(card_info)
+
+
   let card_first_row_btn = document.createElement("div")
   card_first_row_btn.className ="row mx-2"
   card_container.appendChild(card_first_row_btn)
@@ -111,7 +119,7 @@ function create_card_for_appointment(appointment) {
   card_edit_btn.dataset.booking_id = appointment.id
   card_edit_btn.dataset.id = appointment.user_id
   card_edit_btn.dataset.datetime = appointment.at.toLocaleDateString("en-US", options_datetime) 
-  card_edit_btn.dataset.service = appointment.service_name
+  card_edit_btn.dataset.service = appointment.service
   card_edit_btn.dataset.client = appointment.client_name + " " + appointment.client_tel  
   card_edit_btn.dataset.date_picker_format = appointment.at.toISOString().slice(0, 16)  
   card_edit_btn.dataset.duration = appointment.amount_time_min 
@@ -127,7 +135,7 @@ function create_card_for_appointment(appointment) {
   card_confirm_btn.dataset.booking_id = appointment.id
   card_confirm_btn.dataset.id = appointment.user_id
   card_confirm_btn.dataset.datetime = appointment.at.toLocaleDateString("en-US", options_datetime) 
-  card_confirm_btn.dataset.service = appointment.service_name
+  card_confirm_btn.dataset.service = appointment.service
   card_confirm_btn.dataset.client = appointment.client_name + " " + appointment.client_tel
   card_confirm_btn.dataset.message = appointment.description
   card_confirm_btn.textContent = "Confirm"
@@ -144,7 +152,7 @@ function create_card_for_appointment(appointment) {
   card_done_btn.dataset.booking_id = appointment.id
   card_done_btn.dataset.id = appointment.user_id
   card_done_btn.dataset.datetime = appointment.at.toLocaleDateString("en-US", options_datetime) 
-  card_done_btn.dataset.service = appointment.service_name
+  card_done_btn.dataset.service = appointment.service
   card_done_btn.dataset.client = appointment.client_name + " " + appointment.client_tel
   card_done_btn.dataset.message = appointment.description
   card_done_btn.textContent = "Done"
@@ -161,7 +169,7 @@ function create_card_for_appointment(appointment) {
   card_cancel_btn.dataset.booking_id = appointment.id
   card_cancel_btn.dataset.id = appointment.user_id
   card_cancel_btn.dataset.datetime = appointment.at.toLocaleDateString("en-US", options_datetime) 
-  card_cancel_btn.dataset.service = appointment.service_name
+  card_cancel_btn.dataset.service = appointment.service
   card_cancel_btn.dataset.client = appointment.client_name + " " + appointment.client_tel
   card_cancel_btn.dataset.message = appointment.description
   card_cancel_btn.textContent = "Cancel"
@@ -174,7 +182,6 @@ function create_card_for_appointment(appointment) {
 }
 
 let appointment_main = document.getElementsByTagName("main")[0]
-console.log(appointment_main)
 
 for (let index = 0; index < user_appointments_for_frontend.length; index++) {
   const appointment = user_appointments_for_frontend[index];
@@ -190,9 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
          var service_cancel = button.data('service')
          var name_cancel = button.data('client')
          var cancel_message = button.data('message')
-         console.log(user_id_cancel, booking_id_cancel, date_cancel, service_cancel, name_cancel)// Extract info from data-* attributes
-         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
          var modal = $(this)            
          modal.find('#user_id_cancel').val(user_id_cancel)
          modal.find('#booking_id_cancel').val(booking_id_cancel)
@@ -208,39 +212,32 @@ document.addEventListener("DOMContentLoaded", () => {
          var booking_id_edit = button.data('booking_id')
          var date_edit = button.data('datetime')
          var service_edit = button.data('service')
-         var name_edit = button.data('client')
+                  var name_edit = button.data('client')
          var time_edit = button.data('time')
          var date_picker_format_edit = button.data('date_picker_format')
          var duration_edit = button.data('duration')
          var message_edit = button.data('message')
-         
-         // Extract info from data-* attributes
-         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
          var modal = $(this)            
          modal.find('#user_id_edit').val(user_id_edit)
          modal.find('#booking_id_edit').val(booking_id_edit)
          modal.find('#date_edit').text(date_edit)
          modal.find('#service_edit').text(service_edit)
          modal.find('#client_edit').text(name_edit)
-        //  modal.find('#new_time').val(time_edit)
          modal.find('#new_date').val(date_picker_format_edit)
-         console.log(date_picker_format_edit)
          modal.find('#new_duration').val(duration_edit)
          modal.find('#new_message').val(message_edit)
-         console.log(service_edit)
-         if (service_edit == "manicure") {
-           modal.find('#manicure').attr('checked', true)
-           modal.find('#pedicure').attr('checked', false)
-         } else if (service_edit == "pedicure") {
 
-           modal.find('#pedicure').attr('checked', true)
-           modal.find('#manicure').attr('checked', false)
-         } else if (service_edit == "combo") {
-           console.log("combo")
-           modal.find('#manicure').attr('checked', true)
-           modal.find('#pedicure').attr('checked', true)
+         const service_as_arr = service_edit.split(",")
+         checkboxes = document.getElementsByClassName("form-check-input")
+         for (const element of checkboxes) {
+          element.checked = false
          }
+         service_as_arr.forEach(service_in_arr => {
+          let checkbox_for_service = document.getElementById(service_in_arr)
+          if (checkbox_for_service != null) {
+            checkbox_for_service.checked = true
+          }
+         });
        })
 
        $('#confirmModal').on('show.bs.modal', function (event) {
@@ -250,9 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
          var date_confirm = button.data('datetime')
          var service_confirm = button.data('service')
          var name_confirm = button.data('client')
-         console.log(user_id_confirm, booking_id_confirm, date_confirm, service_confirm, name_confirm)// Extract info from data-* attributes
-         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
          var modal = $(this)            
          modal.find('#user_id_confirm').val(user_id_confirm)
          modal.find('#booking_id_confirm').val(booking_id_confirm)
@@ -268,9 +262,6 @@ document.addEventListener("DOMContentLoaded", () => {
          var datetime_done = button.data('datetime')
          var service_done = button.data('service')
          var name_done = button.data('client')
-         console.log(user_id_done, booking_id_done, date_done, service_done, name_done)// Extract info from data-* attributes
-         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
          var modal = $(this)            
          modal.find('#user_id_done').val(user_id_done)
          modal.find('#booking_id_done').val(booking_id_done)
@@ -279,4 +270,3 @@ document.addEventListener("DOMContentLoaded", () => {
          modal.find('#client_done').text(name_done)
        })
  })
-
