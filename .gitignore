@@ -8,4 +8,5 @@ project.code-workspace
 .venv
 venv
 instance
+bash.exe.stackdump
 
