@@ -9,7 +9,7 @@ from ..helpers import get_js_object
 def all_appointments():
     today = datetime.datetime.now()
     user_appointments_for_frontend = []
-    user_appoint_db_v2 = Appointment.query.filter(Appointment.at >= today).order_by(Appointment.at).all()
+    user_appoint_db_v2 = Appointment.query.order_by(Appointment.at).all()
 
     for aptmt in user_appoint_db_v2:
         tmp = aptmt.__dict__

@@ -58,7 +58,7 @@ app.register_error_handler(404, page_not_found)
 # Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "History", "Account", "Contact", "LogOut"]
 navbar_items_not_loged_in = ["Contact", "SignIn", "SignUp"]
-navbar_items_admin = ["All_appointments", "add_service", "All_history", "Account", "Clients", "Windows", "Contact", "LogOut"]
+navbar_items_admin = ["All_appointments", "Add_service", "Account", "Clients", "Windows", "Contact", "LogOut"]
 days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
 
 jinja2_env.SITE_KEY_RECAPTCHA = os.environ.get('SITE_KEY_RECAPTCHA')
