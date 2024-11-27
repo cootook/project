@@ -1,46 +1,32 @@
-import sqlite3
+import datetime
 
+from sqlalchemy import update
+from studio_app.db_classes import Appointment, db_base
 from flask import redirect, render_template, request
+from flask_security import current_user
+
 
 def confirm_appointment():
-    # try:
-    #     user_id_confirm = int(request.form.get("user_id_confirm"))
-    #     booking_id_confirm = int(request.form.get("booking_id_confirm"))
+    try:
+        user_id_confirm = int(request.form.get("user_id_confirm"))
+        booking_id_confirm = int(request.form.get("booking_id_confirm"))
         
-    #     print(user_id_confirm, booking_id_confirm)
+        print(user_id_confirm, booking_id_confirm)
         
-    # except Exception as er:
-    #     print("##/confirm_appointment/ --form request")
-    #     print(er)
-    #     return  render_template("apology.html", error_message="Something went wrong")
+    except Exception as er:
+        print("##/confirm_appointment/ --form request")
+        print(er)
+        return  render_template("apology.html", error_message="Something went wrong")
     
-    # try:
-    #     con = sqlite3.connect("./db.db") 
-    #     cur = con.cursor()
-    #     # appointments (
-    #     #     id INTEGER PRIMARY KEY, 
-    #     #     user_id INT, 
-    #     #     pedicure INT, 
-    #     #     manicure INT, 
-    #     #     message TEXT, 
-    #     #     slot_id INT, 
-    #     #     amount_time_min INT, 
-    #     #     slots_in TEXT, 
-    #     #     is_seen INT, 
-    #     #     is_aproved INT, 
-    #     #     is_canceled INT, 
-    #     #     FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), 
-    #     #     FOREIGN KEY (user_id) REFERENCES users(id))
-    #     cur.execute("UPDATE appointments SET is_aproved=1 WHERE user_id=? AND slot_id=?", (user_id_confirm, booking_id_confirm))
-    #     con.commit()
-    #     con.close()
-    #     return redirect("/all_appointments/")
-        
-    # except Exception as er:
-    #     con.close()
-    #     print("##/confirm_appointment/ --db")
-    #     print(er)
-    #     return  render_template("apology.html", error_message="Something went wrong")
-    
+    db_base.session.execute(update(Appointment).where(Appointment.id == booking_id_confirm, Appointment.user_id == user_id_confirm).values(
+        approved = True,
+        lust_update_at = datetime.datetime.now(),
+        lust_update_by_id = current_user.id,
+        approved_at = datetime.datetime.now(),
+        approved_by_id = current_user.id
+        ))
+    db_base.session.commit()
+
+
     return redirect("/all_appointments/")
 
