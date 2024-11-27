@@ -1,79 +1,42 @@
-import sqlite3
+import datetime
 
+from json import dumps
+from sqlalchemy import select, update
+from studio_app.db_classes import Appointment, Service, db_base
 from flask import redirect, render_template, request
+from flask_security import current_user
 
 def edit_appointment():
-    # try:
-    #     # new_date: 2023-12-31
-    #     # new_time: 10:00
-    #     # new_duration: 120
-    #     # new_manicure: on / None
-    #     # new_pedicure: on / None
-    #     # new_message: 
-    #     # user_id_edit: 1
-    #     # booking_id_edit: 301
-    services = ["manicure", "pedicure", "combo"]
-    services_to_do = []
     form = request.form
-    for i in form:
-        print(i)
-        if i in services:
-            services_to_do.append(i)
-
-    print(services_to_do)
     new_date = request.form.get("new_date")
+    new_date_py = datetime.datetime.strptime(new_date, '%Y-%m-%dT%H:%M')
     new_duration = int(request.form.get("new_duration"))
-    new_manicure = False if request.form.get("new_manicure") == None else True
-    new_pedicure = False if request.form.get("new_pedicure") == None else True
     new_message = request.form.get("new_message")
     user_id_edit = int(request.form.get("user_id_edit"))
     booking_id_edit = int(request.form.get("booking_id_edit"))
-    print(form)
-    print(new_date, new_duration, new_manicure, new_pedicure, new_message, user_id_edit, booking_id_edit,)
-    # print("#edit - new_date, new_time, new_duration, new_manicure, new_pedicure, new_message, user_id_edit, booking_id_edit")
-    # print(new_date, new_time, new_duration, new_manicure, new_pedicure, new_message, user_id_edit, booking_id_edit)
-    # new_year = int(new_date[0:4])
-    # new_month = int(new_date[5:7]) 
-    # new_day = int(new_date[8:10]) 
-    # new_hour = int(new_time[0:2]) 
-    # new_minute = int(new_time[3:5]) 
-    # print("#edit - new_year, new_day, new_month, new_hour, new_minute")
-    # print(new_year, new_day, new_month, new_hour, new_minute)
-        
-    # except Exception as er:
-    #     print("##/edit_appointment/ --form request")
-    #     print(er)
-    #     return  render_template("apology.html", error_message="Something went wrong")
     
-    # try:
-    #     con = sqlite3.connect("./db.db") 
-    #     cur = con.cursor()
-    #     # appointments (
-    #     #     id INTEGER PRIMARY KEY, 
-    #     #     user_id INT, 
-    #     #     pedicure INT, 
-    #     #     manicure INT, 
-    #     #     message TEXT, 
-    #     #     slot_id INT, 
-    #     #     amount_time_min INT, 
-    #     #     slots_in TEXT, 
-    #     #     is_seen INT, 
-    #     #     is_aproved INT, 
-    #     #     is_canceled INT, 
-    #     #     FOREIGN KEY (slot_id) REFERENCES calendar(slot_id), 
-    #     #     FOREIGN KEY (user_id) REFERENCES users(id))
-    #     print("#id edit - ", booking_id_edit)
-    #     cur.execute("UPDATE appointments SET pedicure=?, manicure=?, message=?, amount_time_min=? WHERE user_id=? AND slot_id=?", (new_pedicure, new_manicure, new_message, new_duration, user_id_edit, booking_id_edit))
-    #     #  calendar(slot_id INTEGER PRIMARY KEY, year INT, month INT, weekday INT, day INT, hour INT, minute INT, is_open INT);
-    #     cur.execute("UPDATE calendar SET year=?, month=?, day=?, hour=?, minute=?, is_open=0 WHERE slot_id=?", (new_year, new_month, new_day, new_hour, new_minute, booking_id_edit))
-    #     con.commit()
-    #     con.close()
-    #     return redirect("/all_appointments/")
-        
-    # except Exception as er:
-    #     con.close()
-    #     print("##/edit_appointment/ --db")
-    #     print(er)
-    #     return  render_template("apology.html", error_message="Something went wrong")
+    services = db_base.session.scalars(select(Service.name).where(Service.deleted == False))
+    list_of_services = []
+    for s in services:
+        list_of_services.append(s)
 
+    new_service = []
+    for s in list_of_services:
+        if s in form:
+            new_service.append(s)
+    appointment_to_edit = db_base.session.scalar(select(Appointment).where(Appointment.id == booking_id_edit, Appointment.user_id == user_id_edit))
+
+    if appointment_to_edit is None:
+        return render_template("apology.html", error_message="Sorry. Something went wrong. Please, try again later.")
+    else:
+        db_base.session.execute(update(Appointment).where(Appointment.id == booking_id_edit, Appointment.user_id == user_id_edit).values(
+            at = new_date_py,
+            amount_time_min = new_duration,
+            description = new_message,
+            service = dumps(new_service),
+            lust_update_at = datetime.datetime.now(),
+            lust_update_by_id = current_user.id
+        ))
+        db_base.session.commit()
+      
     return redirect("/all_appointments/")

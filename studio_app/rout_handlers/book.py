@@ -27,7 +27,7 @@ def book():
             return  render_template("apology.html", error_message="Something went wrong") 
 
         if not validate_recaptcha(token):
-            return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot, maybe reCaptcha that you have just checked expired. Please, try arain.")
+            return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot, maybe reCaptcha that you have just checked expired. Please, try again.")
 
         requested_date = datetime.date(year, month, day)
         requested_time = datetime.time(hour, minute)
