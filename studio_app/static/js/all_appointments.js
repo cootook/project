@@ -265,7 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
          var modal = $(this)            
          modal.find('#user_id_done').val(user_id_done)
          modal.find('#booking_id_done').val(booking_id_done)
-         modal.find('#date_done').text(date_done)
+         modal.find('#date_done').text(datetime_done)
          modal.find('#service_done').text(service_done)
          modal.find('#client_done').text(name_done)
        })
