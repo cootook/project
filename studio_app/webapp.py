@@ -189,12 +189,6 @@ def test_mail_py():
 # @register_view
 def register():
     if request.method == 'POST':
-    # email: Mapped[str] = mapped_column(unique = True)
-    # password: Mapped[Optional[str]]
-    # login_count: Mapped[int] 
-    # name: Mapped[str]   
-    # instagram: Mapped[str] 
-    # tel: Mapped[Optional[str]]
         email = request.form.get('email')
         password = request.form.get('password')
         login_count = 0
@@ -293,7 +287,6 @@ def clients():
     try:
         con = sqlite3.connect("./db.db") 
         cur = con.cursor()
-        # users (id INTEGER PRIMARY KEY, is_admin INT, is_clerck INT ,  name TEXT, email TEXT, lang TEXT, instagram TEXT, tel TEXT, is_subscribed_promo INT, avatar TEXT)
         clients_db = cur.execute("SELECT name, instagram, tel, email, id FROM users").fetchall()
         clients = list()
         for client in clients_db:
@@ -312,7 +305,6 @@ def clients():
 
     if request.method == "POST":
         try:
-            # appointment_id_to_cancel = int(request.form.get("appointment_id"))
             return redirect("/clients/")
 
         except Exception as er:
@@ -410,12 +402,7 @@ def signin():
         else:
             return render_template("apology.html", error_message="wrong login or password password_ok")                
 
-        # except Exception as er:
-        #     print("### ERROR signin: request.form, db")
-        #     print(er)
-        #     return render_template("apology.html", error_message="Something went wrong")
-        return redirect("/")
-            
+           
 
     else:
         return render_template("signin.html")
@@ -480,9 +467,3 @@ with app.app_context():
     Slot.delete_old_empty()
     Slot.create_n_days_upfront(35)
     Slot.create(2023, 10, 5, 11, 30)
-# scheduler = BackgroundScheduler()
-# scheduler.add_job(func=create_slots_n_days_upfront, trigger="interval", hours=24)
-# scheduler.start()
-
-# Shut down the scheduler when exiting the app
-# atexit.register(lambda: scheduler.shutdown())
