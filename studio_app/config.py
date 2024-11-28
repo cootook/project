@@ -8,6 +8,8 @@ class Config(object):
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SECURITY_PASSWORD_SALT = os.environ.get("SECURITY_PASSWORD_SALT")
 
+    TEMPLATES_AUTO_RELOAD = True
+
     # Configure session to use filesystem (instead of signed cookies)
     SESSION_PERMANENT = True
     SESSION_TYPE = os.environ.get('FLASK_SESSION_TYPE')
