@@ -29,10 +29,11 @@ def edit_appointment():
     if appointment_to_edit is None:
         return render_template("apology.html", error_message="Sorry. Something went wrong. Please, try again later.")
     else:
+        messages = db_base.session.scalar(select(Appointment.description).where(Appointment.id == booking_id_edit, Appointment.user_id == user_id_edit))
         db_base.session.execute(update(Appointment).where(Appointment.id == booking_id_edit, Appointment.user_id == user_id_edit).values(
             at = new_date_py,
             amount_time_min = new_duration,
-            description = new_message,
+            description = new_message + " | " + messages,
             service = dumps(new_service),
             lust_update_at = datetime.datetime.now(),
             lust_update_by_id = current_user.id
