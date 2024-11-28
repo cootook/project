@@ -24,7 +24,7 @@ def get_js_object(object):
     def convert(obj):
         for el in obj:
             if isinstance(obj[el], datetime.datetime):
-                obj.update({el: obj[el].strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + os.environ.get("TIME_UTC_OFFSET")})
+                obj.update({el: obj[el].strftime('%Y-%m-%dT%H:%M:%S')})
             elif isinstance(obj[el], datetime.date):
                 obj.update({el: obj[el].strftime("%m/%d/%Y")})
             elif isinstance(obj[el], datetime.time):

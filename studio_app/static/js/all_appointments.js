@@ -1,7 +1,3 @@
-user_appointments_for_frontend.forEach(element => {
-  element.at = new Date(element.at)
-});
-
 const options_datetime = {
   weekday: 'long',
   month: 'long',
@@ -13,6 +9,8 @@ const options_datetime = {
 };
 
 function create_card_for_appointment(appointment) {
+  appointment.at_Date_obj = new Date(appointment.at)
+  
   let card_container = document.createElement("div")
   card_container.className = "border border-white m-2 pb-1 bg-light"
   card_container.id = "appointment_" + appointment.id
@@ -43,13 +41,13 @@ function create_card_for_appointment(appointment) {
 
   let card_header_content_date = document.createElement("div")
   card_header_content_date.className = "col"
-  card_header_content_date.id = card_header_content + "_date"
-  card_header_content_date.textContent = appointment.at.toLocaleString("en-US", options_datetime)
+  card_header_content_date.id = card_header_content.id + "_date"
+  card_header_content_date.textContent = appointment.at_Date_obj.toLocaleString("en-US", options_datetime)
   card_header_content.appendChild(card_header_content_date)
 
   let card_header_content_status = document.createElement("div")
   card_header_content_status.className = "col text-end"
-  card_header_content_status.id = card_header_content + "_status"
+  card_header_content_status.id = card_header_content.id + "_status"
   if (appointment.canceled) {
     card_header_content_status.textContent = "canceled"
   } else if (appointment.done){
@@ -118,10 +116,10 @@ function create_card_for_appointment(appointment) {
   card_edit_btn.dataset.target = "#editModal" 
   card_edit_btn.dataset.booking_id = appointment.id
   card_edit_btn.dataset.id = appointment.user_id
-  card_edit_btn.dataset.datetime = appointment.at.toLocaleDateString("en-US", options_datetime) 
+  card_edit_btn.dataset.datetime = appointment.at_Date_obj.toLocaleDateString("en-US", options_datetime) 
   card_edit_btn.dataset.service = appointment.service
   card_edit_btn.dataset.client = appointment.client_name + " " + appointment.client_tel  
-  card_edit_btn.dataset.date_picker_format = appointment.at.toISOString().slice(0, 16)  
+  card_edit_btn.dataset.date_picker_format = appointment.at //.toISOString().slice(0, 16)  
   card_edit_btn.dataset.duration = appointment.amount_time_min 
   card_edit_btn.dataset.message = appointment.description
   card_edit_btn.textContent = "Edit"
@@ -134,7 +132,7 @@ function create_card_for_appointment(appointment) {
   card_confirm_btn.dataset.target="#confirmModal" 
   card_confirm_btn.dataset.booking_id = appointment.id
   card_confirm_btn.dataset.id = appointment.user_id
-  card_confirm_btn.dataset.datetime = appointment.at.toLocaleDateString("en-US", options_datetime) 
+  card_confirm_btn.dataset.datetime = appointment.at_Date_obj.toLocaleDateString("en-US", options_datetime) 
   card_confirm_btn.dataset.service = appointment.service
   card_confirm_btn.dataset.client = appointment.client_name + " " + appointment.client_tel
   card_confirm_btn.dataset.message = appointment.description
@@ -151,7 +149,7 @@ function create_card_for_appointment(appointment) {
   card_done_btn.dataset.target="#doneModal" 
   card_done_btn.dataset.booking_id = appointment.id
   card_done_btn.dataset.id = appointment.user_id
-  card_done_btn.dataset.datetime = appointment.at.toLocaleDateString("en-US", options_datetime) 
+  card_done_btn.dataset.datetime = appointment.at_Date_obj.toLocaleDateString("en-US", options_datetime) 
   card_done_btn.dataset.service = appointment.service
   card_done_btn.dataset.client = appointment.client_name + " " + appointment.client_tel
   card_done_btn.dataset.message = appointment.description
@@ -168,7 +166,7 @@ function create_card_for_appointment(appointment) {
   card_cancel_btn.dataset.target="#cancelModal" 
   card_cancel_btn.dataset.booking_id = appointment.id
   card_cancel_btn.dataset.id = appointment.user_id
-  card_cancel_btn.dataset.datetime = appointment.at.toLocaleDateString("en-US", options_datetime) 
+  card_cancel_btn.dataset.datetime = appointment.at_Date_obj.toLocaleDateString("en-US", options_datetime) 
   card_cancel_btn.dataset.service = appointment.service
   card_cancel_btn.dataset.client = appointment.client_name + " " + appointment.client_tel
   card_cancel_btn.dataset.message = appointment.description
