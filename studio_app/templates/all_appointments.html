@@ -37,10 +37,12 @@ Appointments
 
           </div>
           {% for service in services %}
+          {% if service.deleted == False %}
           <div class="form-check">
             <input type="checkbox" class="form-check-input" id="{{service.name}}" name="{{service.name}}">
             <label class="form-check-label" for="{{service.name}}">{{service.name}}</label>
           </div>
+          {% endif %}
           {% endfor %}
 
           <div class="form-group">
