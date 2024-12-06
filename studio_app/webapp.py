@@ -19,7 +19,7 @@ from flask_security import Security, SQLAlchemyUserDatastore, auth_required, has
 from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
 from jinja2 import Environment as jinja2_env
-from .helpers import validate_recaptcha
+from .helpers import validate_recaptcha, validate_twilio_request
 from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
@@ -27,6 +27,8 @@ from studio_app.config import ProductionConfig, DevelopmentConfig, TestingConfig
 from studio_app.db_classes import db_base
 from studio_app.db_classes import Appointment, Booking_message, Language, Notification_type, Payment, Payment_method, Payment_status, Payment_type, Role, Service, Service_role, Slot, User, User_notification, User_role
 from studio_app.helpers import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
+from twilio.rest import Client
+from twilio.twiml.messaging_response import MessagingResponse
 from .rout_handlers import *
 
 # flask security
@@ -199,6 +201,36 @@ def register():
         user_datastore.create_user(email = email, password = hash_password(password))
         db_base.commit()
     return render_template('security/register_user.html')
+
+@app.route('/sms/', methods=['GET', 'POST'])
+# @register_view
+def sms():
+    account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+    auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+    client = Client(account_sid, auth_token)
+
+    new_key = client.new_keys.create(friendly_name="test sms")
+
+    message = client.messages.create(
+        body="visit https://cootook.pythonanywhere.com/",
+        from_="+18336610456",
+        to="+16465191763",
+        )
+
+    print(new_key)
+
+    return redirect('/')
+
+@app.route('/message', methods=['POST'])
+@validate_twilio_request
+def incoming_message():
+    resp = MessagingResponse()
+
+    body = "Лиза, я тебя люблю!" 
+    resp.message(body)
+    print(request.values['From'])
+    print(request.values['Body'])
+    return str(resp)
 
 @app.route("/")
 def home():
