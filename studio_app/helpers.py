@@ -3,9 +3,10 @@ import os
 import re
 import requests
 import json
-from flask import redirect, render_template, session
+from flask import redirect, render_template, session, abort, current_app, request
 from werkzeug.security import check_password_hash
 from functools import wraps
+from twilio.request_validator import RequestValidator
 
 def admin_only(f):
     @wraps(f)
@@ -150,4 +151,21 @@ def validate_password (password):
         return True
     else:
         return False
+    
+def validate_twilio_request(f):
+    """Validates that incoming requests genuinely originated from Twilio"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        validator = RequestValidator(os.environ.get('TWILIO_AUTH_TOKEN'))
+
+        request_valid = validator.validate(
+            request.url,
+            request.form,
+            request.headers.get('X-TWILIO-SIGNATURE', ''))
+
+        if request_valid or current_app.debug:
+            return f(*args, **kwargs)
+        else:
+            return abort(403)
+    return decorated_function
 
