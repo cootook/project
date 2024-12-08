@@ -1,5 +1,6 @@
 import atexit
 import os
+import click
 import re
 import secrets
 import sqlite3
@@ -13,8 +14,11 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from calendar import monthrange
 from datetime import timedelta, date
+from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, session, render_template_string
+from flask.cli import with_appcontext
 from flask_mailman import Mail
+from flask_migrate import Migrate
 from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password, login_user, verify_and_update_password, logout_user
 from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
@@ -34,6 +38,8 @@ from .rout_handlers import *
 # flask security
 from typing import List
 
+load_dotenv()
+
 app = Flask(
                 __name__,
                 static_url_path='', 
@@ -50,6 +56,7 @@ Session(app)
 mail = Mail(app)
 
 db_base.init_app(app)
+migrate = Migrate(app, db_base)
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db_base, User, Role)
@@ -64,55 +71,6 @@ navbar_items_admin = ["All_appointments", "Add_service", "Account", "Clients", "
 days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
 
 jinja2_env.SITE_KEY_RECAPTCHA = os.environ.get('SITE_KEY_RECAPTCHA')
-
-with app.app_context():
-    # db_base.drop_all()  
-    # print("################## db dropped")
-
-    db_base.create_all()
-
-    # seed database with admin and test user
-    if db_base.session.scalar(select(User).where(User.id == 1)) is None:
-        admin_email = os.environ.get('ADMINISTRATOR_EMAIL')
-        admin_password = os.environ.get('ADMINISTRATOR_PASSWORD')
-        admin_name = os.environ.get('ADMINISTRATOR_NAME')
-        admin_phone = os.environ.get('ADMINISTRATOR_US_PHONE')
-        admin = user_datastore.create_user(
-            email = admin_email, 
-            password = hash_password(admin_password), 
-            name = admin_name, 
-            tel = admin_phone, 
-            us_phone_number = admin_phone
-            )
-        db_base.session.add(admin)
-        db_base.session.commit()
-
-        role = user_datastore.find_or_create_role("admin")
-        db_base.session.add(role)
-        db_base.session.commit()
-        user_datastore.add_role_to_user(admin, role)
-        db_base.session.commit()
-
-    if db_base.session.scalar(select(User).where(User.id == 2)) is None:
-        test_user_email = os.environ.get('TEST_USER_EMAIL')
-        test_user_password = os.environ.get('TEST_USER_PASSWORD')
-        test_user_name = os.environ.get('TEST_USER_NAME')
-        test_user_phone = os.environ.get('TEST_USER_US_PHONE')
-        test_user = user_datastore.create_user(
-            email = test_user_email, 
-            password = hash_password(test_user_password), 
-            name = test_user_name, 
-            tel = test_user_phone, 
-            us_phone_number = test_user_phone
-            )
-        db_base.session.add(test_user)
-        db_base.session.commit()
-
-        role_tester = user_datastore.find_or_create_role("tester")
-        db_base.session.add(role_tester)
-        db_base.session.commit()
-        user_datastore.add_role_to_user(test_user, role_tester)
-        db_base.session.commit()
 
 @app.context_processor
 def get_services():
@@ -494,8 +452,73 @@ def windows():
         
     return render_template("windows.html", slots=slots_to_frontend)
         
+@click.command("seed_slots")
+@with_appcontext
+def seed_slots():
+    amount_days = int(os.environ.get("HOW_FAR_IN_FUTURE_CREATE_SLOTS")) if os.environ.get("HOW_FAR_IN_FUTURE_CREATE_SLOTS") else 300
+    Slot.create_n_days_upfront(amount_days)
+app.cli.add_command(seed_slots)
 
-with app.app_context():
+@click.command("delete_empty_slots")
+@with_appcontext
+def delete_empty_slots():
     Slot.delete_old_empty()
-    Slot.create_n_days_upfront(35)
-    Slot.create(2023, 10, 5, 11, 30)
+app.cli.add_command(delete_empty_slots)
+
+@click.command("seed_admin")
+@with_appcontext
+def seed_admin():
+    if db_base.session.scalar(select(User).where(User.id == 1)) is None:
+        admin_email = os.environ.get('ADMINISTRATOR_EMAIL')
+        admin_password = os.environ.get('ADMINISTRATOR_PASSWORD')
+        admin_name = os.environ.get('ADMINISTRATOR_NAME')
+        admin_phone = os.environ.get('ADMINISTRATOR_US_PHONE')
+        admin = user_datastore.create_user(
+            email = admin_email, 
+            password = hash_password(admin_password), 
+            name = admin_name, 
+            tel = admin_phone, 
+            us_phone_number = admin_phone
+            )
+        db_base.session.add(admin)
+        db_base.session.commit()
+
+        role = user_datastore.find_or_create_role("admin")
+        db_base.session.add(role)
+        db_base.session.commit()
+        user_datastore.add_role_to_user(admin, role)
+        db_base.session.commit()
+        print("created: ", db_base.session.scalar(select(User).where(User.id == 1)))
+    else:
+        print("already exist: ", db_base.session.scalar(select(User).where(User.id == 1)))
+    
+app.cli.add_command(seed_admin)
+
+@click.command("seed_test_user")
+@with_appcontext
+def seed_test_user():
+    if db_base.session.scalar(select(User).where(User.id == 2)) is None:
+        test_user_email = os.environ.get('TEST_USER_EMAIL')
+        test_user_password = os.environ.get('TEST_USER_PASSWORD')
+        test_user_name = os.environ.get('TEST_USER_NAME')
+        test_user_phone = os.environ.get('TEST_USER_US_PHONE')
+        test_user = user_datastore.create_user(
+            email = test_user_email, 
+            password = hash_password(test_user_password), 
+            name = test_user_name, 
+            tel = test_user_phone, 
+            us_phone_number = test_user_phone
+            )
+        db_base.session.add(test_user)
+        db_base.session.commit()
+
+        role_tester = user_datastore.find_or_create_role("tester")
+        db_base.session.add(role_tester)
+        db_base.session.commit()
+        user_datastore.add_role_to_user(test_user, role_tester)
+        db_base.session.commit()
+        print("created: ", db_base.session.scalar(select(User).where(User.id == 2)))
+    else:
+        print("already exist: ", db_base.session.scalar(select(User).where(User.id == 2)))
+app.cli.add_command(seed_test_user)
+
