@@ -19,21 +19,17 @@ Liza Nail Studio
     <form id="book_form" action="/book/" method="post">
     <div class="modal-content bg-dark">
       <div class="modal-header">
-        <h5 class="modal-title" id="book_confirm_modal_lable">Confirm request</h5>
+        <h5 class="modal-title" id="book_confirm_modal_lable">Request appointment</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
                   
-          <input type="hidden" name="minute" id="minute_input" value="">
-          <input type="hidden" name="hour" id="hour_input" value="">
-          <input type="hidden" name="date" id="date_input" value="">
-          <input type="hidden" name="month" id="month_input" value="">
-          <input type="hidden" name="year" id="year_input" value="">
+          <input type="hidden" name="datetime-iso" id="datetime-iso" value="">
           <input type="hidden" name="slot_id" id="slot_id_input" value="">
             
-           <span id="time_book"> </span>
+           <span id="date-local"> </span>
 
            {% for service in services %}
            {% if service.deleted == False %}

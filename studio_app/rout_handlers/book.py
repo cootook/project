@@ -10,14 +10,9 @@ def book():
     
     if request.method == "POST":
         try:                  
-            print(request.form)
             form_data = request.form.to_dict()
             token = request.form.get("g-recaptcha-response")
-            minute = int(request.form.get("minute"))
-            hour = int(request.form.get("hour"))
-            day = int(request.form.get("date"))
-            month = int(request.form.get("month")) + 1 # in calendar.js month range starts from 0
-            year = int(request.form.get("year"))
+            datetime_iso = request.form.get("datetime-iso")
             slot_id = int(request.form.get("slot_id"))
             message = request.form.get("message-text")            
 
@@ -28,13 +23,15 @@ def book():
 
         if not validate_recaptcha(token):
             return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot, maybe reCaptcha that you have just checked expired. Please, try again.")
-
-        requested_date = datetime.date(year, month, day)
-        requested_time = datetime.time(hour, minute)
-        requested_date_time = datetime.datetime(year, month, day, hour, minute)
+        
+        requested_date_time = datetime.datetime.strptime(datetime_iso, "%Y-%m-%dT%H:%M:%S")
+        requested_date = requested_date_time.date()
+        requested_time = requested_date_time.time()
         
         # try:
-        requested_slot = Slot.query.filter(Slot.id == slot_id, Slot.date == requested_date, Slot.time == requested_time).first()          
+        requested_slot = Slot.query.filter(Slot.id == slot_id, Slot.date == requested_date, Slot.time == requested_time).first()  
+        if requested_slot is None:
+            return  render_template("apology.html", error_message="Sorry. Something went wrong with this slot. Please, try again.")        
         if not requested_slot.opened:
             return  render_template("apology.html", error_message="Time is not available")
         else:
