@@ -1,4 +1,53 @@
 # project
+
+## migrations and seed
+
+if there is no 'migrations' directory : run 
+    ```console
+        flask bb init
+    ```
+    to file 'migrations/script.py.mako' add imports
+    ```python
+        import flask_security
+        from flask_security.models import fsqla_v3 as fsqla
+        from typing import Optional
+    ```
+else:
+    make sure imports were added
+
+run
+```console
+    flask db migrate
+```
+migration should be ran on each models mutations 
+
+check auto created scripts in 'migrations/versions', first of all imports
+if there is any data in database make sure that new fields are not 'nullable = False', because in old lines these fields are going to be set 'null'
+
+```console
+    flask db upgrade
+```
+
+ADMIN settings in '.env' (terminal reload for changes to apply) 
+
+```console
+    flask seed_admin
+```
+
+TEST_USER settings in '.env' (terminal reload for changes to apply)
+
+```console
+    flask seed_test_user
+```
+
+default days upfront for creating slots is 300 days, change in '.env' (terminal reload for changes to apply)
+
+```console
+    flask seed_slots
+```
+
+
+
 ```*learn-by-doing*```
 
 That was [@cootook's](https://github.com/cootook) final project of **[Harvard CS50](https://pll.harvard.edu/course/cs50-introduction-computer-science)** course in 2023.
