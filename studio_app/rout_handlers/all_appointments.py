@@ -28,5 +28,4 @@ def all_appointments():
     user_appointments_for_template = user_appointments_for_frontend    
     user_appointments_for_frontend = get_js_object(user_appointments_for_frontend)
     
-    print(user_appointments_for_template)
     return render_template("all_appointments.html", user_appointments_for_frontend=user_appointments_for_frontend, user_appointments_for_template=user_appointments_for_template)

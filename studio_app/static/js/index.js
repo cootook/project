@@ -1,4 +1,5 @@
 let recaptcha_checked = false;
+
 document.addEventListener("DOMContentLoaded", () => {
     $('#book_confirm_modal').on('show.bs.modal', function (event) {
       var slot_to_book = $(event.relatedTarget) // Button that triggered the modal
@@ -16,11 +17,40 @@ document.addEventListener("DOMContentLoaded", () => {
        }
       
     })
+
+    const input = document.querySelector("#phone");
+    const phone_valid = document.querySelector("#phone_valid")
+    const phone_not_valid = document.querySelector("#phone_not_valid")
+
+
+    const iti = window.intlTelInput(input, {
+      initialCountry: "us",
+      containerClass: "w-100",
+      hiddenInput: () => ({ phone: "full_phone", country: "country_code" }),
+      loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.1.1/build/js/utils.js"),
+    });
+
+    const validate = () => {
+        if (iti.isValidNumber()) {
+          phone_not_valid.hidden = true
+          phone_valid.hidden = false
+        } else {
+          phone_not_valid.hidden = false
+          phone_valid.hidden = true
+        }
+        submit_btn_active()
+     }
+
+     input.addEventListener("change", validate)
+     input.addEventListener("keyup", validate)
+
+
   })
 
   function submit_btn_active() {
     service_check_collection = document.getElementsByClassName("service-check")
     let btn = document.getElementById('submit_booking_btn');
+    const is_phone_invalid = document.querySelector("#phone_valid").hidden
     let at_least_one_checked = false
     for (const check of service_check_collection) {
       if (check.checked) {
@@ -28,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    if (recaptcha_checked && at_least_one_checked) {
+    if (recaptcha_checked && at_least_one_checked && !is_phone_invalid) {
       btn.disabled = false;
     } else {
       btn.disabled = true;
@@ -46,3 +76,4 @@ document.addEventListener("DOMContentLoaded", () => {
     submit_btn_active();    
     return
   }
+

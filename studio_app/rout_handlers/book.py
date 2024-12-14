@@ -14,8 +14,10 @@ def book():
             token = request.form.get("g-recaptcha-response")
             datetime_iso = request.form.get("datetime-iso")
             slot_id = int(request.form.get("slot_id"))
-            message = request.form.get("message-text")            
-
+            message = request.form.get("message-text")
+            full_phone = request.form.get("full_phone") 
+            client_name = request.form.get("client_name")         
+            print(full_phone, client_name, message)
         except Exception as er:
             print("##/book/ --request.form.get")
             print(er)
@@ -51,11 +53,6 @@ def book():
                                                         message_link_text="Home page.")
             else:
                 return  render_template("apology.html", error_message="Something went wrong")
-        
-        # except Exception as er:
-        #     print("##/book/ -- db query")
-        #     print(er)
-        #     return  render_template("apology.html", error_message="Something went wrong.")        
 
     else:
         return redirect("/")

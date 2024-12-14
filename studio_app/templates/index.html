@@ -3,6 +3,7 @@
 {% block custom_styles %} 
   <!-- Custom styles for this template -->
   <link href="{{ url_for('static', filename='/css/calendar.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.1.1/build/css/intlTelInput.css">
 {% endblock %}
 
 {% block title %}
@@ -11,6 +12,7 @@ Liza Nail Studio
 
 {% block content %}
 <script> var action_path = "/book/"; var slots = {{slots}}; </script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.1.1/build/js/intlTelInput.min.js"></script>
 <script src="{{ url_for('static', filename='/js/index.js') }}"></script>
 
 {% include 'calendar.html' %}
@@ -28,8 +30,10 @@ Liza Nail Studio
                   
           <input type="hidden" name="datetime-iso" id="datetime-iso" value="">
           <input type="hidden" name="slot_id" id="slot_id_input" value="">
-            
+
+            <div class="form-text">Date:</div>
            <span id="date-local"> </span>
+           <p class="form-text mb-0">Pick a service:</p>
 
            {% for service in services %}
            {% if service.deleted == False %}
@@ -39,22 +43,42 @@ Liza Nail Studio
            </div>
            {% endif %}
            {% endfor %}
-
-          <div class="form-group">
-            <label for="message-text" class="col-form-label">Message:</label>
+            <div class="form-group mb-2 border-top">
+            <label for="client_name" class="form-label">Your name (required):</label>
+            <input type="text" class="form-control" id="client_namet" name="client_name">
+          </div>
+           <div class="form-group  my-2 w-100 border-top">
+            <label class="form-label mb-0" for="phone">Phone number (required):</label>
+            <p class="slmall mb-1 mt-0 form-text">we will send a confirmation code</p>
+            <input type="tel" id="phone" name="phone" class="form-control bg-light text-dark">
+            <div class="text-danger fw-bold" id="phone_not_valid">
+              <b class="text-danger" >✖</b> <span class="text-danger">not valid</span> 
+            </div>
+            <div class="text-success fw-bold" id="phone_valid" hidden>
+              <b class="text-success" >✔</b> <span class="text-success">valid</span>
+            </div>
+           </div>
+           
+          <div class="form-group mb-2 border-top">
+            <label for="message-text" class="col-form-label">Message (optional):</label>
             <textarea class="form-control" id="message-text" name="message-text"></textarea>
           </div>
+          
       </div>
-      <div class="g-recaptcha" data-sitekey="{{ SITE_KEY_RECAPTCHA }}" data-callback="enable_submit_book" data-expired-callback="disable_submit_book"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button 
-          type="submit" 
-          class="btn btn-primary" 
-          id="submit_booking_btn"
-          disabled>
-          Request appointment
-        </button>
+      
+      <div class="modal-footer-custom">
+        <div class="g-recaptcha" data-sitekey="{{ SITE_KEY_RECAPTCHA }}" data-callback="enable_submit_book" data-expired-callback="disable_submit_book"></div>
+        <div class="form-group">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            id="submit_booking_btn"
+            disabled>
+            Request appointment
+          </button>
+        </div>
+
       </div>
     </div>
     </form>
