@@ -1,7 +1,8 @@
 import datetime
 import json
+import phonenumbers
 
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, current_app
 from ..helpers import validate_recaptcha
 from sqlalchemy import select
 from studio_app.db_classes import Appointment, Slot, Service, db_base
@@ -17,7 +18,6 @@ def book():
             message = request.form.get("message-text")
             full_phone = request.form.get("full_phone") 
             client_name = request.form.get("client_name")         
-            print(full_phone, client_name, message)
         except Exception as er:
             print("##/book/ --request.form.get")
             print(er)
@@ -26,6 +26,14 @@ def book():
         if not validate_recaptcha(token):
             return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot, maybe reCaptcha that you have just checked expired. Please, try again.")
         
+        parsed_phone = phonenumbers.parse(full_phone, None)
+        is_number_valid = phonenumbers.is_valid_number(parsed_phone)
+        if not is_number_valid:
+            return  render_template("apology.html", error_message=f"Sorry {client_name}. We cannot sent a message to {full_phone}. Please, try again or contact us.")
+        
+        canonical_n = phonenumbers.format_number(parsed_phone, phonenumbers.PhoneNumberFormat.E164)
+        return redirect ("/")
+
         requested_date_time = datetime.datetime.strptime(datetime_iso, "%Y-%m-%dT%H:%M:%S")
         requested_date = requested_date_time.date()
         requested_time = requested_date_time.time()
