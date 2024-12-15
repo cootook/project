@@ -465,6 +465,19 @@ def delete_empty_slots():
     Slot.delete_old_empty()
 app.cli.add_command(delete_empty_slots)
 
+@click.command("seed_role")
+@with_appcontext
+def seed_role():
+    role_admin = user_datastore.find_or_create_role("admin")
+    role_client = user_datastore.find_or_create_role("client")
+    role_tester = user_datastore.find_or_create_role("tester")
+    roles = [role_admin, role_client, role_tester]
+    db_base.session.add_all(roles)
+    db_base.session.commit()
+
+app.cli.add_command(seed_role)
+
+
 @click.command("seed_admin")
 @with_appcontext
 def seed_admin():
@@ -483,10 +496,7 @@ def seed_admin():
         db_base.session.add(admin)
         db_base.session.commit()
 
-        role = user_datastore.find_or_create_role("admin")
-        db_base.session.add(role)
-        db_base.session.commit()
-        user_datastore.add_role_to_user(admin, role)
+        user_datastore.add_role_to_user(admin, "admin")
         db_base.session.commit()
         print("created: ", db_base.session.scalar(select(User).where(User.id == 1)))
     else:
@@ -512,10 +522,7 @@ def seed_test_user():
         db_base.session.add(test_user)
         db_base.session.commit()
 
-        role_tester = user_datastore.find_or_create_role("tester")
-        db_base.session.add(role_tester)
-        db_base.session.commit()
-        user_datastore.add_role_to_user(test_user, role_tester)
+        user_datastore.add_role_to_user(test_user, "tester")
         db_base.session.commit()
         print("created: ", db_base.session.scalar(select(User).where(User.id == 2)))
     else:

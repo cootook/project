@@ -1,11 +1,15 @@
 import datetime
 import json
+import os
 import phonenumbers
 
 from flask import redirect, render_template, request, session, current_app
+from flask_security import current_user, hash_password, login_user, logout_user
 from ..helpers import validate_recaptcha
-from sqlalchemy import select
-from studio_app.db_classes import Appointment, Slot, Service, db_base
+from random import randrange
+from sqlalchemy import select, update
+from studio_app.db_classes import Appointment, Slot, Service, db_base, User
+
 
 def book():
     
@@ -24,7 +28,7 @@ def book():
             return  render_template("apology.html", error_message="Something went wrong") 
 
         if not validate_recaptcha(token):
-            return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot, maybe reCaptcha that you have just checked expired. Please, try again.")
+            return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot, maybe reCaptcha that you have just checked expired. Please, try again or contact us.")
         
         parsed_phone = phonenumbers.parse(full_phone, None)
         is_number_valid = phonenumbers.is_valid_number(parsed_phone)
@@ -32,35 +36,46 @@ def book():
             return  render_template("apology.html", error_message=f"Sorry {client_name}. We cannot sent a message to {full_phone}. Please, try again or contact us.")
         
         canonical_n = phonenumbers.format_number(parsed_phone, phonenumbers.PhoneNumberFormat.E164)
-        return redirect ("/")
 
-        requested_date_time = datetime.datetime.strptime(datetime_iso, "%Y-%m-%dT%H:%M:%S")
-        requested_date = requested_date_time.date()
-        requested_time = requested_date_time.time()
+        try:
+            requested_date_time = datetime.datetime.strptime(datetime_iso, "%Y-%m-%dT%H:%M:%S")
+            requested_date = requested_date_time.date()
+            requested_time = requested_date_time.time()
+        except Exception as er:
+            print(f"cannot get date out of submitted datetime_iso: {datetime_iso}")
         
-        # try:
-        requested_slot = Slot.query.filter(Slot.id == slot_id, Slot.date == requested_date, Slot.time == requested_time).first()  
+        requested_slot = Slot.query.filter(Slot.id == slot_id, Slot.date == requested_date, Slot.time == requested_time, Slot.opened == True).first()  
         if requested_slot is None:
-            return  render_template("apology.html", error_message="Sorry. Something went wrong with this slot. Please, try again.")        
-        if not requested_slot.opened:
-            return  render_template("apology.html", error_message="Time is not available")
+            return  render_template("apology.html", error_message="Sorry. This slot is not available. Please, try again or contact us.")        
+
+        service_list = []
+        for item in form_data:
+            if item == form_data[item]:
+                service_by_name = db_base.session.scalar(select(Service).where(Service.name == item, Service.deleted == False))
+                if not service_by_name == None:
+                    service_list.append(item)
+        # find or create user
+        logout_user()
+        client = db_base.session.scalar(select(User).where(User.tel == canonical_n))
+        if client is None:
+            from studio_app.webapp import user_datastore
+            # client = User(tel = canonical_n, name = client_name, email = os.environ.get("DEFAULT_EMAIL"), password = hash_password(os.environ.get("DEFAULT_PASSWORD")))
+            client = user_datastore.create_user(tel = canonical_n, name = client_name, email = os.environ.get("DEFAULT_EMAIL"), password = hash_password(os.environ.get("DEFAULT_PASSWORD")))
+            db_base.session.add(client)
+            db_base.session.commit()
+            user_datastore.add_role_to_user(client, "client")
+        login_user(client)
+        new_appointment = Appointment.create(current_user.id, json.dumps(service_list), requested_date_time, slot_id, message)
+        db_base.session.execute(update(Appointment).where(Appointment.id == new_appointment.id).values(sms_confirmation_code = randrange(1000, 9999, 11)))
+
+        if Slot.book(current_user.id, requested_slot, new_appointment):
+            return render_template("message_page.html", message_title="success", 
+                                                    message_header="You requested appointment on", 
+                                                    message_text= " " + requested_date.strftime("%m/%d/%Y") + " at " + requested_time.strftime("%H:%M") + ". We will send you a confirmation.", 
+                                                    message_link="/", 
+                                                    message_link_text="Home page.")
         else:
-            # define service 
-            service_list = []
-            for item in form_data:
-                if item == form_data[item]:
-                    service_by_name = db_base.session.scalar(select(Service).where(Service.name == item, Service.deleted == False))
-                    if not service_by_name == None:
-                        service_list.append(item)
-            new_appointment = Appointment.create(session["user_id"], json.dumps(service_list), requested_date_time, slot_id, message)
-            if Slot.book(session["user_id"], requested_slot, new_appointment):
-                return render_template("message_page.html", message_title="success", 
-                                                        message_header="You requested appointment on", 
-                                                        message_text= " " + requested_date.strftime("%m/%d/%Y") + " at " + requested_time.strftime("%H:%M") + ". We will send you a confirmation.", 
-                                                        message_link="/", 
-                                                        message_link_text="Home page.")
-            else:
-                return  render_template("apology.html", error_message="Something went wrong")
+            return  render_template("apology.html", error_message="Something went wrong")
 
     else:
         return redirect("/")
