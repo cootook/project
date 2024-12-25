@@ -97,6 +97,10 @@ def inject_navbar_items_not_loged_in():
 def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
 
+@app.route('/zohoverify/verifyforzoho.html', methods=['GET'])
+def zoho():
+    return "41961746"
+
 @app.route("/test_mail_py/", methods=["GET", "POST"])
 @login_required
 def test_mail_py():
