@@ -15,7 +15,7 @@ from email.mime.multipart import MIMEMultipart
 from calendar import monthrange
 from datetime import timedelta, date
 from dotenv import load_dotenv
-from flask import Flask, flash, redirect, render_template, request, session, render_template_string
+from flask import Flask, flash, redirect, render_template, request, session, render_template_string, send_file
 from flask.cli import with_appcontext
 from flask_mailman import Mail
 from flask_migrate import Migrate
@@ -99,7 +99,7 @@ def inject_navbar_items_admin():
 
 @app.route('/zohoverify/verifyforzoho.html', methods=['GET'])
 def zoho():
-    return "41961746"
+    return send_file('verifyforzoho.html', as_attachment=True)
 
 @app.route("/test_mail_py/", methods=["GET", "POST"])
 @login_required
