@@ -3,10 +3,14 @@ import os
 import re
 import requests
 import json
+import phonenumbers
+
 from flask import redirect, render_template, session, abort, current_app, request
 from werkzeug.security import check_password_hash
 from functools import wraps
 from twilio.request_validator import RequestValidator
+from twilio.rest import Client
+from twilio.twiml.messaging_response import MessagingResponse
 
 def admin_only(f):
     @wraps(f)
@@ -117,6 +121,34 @@ def not_loged_only(f):
             return redirect("/")
         return f(*args, **kwargs)
     return decorated_function
+
+def send_sms(from_number, to_number, sms_body):
+    def is_number_valid(number):
+        parsed_phone = phonenumbers.parse(number, None)
+        is_parsed_number_valid = phonenumbers.is_valid_number(parsed_phone)
+        if not is_parsed_number_valid:
+            return False
+        else:
+            return True
+    if not is_number_valid(from_number):
+        return "INVALID FROM"
+    elif not is_number_valid(to_number):
+        return "INVALID TO"
+    account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+    auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+    client = Client(account_sid, auth_token)
+
+    new_key = client.new_keys.create(friendly_name="test sms")
+
+    message = client.messages.create(
+        body=sms_body,
+        from_=from_number,
+        to=to_number,
+        )
+
+    print("# send_sms: ", new_key)
+
+    return "OK"
 
 def page_not_found(e):
   error_message  = "404 - page not fond"

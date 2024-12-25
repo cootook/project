@@ -174,8 +174,8 @@ def sms():
     new_key = client.new_keys.create(friendly_name="test sms")
 
     message = client.messages.create(
-        body="visit https://cootook.pythonanywhere.com/",
-        from_="+18336610456",
+        body="visit https://maniaurabyrusa.com/",
+        from_="+19295436368",
         to="+16465191763",
         )
 
@@ -315,6 +315,22 @@ def clients():
 @admin_only
 def _confirm_appointment():
     return confirm_appointment.confirm_appointment()
+
+@app.route("/confirm-phone/", methods = ["POST"])
+def _confirm_phone():
+    
+    if request.method == "POST":
+        try:                  
+            form_data = request.form.to_dict()
+            code = request.form.get("code")
+            appointment_id = request.form.get("appointment_id")
+                    
+        except Exception as er:
+            print("##/confirm-phone/ --request.form.get")
+            print(er)
+            return  render_template("apology.html", error_message="Something went wrong") 
+    print(code, appointment_id)
+    return redirect("/")
 
 
 @app.route("/contact/")
