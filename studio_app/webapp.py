@@ -150,6 +150,14 @@ def test_mail_py():
     flash(f'A test message was sent to {receiver}.')
     return redirect("/")
 
+@app.route('/privacy_policy', methods=['GET'])
+def register():
+    return render_template('privacy_policy.html')
+
+@app.route('/terms_of_service', methods=['GET'])
+def register():
+    return render_template('terms_of_service.html')
+
 @app.route('/register', methods=['GET', 'POST'])
 # @register_view
 def register():
