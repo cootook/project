@@ -151,11 +151,11 @@ def test_mail_py():
     return redirect("/")
 
 @app.route('/privacy_policy', methods=['GET'])
-def register():
+def privacy_policy():
     return render_template('privacy_policy.html')
 
 @app.route('/terms_of_service', methods=['GET'])
-def register():
+def terms_of_service():
     return render_template('terms_of_service.html')
 
 @app.route('/register', methods=['GET', 'POST'])
