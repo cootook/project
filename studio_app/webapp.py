@@ -98,9 +98,9 @@ def inject_navbar_items_not_loged_in():
 def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
 
-@app.route('/zohoverify/verifyforzoho.html', methods=['GET'])
-def zoho():
-    return send_file('verifyforzoho.html', as_attachment=True)
+@app.route('/verify/f2c5930a29900498068d74013e18e78c.html', methods=['GET'])
+def verify_html():
+    return send_file('f2c5930a29900498068d74013e18e78c.html', as_attachment=True)
 
 @app.route("/test_mail_py/", methods=["GET", "POST"])
 @login_required
