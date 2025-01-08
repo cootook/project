@@ -1,4 +1,5 @@
-# project
+# booking app for manicure salon in New York City
+**[ManiAuraByRusa.com](https://www.maniaurabyrusa.com/)**
 
 ## migrations and seed
 
@@ -48,21 +49,6 @@ default days upfront for creating slots is 300 days, change in '.env' (terminal 
 
 
 
-```*learn-by-doing*```
-
-That was [@cootook's](https://github.com/cootook) final project of **[Harvard CS50](https://pll.harvard.edu/course/cs50-introduction-computer-science)** course in 2023.
-I decided not to throw it away but to use it for my future learning. Now it is a learn-by-doing project. The goal is to bridge the gap between learning code and launching a success career and being promoted.
-
-The main part of that is to create real-world-like project for learners. I believe it is good to invent the wheel before using out of the box solution, it is ok to build the same thing again and again, it is ok to get specific related to the subject critics and advices.
-In my mind any programmer job is not about coding only. And coding is not the main part at all. Coder should be able to:
-* be a creative problem solver 
-* find and fix a cause or a root not an effect
-* deny yourself to fix than not broken
-* read and understand docs
-* write a comprehensive explanations and messages
-* follow existing codes and rules 
-* read and understand code written by others (self written too)
-* constantly to learn new things
 
 How it works while contributing this project? Like that:
 * learn ```something```
