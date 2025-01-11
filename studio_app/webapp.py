@@ -1,20 +1,11 @@
-import atexit
 import os
 import click
-import re
-import secrets
 import sqlite3
 import datetime
 import requests
-import smtplib, ssl
-import time
 import flask_security
 
-from apscheduler.schedulers.background import BackgroundScheduler
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from calendar import monthrange
-from datetime import timedelta, date
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, session, render_template_string, send_file
 from flask.cli import with_appcontext
@@ -24,7 +15,7 @@ from flask_security import Security, SQLAlchemyUserDatastore, auth_required, has
 from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
 from jinja2 import Environment as jinja2_env
-from .helpers import validate_recaptcha, validate_twilio_request
+from .helpers import validate_recaptcha, validate_twilio_request, send_email
 from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
@@ -66,9 +57,9 @@ app.security = Security(app, user_datastore, confirm_register_form=ExtendedRegis
 app.register_error_handler(404, page_not_found)
 
 # Define lists of navbar items to be used in templates
-navbar_items = ["Appointments", "History", "Account", "Contact", "LogOut"]
-navbar_items_not_loged_in = ["Contact", "SignIn", "SignUp"]
-navbar_items_admin = ["All_appointments", "Add_service", "Account", "Clients", "Windows", "Contact", "LogOut"]
+navbar_items = ["Appointments", "History", "Account", "Contact", "Terms_of_service", "Privacy_policy", "LogOut"]
+navbar_items_not_loged_in = ["Contact", "Terms_of_service", "Privacy_policy", "SignIn"]
+navbar_items_admin = ["All_appointments", "Add_service", "Account", "Clients", "Windows", "Contact", "Terms_of_service", "Privacy_policy", "LogOut"]
 days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
 
 jinja2_env.SITE_KEY_RECAPTCHA = os.environ.get('SITE_KEY_RECAPTCHA')
@@ -102,59 +93,13 @@ def inject_navbar_items_admin():
 def verify_html():
     return send_file('f2c5930a29900498068d74013e18e78c.html', as_attachment=True)
 
-@app.route("/test_mail_py/", methods=["GET", "POST"])
-@login_required
-def test_mail_py():
-    mail_server = os.environ.get('MAIL_SERVER')
-
-    receiver = "cootook@gmail.com"
-    sender = "matveising@ya.ru"
-    port = int(os.environ.get('MAIL_PORT'))
-    username = os.environ.get('MAIL_USERNAME')
-    password = os.environ.get('MAIL_APP_KEY')
-
-    message = MIMEMultipart("alternative")
-    # message.set_content("This message is sent from Python.")
-    message['Subject'] = 'Test of sending via Python'
-    message['To'] = "cootook@gmail.con"
-    message['From'] = "Liza nail studio <matveising@ya.ru>"
-
-    text = """\
-    Hi,
-    This is a plain text.
-    """
-    html = """\
-    <html>
-    <body>
-        <p>Hi,<br>
-        Second one
-        This is HTML<br>
-        <a href="https://github.com/cootook">my GitHub</a> 
-        </p>
-    </body>
-    </html>
-    """
-
-    part1 = MIMEText(text, "plain")
-    part2 = MIMEText(html, "html")
-
-    message.attach(part1)
-    message.attach(part2)
-
-    context = ssl.create_default_context()
-
-    with smtplib.SMTP_SSL(mail_server, port, context=context) as server:
-        server.login(username, password)
-        server.sendmail(sender, receiver, message.as_string())
-
-    flash(f'A test message was sent to {receiver}.')
-    return redirect("/")
-
 @app.route('/privacy_policy', methods=['GET'])
+@app.route('/privacy_policy/', methods=['GET'])
 def privacy_policy():
     return render_template('privacy_policy.html')
 
 @app.route('/terms_of_service', methods=['GET'])
+@app.route('/terms_of_service/', methods=['GET'])
 def terms_of_service():
     return render_template('terms_of_service.html')
 

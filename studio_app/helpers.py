@@ -2,11 +2,14 @@ import datetime
 import os
 import re
 import requests
+import smtplib
 import json
 from flask import redirect, render_template, session, abort, current_app, request
 from werkzeug.security import check_password_hash
 from functools import wraps
 from twilio.request_validator import RequestValidator
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 def admin_only(f):
     @wraps(f)
@@ -79,8 +82,6 @@ def log_user_in(login, password, cursor):
 
     if is_password_correct:
         user = cursor.execute("SELECT * FROM users WHERE email=?", (login,)).fetchone()
-        #seve user info 
-        # id, is_admin INT, is_editor INT, name TEXT, email TEXT, lang TEXT, instagram TEXT, tel TEXT, is_subscribed_promo INT, is_instagram_notification INT, is_email_notification INT, is_text_notification INT, avatar TEXT
         session["user_id"] = user_id[0] 
         session["is_admin"] = user[1]
         session["is_editor"] = user[2]
@@ -94,8 +95,6 @@ def log_user_in(login, password, cursor):
         return True
     else:
         return False
-    # Redirect user to home page
-    # return redirect("/")
 
 def log_user_out():
     session["user_id"] = None
@@ -109,6 +108,44 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+def send_email(to_email: str, subject: str, plain_text, from_email: str = None, from_field_name = ""):
+    """
+    returns OK or error as str
+    
+    there is no validations of passed params in that func
+
+    look at .env and config.py to configure
+    """
+    if from_email is None:
+        from_email = os.environ.get('MAIL_DEFAULT_SENDER')
+    mail_server = os.environ.get('MAIL_SERVER')
+    port = int(os.environ.get('MAIL_PORT'))
+    username = os.environ.get('MAIL_USERNAME')
+    password = os.environ.get('MAIL_PASSWORD')
+
+    message = MIMEMultipart("alternative")
+    message['Subject'] = subject
+    message['To'] = to_email
+    message['From'] = f"{from_field_name} <{from_email}>"
+
+    text = plain_text
+
+    part1 = MIMEText(text, "plain")
+
+    message.attach(part1)
+
+    try:
+        server = smtplib.SMTP(mail_server, port)
+        server.starttls()
+        server.login(username, password)
+        txt = message.as_string()
+        server.sendmail(from_email, to_email, txt)
+        server.quit()
+        return "OK"
+    except Exception as error:
+        return str(error)
+    
 
 def not_loged_only(f):
     @wraps(f)
