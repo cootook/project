@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block title %}
+Phone confirmation
+{% endblock %}
+{% block content %}
+<script src="{{ url_for('static', filename='/js/booking_sms_confirmation_code.js') }}"></script>
+
+<h1 class="mt-2 text-start" >Enter code</h1>
+<form class="form-group" id="confirmation_code" action="/confirm-phone" method="post">
+    <p>
+        sent to {{phone}}:
+    </p>
+    <div class="form-floating">
+        <input class="form-control w-100" type="number" max="9999" min="1000" id="code" name="code" placeholder="0000" autocomplete="off">
+        <label class="text-black" for="code">Code:</label>
+    </div>
+    <input hidden type="text" id="appointment_id" name="appointment_id" value="{{appointment_id}}">
+        
+        
+        <button 
+        type="submit" 
+        class="btn btn-primary w-100 mt-2" 
+        id="submit_code"
+        disabled>
+        Send code
+      </button>
+ 
+
+</form>
+<a style="text-align: center" href="/"><h2>Home</h2></a>
+{% endblock %}

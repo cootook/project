@@ -331,21 +331,16 @@
         var square = createElement('div', 'event-category ' + ev.color);
         //var span = createElement('span', '', ev.eventName);
         if (action_path == "/book/"){
-                // <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Open modal for @mdo</button>
                 var modal_button = createElement('button', 'btn btn-primary btn-calendar')
                 modal_button.setAttribute("data-toggle", "modal")
                 modal_button.setAttribute("data-target", "#book_confirm_modal")
                 modal_button.setAttribute("data-slot_id", ev.id)
-                modal_button.setAttribute("data-minute", ev.date.minute())
-                modal_button.setAttribute("data-hour", ev.date.hour())
-                modal_button.setAttribute("data-date", ev.date.date())
-                modal_button.setAttribute("data-month", ev.date.month())
-                modal_button.setAttribute("data-year", ev.date.year())
-                modal_button.setAttribute("data-full", ev.date.format('LLLL'))
-                // modal_button.setAttribute("value", ev.date.format('h:mm a'))
-                modal_button.innerText = ev.date.format('llll')
+                modal_button.setAttribute("data-datetime-iso", ev.date.format('YYYY-MM-DD[T]HH[:]mm[:00]'))
+                modal_button.setAttribute("data-date-local", ev.date.format('ddd, MMM D [at] h:mm A'))
+                modal_button.innerText = ev.date.format('ddd, MMM D [at] h:mm A')
                 div.appendChild(modal_button);
                 }
+
         else if (action_path == "/windows/") {
           
         var form = createElement('form');

@@ -103,6 +103,7 @@ def privacy_policy():
 def terms_of_service():
     return render_template('terms_of_service.html')
 
+
 @app.route('/register', methods=['GET', 'POST'])
 # @register_view
 def register():
@@ -128,8 +129,8 @@ def sms():
     new_key = client.new_keys.create(friendly_name="test sms")
 
     message = client.messages.create(
-        body="visit https://cootook.pythonanywhere.com/",
-        from_="+18336610456",
+        body="visit https://maniaurabyrusa.com/",
+        from_="+19295436368",
         to="+16465191763",
         )
 
@@ -269,6 +270,22 @@ def clients():
 @admin_only
 def _confirm_appointment():
     return confirm_appointment.confirm_appointment()
+
+@app.route("/confirm-phone/", methods = ["POST"])
+def _confirm_phone():
+    
+    if request.method == "POST":
+        try:                  
+            form_data = request.form.to_dict()
+            code = request.form.get("code")
+            appointment_id = request.form.get("appointment_id")
+                    
+        except Exception as er:
+            print("##/confirm-phone/ --request.form.get")
+            print(er)
+            return  render_template("apology.html", error_message="Something went wrong") 
+    print(code, appointment_id)
+    return redirect("/")
 
 
 @app.route("/contact/")
@@ -423,6 +440,19 @@ def delete_empty_slots():
     Slot.delete_old_empty()
 app.cli.add_command(delete_empty_slots)
 
+@click.command("seed_role")
+@with_appcontext
+def seed_role():
+    role_admin = user_datastore.find_or_create_role("admin")
+    role_client = user_datastore.find_or_create_role("client")
+    role_tester = user_datastore.find_or_create_role("tester")
+    roles = [role_admin, role_client, role_tester]
+    db_base.session.add_all(roles)
+    db_base.session.commit()
+
+app.cli.add_command(seed_role)
+
+
 @click.command("seed_admin")
 @with_appcontext
 def seed_admin():
@@ -441,10 +471,7 @@ def seed_admin():
         db_base.session.add(admin)
         db_base.session.commit()
 
-        role = user_datastore.find_or_create_role("admin")
-        db_base.session.add(role)
-        db_base.session.commit()
-        user_datastore.add_role_to_user(admin, role)
+        user_datastore.add_role_to_user(admin, "admin")
         db_base.session.commit()
         print("created: ", db_base.session.scalar(select(User).where(User.id == 1)))
     else:
@@ -470,10 +497,7 @@ def seed_test_user():
         db_base.session.add(test_user)
         db_base.session.commit()
 
-        role_tester = user_datastore.find_or_create_role("tester")
-        db_base.session.add(role_tester)
-        db_base.session.commit()
-        user_datastore.add_role_to_user(test_user, role_tester)
+        user_datastore.add_role_to_user(test_user, "tester")
         db_base.session.commit()
         print("created: ", db_base.session.scalar(select(User).where(User.id == 2)))
     else:

@@ -29,6 +29,12 @@ if there is any data in database make sure that new fields are not 'nullable = F
     flask db upgrade
 ```
 
+before seeding any user seed roles
+
+```console
+    flask seed_role
+```
+
 ADMIN settings in '.env' (terminal reload for changes to apply) 
 
 ```console
