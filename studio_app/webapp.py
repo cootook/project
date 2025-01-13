@@ -15,7 +15,8 @@ from flask_security import Security, SQLAlchemyUserDatastore, auth_required, has
 from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
 from jinja2 import Environment as jinja2_env
-from .helpers import validate_recaptcha, validate_twilio_request, send_email
+from .helpers import *
+from .helpers.email_service import Email_helper
 from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
@@ -26,6 +27,7 @@ from studio_app.helpers import log_user_in, log_user_out, login_required, valida
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
 from .rout_handlers import *
+
 
 # flask security
 from typing import List
