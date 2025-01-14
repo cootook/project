@@ -15,8 +15,8 @@ from flask_security import Security, SQLAlchemyUserDatastore, auth_required, has
 from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
 from jinja2 import Environment as jinja2_env
-from .helpers import *
-from .helpers.email_service import Email_helper
+from .helpers import validate_recaptcha, validate_twilio_request, send_email
+from .helpers.email import Email_helper
 from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
@@ -120,6 +120,15 @@ def register():
         user_datastore.create_user(email = email, password = hash_password(password))
         db_base.commit()
     return render_template('security/register_user.html')
+
+@app.route('/test_email/', methods=['GET', 'POST'])
+def test_email():
+    new_email = Email_helper()
+    status = new_email.send_email("cootook@gmail.com", "more tests", "Another test email \n https://www.maniaurabyrusa.com/")
+    if status == "ok":
+        return redirect('/')
+    else:
+        return render_template("apology.html", error_message=status)
 
 @app.route('/sms/', methods=['GET', 'POST'])
 # @register_view
