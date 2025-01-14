@@ -2,7 +2,7 @@ import sqlite3
 import re
 
 from flask import flash, redirect, render_template, request, session
-from ..helpers import validate_recaptcha, validate_password, does_user_exist, log_user_in
+from ..helpers_legacy import validate_recaptcha, validate_password, does_user_exist, log_user_in
 from werkzeug.security import  generate_password_hash
 
 def signup():
