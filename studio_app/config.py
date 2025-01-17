@@ -5,6 +5,9 @@ from datetime import timedelta
 class Config(object):
     """Base config."""
 
+    SECRET_RECAPTCHA = os.environ.get("SECRET_RECAPTCHA")
+    URL_RECAPTCHA = os.environ.get("URL_RECAPTCHA")
+
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SECURITY_PASSWORD_SALT = os.environ.get("SECURITY_PASSWORD_SALT")
 

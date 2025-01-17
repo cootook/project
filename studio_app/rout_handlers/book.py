@@ -5,7 +5,8 @@ import phonenumbers
 
 from flask import redirect, render_template, request, session, current_app
 from flask_security import current_user, hash_password, login_user, logout_user
-from ..helpers_legacy import validate_recaptcha, send_sms
+from ..helpers_legacy import send_sms
+from ..helpers.recaptcha import Recaptcha
 from random import randrange
 from sqlalchemy import select, update
 from studio_app.db_classes import Appointment, Slot, Service, db_base, User
@@ -29,7 +30,7 @@ def book():
             print(er)
             return  render_template("apology.html", error_message="Something went wrong") 
 
-        if not validate_recaptcha(token):
+        if not Recaptcha.validate(token):
             return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot, maybe reCaptcha that you have just checked expired. Please, try again or contact us.")
         
         parsed_phone = phonenumbers.parse(full_phone, None)
