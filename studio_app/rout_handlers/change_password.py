@@ -2,7 +2,7 @@ import sqlite3
 import datetime
 
 from flask import render_template, request, session
-from ..helpers import validate_password, log_user_in
+from ..helpers_legacy import validate_password, log_user_in
 from werkzeug.security import  generate_password_hash
 
 def change_password():    

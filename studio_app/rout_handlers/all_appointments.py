@@ -4,7 +4,7 @@ import json
 from flask import flash, redirect, render_template, request, session
 from sqlalchemy import select
 from studio_app.db_classes import Appointment, User, db_base
-from ..helpers import get_js_object
+from ..helpers_legacy import get_js_object
 
 def all_appointments():
     today = datetime.datetime.now()

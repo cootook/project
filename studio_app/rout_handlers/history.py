@@ -3,7 +3,7 @@ import sqlite3
 
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
-from studio_app.helpers import get_service_name
+from studio_app.helpers_legacy import get_service_name
 
 def history():
     today = datetime.datetime.now()

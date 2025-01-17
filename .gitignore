@@ -1,4 +1,3 @@
-studio_app/__pycache__/
 flask_session/
 .env
 db.db
@@ -9,4 +8,4 @@ project.code-workspace
 venv
 instance
 bash.exe.stackdump
-
+__pycache__

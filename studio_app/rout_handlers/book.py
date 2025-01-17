@@ -5,7 +5,7 @@ import phonenumbers
 
 from flask import redirect, render_template, request, session, current_app
 from flask_security import current_user, hash_password, login_user, logout_user
-from ..helpers import validate_recaptcha, send_sms
+from ..helpers_legacy import validate_recaptcha, send_sms
 from random import randrange
 from sqlalchemy import select, update
 from studio_app.db_classes import Appointment, Slot, Service, db_base, User

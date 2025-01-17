@@ -207,7 +207,7 @@ def validate_recaptcha (token):
         else: 
             return True
     except Exception as er:
-        print("#helpers.validate_recaptchs ---recaptcha request")
+        print("#helpers_legacy.validate_recaptchs ---recaptcha request")
         print(er)
         return  False
 

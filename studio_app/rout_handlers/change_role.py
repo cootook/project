@@ -3,8 +3,8 @@ import sqlite3
 import os
 
 from flask import redirect, render_template, request, session
-from studio_app.helpers import get_service_name
-from ..helpers import validate_recaptcha
+from studio_app.helpers_legacy import get_service_name
+from ..helpers_legacy import validate_recaptcha
 
 def change_role():
     today = datetime.datetime.now()

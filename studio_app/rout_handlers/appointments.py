@@ -2,7 +2,7 @@ import datetime
 import sqlite3
 
 from flask import redirect, render_template, request, session
-from studio_app.helpers import get_service_name
+from studio_app.helpers_legacy import get_service_name
 
 def appointments():
     today = datetime.datetime.now()
