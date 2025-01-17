@@ -122,6 +122,7 @@ def register():
     return render_template('security/register_user.html')
 
 @app.route('/test_email/', methods=['GET', 'POST'])
+@login_required
 def test_email():
     new_email = Email_service(
         "cootook@gmail.com", 
