@@ -16,7 +16,7 @@ from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
 from jinja2 import Environment as jinja2_env
 from .helpers_legacy import validate_recaptcha, validate_twilio_request, send_email
-from .helpers.email import Email_helper
+from .helpers.email import Email_service
 from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
@@ -123,11 +123,12 @@ def register():
 
 @app.route('/test_email/', methods=['GET', 'POST'])
 def test_email():
-    status = Email_helper.send_email(
+    new_email = Email_service(
         "cootook@gmail.com", 
         "more tests", 
         "Another test email \n https://www.maniaurabyrusa.com/"
         )
+    status = new_email.send()
     if status == "OK":
         return redirect('/')
     else:

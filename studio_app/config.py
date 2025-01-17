@@ -29,6 +29,7 @@ class Config(object):
     MAIL_USERNAME = os.getenv("MAIL_USERNAME")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
+    MAIL_DEFAULT_SENDER_NAME = os.getenv("MAIL_DEFAULT_SENDER_NAME")
 
     # flask-sqlalchemy
         # As of Flask-SQLAlchemy 2.4.0 it is easy to pass in options directly to the
