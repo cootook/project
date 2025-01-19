@@ -33,6 +33,17 @@ class Config(object):
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
     MAIL_DEFAULT_SENDER_NAME = os.getenv("MAIL_DEFAULT_SENDER_NAME")
+    MAIL_DEFAULT_DOMAIN = os.getenv("MAIL_DEFAULT_DOMAIN")
+
+    DEFAULT_PASSWORD = os.getenv("DEFAULT_PASSWORD")
+
+    TWILIO_AUTH_TOKEN=os.getenv("TWILIO_AUTH_TOKEN")
+    TWILIO_ACCOUNT_SID=os.getenv("TWILIO_ACCOUNT_SID")
+    TWILIO_FROM_NUMBER=os.getenv("TWILIO_FROM_NUMBER")
+    TWILIO_SITE_LINK=os.getenv("TWILIO_SITE_LINK")
+    TWILIO_BUSINESS_NAME=os.getenv("TWILIO_BUSINESS_NAME")
+    TWILIO_SMS_HEADER=os.getenv("TWILIO_BUSINESS_NAME")
+    TWILIO_SMS_FOOTER=os.getenv("TWILIO_BUSINESS_NAME")
 
     # flask-sqlalchemy
         # As of Flask-SQLAlchemy 2.4.0 it is easy to pass in options directly to the
