@@ -201,7 +201,6 @@ def articles():
     return render_template("articles.html")
 
 @app.route("/book/", methods=["GET", "POST"])
-@login_required
 def _book():
     with app.app_context():
         return book.book()
@@ -269,7 +268,6 @@ def _confirm_appointment():
     return confirm_appointment.confirm_appointment()
 
 @app.route("/confirm_phone", methods = ["POST"])
-@login_required
 def _confirm_phone():    
     return confirm_phone.confirm_phone()
 

@@ -6,7 +6,7 @@ from random import randrange
 from ..services.user import User_service
 
 class Booking:
-    def __init__(self, datetime: datetime.datetime, slot_id, message: str, client_phone: str, client_name: str, list_of_services: list):
+    def __init__(self, datetime: datetime.datetime, slot_id, message: str, client_phone: str, client_name: str, list_of_services: list, appointment_id = None):
         self.datetime = datetime
         self.date = self.datetime.date()
         self.time = self.datetime.time()
@@ -18,13 +18,13 @@ class Booking:
         self.client_is_logged_in = User_service.login_by_id(self.client_id)
         self.is_slot_open = Slot.is_open(self.slot_id, self.date, self.time)
         self.list_of_services = list_of_services
-        self.appointment_id = Appointment.create(
-            self.client_id, 
-            json.dumps(self.list_of_services), 
-            self.datetime, 
-            slot_id, 
-            self.message
-            ).id
+        self.appointment_id = appointment_id or Appointment.create(
+                self.client_id, 
+                json.dumps(self.list_of_services), 
+                self.datetime, 
+                self.slot_id, 
+                self.message
+                ).id
         self.confirmation_code = Appointment.get_by_id(self.appointment_id).sms_confirmation_code
         self.is_phone_verified = False
         
@@ -48,7 +48,8 @@ class Booking:
             message=data['message'],
             client_phone=data['client_phone'],
             client_name=data['client_name'],
-            list_of_services=data['list_of_services']
+            list_of_services=data['list_of_services'],
+            appointment_id=data['appointment_id']
         )
 
     def reserve_slot(self):
