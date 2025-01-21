@@ -168,3 +168,140 @@ Administrators can confirm, edit, cancel, or mark appointments as done. They can
 * license MIT: [LICENSE](/LICENSE)
 
 ##### This project is not deployed yet. 
+
+```
+project
+├─ .gitignore
+├─ CODE_OF_CONDUCT.md
+├─ CONTRIBUTING.md
+├─ docs
+│  ├─ commit_message_format.md
+│  ├─ database_schema.md
+│  ├─ files
+│  ├─ helpers_functions.md
+│  ├─ images
+│  │  ├─ account.png
+│  │  ├─ apointment_admin_view.png
+│  │  ├─ appointment.png
+│  │  ├─ calendar.png
+│  │  ├─ db_schema.png
+│  │  ├─ make_admin.png
+│  │  ├─ request.png
+│  │  ├─ signup.png
+│  │  ├─ signup_filled.png
+│  │  └─ windows.png
+│  ├─ pull_request_template.md
+│  └─ route_handlers.md
+├─ env_config_info.txt
+├─ LICENSE
+├─ migrations
+│  ├─ alembic.ini
+│  ├─ env.py
+│  ├─ README
+│  ├─ script.py.mako
+│  └─ versions
+│     ├─ 11b4045c2dcb_.py
+│     └─ a0e6bbf34d48_.py
+├─ README.md
+├─ requirements.txt
+└─ studio_app
+   ├─ config.py
+   ├─ db_classes.py
+   ├─ f2c5930a29900498068d74013e18e78c.html
+   ├─ forms.py
+   ├─ helpers
+   │  ├─ email.py
+   │  ├─ phone.py
+   │  ├─ recaptcha.py
+   │  ├─ sms.py
+   │  └─ __init__.py
+   ├─ helpers_legacy.py
+   ├─ rout_handlers
+   │  ├─ account.py
+   │  ├─ add_service.py
+   │  ├─ all_appointments.py
+   │  ├─ all_history.py
+   │  ├─ appointments.py
+   │  ├─ book.py
+   │  ├─ cancel_appointment.py
+   │  ├─ change_password.py
+   │  ├─ change_role.py
+   │  ├─ confirm_appointment.py
+   │  ├─ confirm_phone.py
+   │  ├─ delete_service.py
+   │  ├─ done_appointment.py
+   │  ├─ edit_appointment.py
+   │  ├─ edit_service.py
+   │  ├─ history.py
+   │  ├─ signup.py
+   │  └─ __init__.py
+   ├─ services
+   │  ├─ booking.py
+   │  ├─ user.py
+   │  └─ verification.py
+   ├─ static
+   │  ├─ css
+   │  │  ├─ account.css
+   │  │  ├─ all_appointments.css
+   │  │  ├─ bootstrap.min.css
+   │  │  ├─ bootstrap.min.css.map
+   │  │  ├─ calendar.css
+   │  │  ├─ clients.css
+   │  │  ├─ contact.css
+   │  │  ├─ form-validation.css
+   │  │  ├─ header_navbar.css
+   │  │  ├─ layout.css
+   │  │  └─ style.css
+   │  ├─ img
+   │  │  └─ icon.svg
+   │  └─ js
+   │     ├─ account.js
+   │     ├─ all_appointments.js
+   │     ├─ booking_sms_confirmation_code.js
+   │     ├─ bootstrap.bundle.min.js
+   │     ├─ bootstrap.bundle.min.js.map
+   │     ├─ calendar.js
+   │     ├─ change_password.js
+   │     ├─ form-validation.js
+   │     ├─ index.js
+   │     ├─ moment.js
+   │     ├─ signin.js
+   │     └─ signup.js
+   ├─ templates
+   │  ├─ about.html
+   │  ├─ account.html
+   │  ├─ add_service.html
+   │  ├─ all_appointments.html
+   │  ├─ all_history.html
+   │  ├─ apology.html
+   │  ├─ appointments.html
+   │  ├─ appointment_request.html
+   │  ├─ articles.html
+   │  ├─ booking_sms_confirmation_code.html
+   │  ├─ calendar.html
+   │  ├─ change_password.html
+   │  ├─ change_role.html
+   │  ├─ clients.html
+   │  ├─ contact.html
+   │  ├─ day.html
+   │  ├─ delete_service.html
+   │  ├─ edit_service.html
+   │  ├─ header_navbar.html
+   │  ├─ history.html
+   │  ├─ index.html
+   │  ├─ layout.html
+   │  ├─ message_page.html
+   │  ├─ pricing.html
+   │  ├─ privacy_policy.html
+   │  ├─ security
+   │  │  ├─ login_user.html
+   │  │  ├─ register_user.html
+   │  │  ├─ _macros.html
+   │  │  └─ _menu.html
+   │  ├─ signin.html
+   │  ├─ signup.html
+   │  ├─ terms_of_service.html
+   │  └─ windows.html
+   └─ webapp.py
+
+```

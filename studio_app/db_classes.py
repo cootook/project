@@ -213,15 +213,8 @@ class Slot(db_base.Model):
 
     @staticmethod
     def set_booked(slot_id, appointment_id):
-        slot = Slot.get_by_id(slot_id)
-        try:
-            slot.opened = False
-            slot.occupied = True
-            slot.occupied_by_appoint_id = appointment_id
-            db_base.session.commit()
-            return True
-        except Exception:
-            return False
+        db_base.session.execute(update(Slot).where(Slot.id == slot_id).values(opened = False, occupied = True, occupied_by_appoint_id = appointment_id))
+        db_base.session.commit()
 
     @staticmethod
     def delete_old_empty():
