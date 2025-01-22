@@ -66,8 +66,15 @@ Liza Nail Studio
           
       </div>
       
-      <div class="modal-footer-custom">
+      <div class="modal-footer-custom mx-3">
         <div class="g-recaptcha" data-sitekey="{{ SITE_KEY_RECAPTCHA }}" data-callback="enable_submit_book" data-expired-callback="disable_submit_book"></div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="terms_and_privacy" name="terms_and_privacy" value="accepted">
+          <label class="form-check-label px-2 small w-75" for="terms_and_privacy"> I agree to receive messages and calls from Mani Aura by Rusa on provided phone number and accept               
+              <a href="/terms_of_service">terms</a>
+               and <a href="/privacy_policy">policy</a> 
+          </label>
+        </div>
         <div class="form-group">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           <button 

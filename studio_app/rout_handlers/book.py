@@ -22,7 +22,8 @@ def book():
             slot_id = int(request.form.get("slot_id"))
             message = request.form.get("message-text")
             full_phone = request.form.get("full_phone") 
-            client_name = request.form.get("client_name")         
+            client_name = request.form.get("client_name")  
+            terms_and_privacy = request.form.get("terms_and_privacy")       
             print("## - form:", form_data)
         except Exception as er:
             print("##/book/ --request.form.get")
