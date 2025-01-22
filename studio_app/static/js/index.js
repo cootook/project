@@ -61,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
         at_least_one_checked = true
       }
     }
-    console.log(terms_and_privacy.checked)
     if (recaptcha_checked && at_least_one_checked && !is_phone_invalid && terms_and_privacy.checked) {
       btn.disabled = false;
     } else {
