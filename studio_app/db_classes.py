@@ -80,7 +80,7 @@ class Appointment(db_base.Model):
     def set_phone_confirmed(appointment_id):
         db_base.session.execute(update(Appointment).where(Appointment.id == appointment_id).values(phone_confirmed = True))
 
-class Booking_message(db_base.Model):
+class BookingMessage(db_base.Model):
     __tablename__ = "booking_message"
     id: Mapped[int] = mapped_column(primary_key=True)
     appoint_id = mapped_column(ForeignKey("appointment.id"))
@@ -89,7 +89,7 @@ class Booking_message(db_base.Model):
     edited_at: Mapped[Optional[datetime.datetime]]
     deleted: Mapped[bool] = mapped_column(default = False)
 
-class Consent_sms(db_base.Model):
+class ConsentSms(db_base.Model):
     __tablename__ = "consent_sms"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id = mapped_column(ForeignKey("user.id"))
@@ -110,7 +110,7 @@ class Language(db_base.Model):
     name: Mapped[str] = mapped_column(unique = True)
     description: Mapped[str] = mapped_column(default = "")
 
-class Notification_type(db_base.Model):
+class NotificationType(db_base.Model):
     __tablename__ = "notification_type"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique = True)
@@ -131,19 +131,19 @@ class Payment(db_base.Model):
     lust_update_by: Mapped[Optional[int]]
     description: Mapped[str] = mapped_column(default = "")
 
-class Payment_method(db_base.Model):
+class PaymentMethod(db_base.Model):
     __tablename__ = "payment_method"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique = True)
     description: Mapped[str] = mapped_column(default = "")
 
-class Payment_status(db_base.Model):
+class PaymentStatus(db_base.Model):
     __tablename__ = "payment_status"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique = True)
     description: Mapped[str] = mapped_column(default = "")
 
-class Payment_type(db_base.Model):
+class PaymentType(db_base.Model):
     __tablename__ = "payment_type"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique = True)
@@ -183,7 +183,7 @@ class Service(db_base.Model):
                     services.append(item)
         return services
 
-class Service_role(db_base.Model):
+class ServiceRole(db_base.Model):
     __tablename__ = "service_role"
     id: Mapped[int] = mapped_column(primary_key=True)
     service_id: Mapped[int]
@@ -352,7 +352,7 @@ class User(db_base.Model, fsqla.FsUserMixin):
 
 # #### USE CLASS USER_AS_WORKER WHEN MORE THAN ONE WORKER, UPDATE SLOT GENERATION 
 
-# class User_as_worker(db_base.Model):
+# class UserAsWorker(db_base.Model):
 #     __tablename__ = "user_as_worker"
 #     id: Mapped[int] = mapped_column(primary_key=True)
 #     user_id = mapped_column(ForeignKey("user.id"))
@@ -370,13 +370,13 @@ class User(db_base.Model, fsqla.FsUserMixin):
 #     deleted_by_id = mapped_column(ForeignKey("user.id"), nullable=True)
 #     deleted_by = relationship("User", foreign_keys=[deleted_by_id])
 
-class User_notification(db_base.Model):
+class UserNotification(db_base.Model):
     __tablename__ = "user_notification"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id = mapped_column(ForeignKey("user.id"))
     type_id = mapped_column(ForeignKey("notification_type.id"))
 
-class User_role(db_base.Model):
+class UserRole(db_base.Model):
     __tablename__ = "user_role"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id = mapped_column(ForeignKey("user.id"))

@@ -1,7 +1,7 @@
 import json
 from ..config import Config
 from twilio.rest import Client
-class SMS:
+class SmsService:
     def __init__(self, to: str, text: str):
             self.to = to
             self.text = text

@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from ..config import Config
 
-class Email_service:
+class EmailService:
     def __init__(self, to_email: str, subject: str, plain_text: str, from_email: str = None, from_field_name: str = None):
         self.to = to_email
         self.from_email = from_email or Config.MAIL_DEFAULT_SENDER

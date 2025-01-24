@@ -16,13 +16,13 @@ from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
 from jinja2 import Environment as jinja2_env
 from .helpers_legacy import validate_recaptcha, validate_twilio_request, send_email
-from .helpers.email import Email_service
+from .services.email import EmailService
 from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
 from studio_app.config import ProductionConfig, DevelopmentConfig, TestingConfig
 from studio_app.db_classes import db_base
-from studio_app.db_classes import Appointment, Booking_message, Language, Notification_type, Payment, Payment_method, Payment_status, Payment_type, Role, Service, Service_role, Slot, User, User_notification, User_role
+from studio_app.db_classes import Appointment, BookingMessage, Language, NotificationType, Payment, PaymentMethod, PaymentStatus, PaymentType, Role, Service, ServiceRole, Slot, User, UserNotification, UserRole
 from studio_app.helpers_legacy import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
@@ -124,7 +124,7 @@ def register():
 @app.route('/test_email/', methods=['GET', 'POST'])
 @login_required
 def test_email():
-    new_email = Email_service(
+    new_email = EmailService(
         "cootook@gmail.com", 
         "more tests", 
         "Another test email \n https://www.maniaurabyrusa.com/"

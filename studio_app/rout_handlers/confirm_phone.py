@@ -1,6 +1,6 @@
 from flask import redirect, render_template, request, session
 from ..services.booking import Booking
-from ..services.verification import SMS_Verification_of_Booking
+from ..services.verification import SmsVerificationOfBooking
 
 def confirm_phone():    
     if request.method == "POST":
@@ -12,7 +12,7 @@ def confirm_phone():
             return  render_template("apology.html", error_message="Something went wrong") 
         
         booking = Booking.from_json(session["booking_json"])
-        verification = SMS_Verification_of_Booking(booking)
+        verification = SmsVerificationOfBooking(booking)
         is_code_ok = verification.verify_code(code)
         if not is_code_ok:
                 return render_template(
