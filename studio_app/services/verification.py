@@ -16,7 +16,7 @@ class SmsVerificationOfBooking:
             return False
     
     def send_code(self):
-        text = f"{Config.TWILIO_SmsService_HEADER}your code: {self.booking.confirmation_code} {Config.TWILIO_SmsService_FOOTER}"
+        text = f"{Config.TWILIO_SMS_HEADER}your code: {self.booking.confirmation_code} {Config.TWILIO_SMS_FOOTER}"
         new_sms = SmsService(self.booking.client_phone, text).send()
         return new_sms
     
