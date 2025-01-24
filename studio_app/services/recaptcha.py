@@ -3,7 +3,7 @@ import requests
 
 from ..config import Config
 
-class Recaptcha:
+class RecaptchaService:
     def __init__(self):
         pass
 
@@ -21,6 +21,6 @@ class Recaptcha:
             return True if recaptcha_respond_dict['success'] else False
 
         except Exception as er:
-            print("#helpers.recaptcha.Recaptcha.validate ---recaptcha request")
+            print("#helpers.recaptcha.RecaptchaService.validate ---recaptcha request")
             print(er)
             return  False

@@ -3,7 +3,7 @@ import json
 
 from ..db_classes import Appointment, Slot, User
 from random import randrange
-from ..services.user import User_service
+from ..services.user import UserService
 
 class Booking:
     def __init__(self, datetime: datetime.datetime, slot_id, message: str, client_phone: str, client_name: str, list_of_services: list, appointment_id = None):
@@ -15,7 +15,7 @@ class Booking:
         self.client_phone = client_phone
         self.client_name = client_name
         self.client_id = User.get_or_create_id_by_phone(self.client_phone, self.client_name)
-        self.client_is_logged_in = User_service.login_by_id(self.client_id)
+        self.client_is_logged_in = UserService.login_by_id(self.client_id)
         self.is_slot_open = Slot.is_open(self.slot_id, self.date, self.time)
         self.list_of_services = list_of_services
         self.appointment_id = appointment_id or Appointment.create(

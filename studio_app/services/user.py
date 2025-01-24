@@ -2,7 +2,7 @@ from ..db_classes import User
 from flask_security import current_user, hash_password, login_user, logout_user
 from ..config import Config
 
-class User_service:
+class UserService:
     def __init__(self):
         pass
 

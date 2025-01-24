@@ -1,9 +1,9 @@
 import datetime
 
 from flask import redirect, render_template, request, session
-from ..helpers.recaptcha import Recaptcha
-from ..helpers.phone import Phone
-from ..services.verification import SMS_Verification_of_Booking
+from ..services.recaptcha import RecaptchaService
+from ..services.phone import PhoneNumberService
+from ..services.verification import SmsVerificationOfBooking
 from ..services.booking import Booking
 from studio_app.db_classes import Service
 
@@ -23,13 +23,13 @@ def book():
             print(er)
             return  render_template("apology.html", error_message="Something went wrong") 
 
-        if not Recaptcha.validate(token):
+        if not RecaptchaService.validate(token):
             return  render_template(
                 "apology.html", 
                 error_message="Sorry. Something went wrong with anti robot, maybe reCaptcha that you have just checked expired. Please, try again or contact us."
                 )
         
-        phone = Phone(input_phone)
+        phone = PhoneNumberService(input_phone)
 
         if not phone.is_valid:
             return  render_template(
@@ -56,7 +56,7 @@ def book():
             list_of_requested_services
             )       
 
-        new_verification = SMS_Verification_of_Booking(new_booking)
+        new_verification = SmsVerificationOfBooking(new_booking)
         new_verification.send_code()
 
         session["booking_json"] = new_booking.to_json()
