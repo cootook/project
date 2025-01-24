@@ -5,16 +5,19 @@ Phone confirmation
 {% block content %}
 <script src="{{ url_for('static', filename='/js/booking_sms_confirmation_code.js') }}"></script>
 
-<h1 class="mt-2 text-start" >Hi {{name}}! </h1>
-<form class="form-group" id="confirmation_code" action="/confirm_phone" method="post">
+<h1 class="mt-2 text-start" >Enter code</h1>
+<form class="form-group" id="confirmation_code" action="/confirm-phone" method="post">
     <p>
-        Enter code we sent to {{phone}}:
+        sent to {{phone}}:
     </p>
     <div class="form-floating">
         <input class="form-control w-100" type="number" max="9999" min="1000" id="code" name="code" placeholder="0000" autocomplete="off">
         <label class="text-black" for="code">Code:</label>
     </div>
-      <button 
+    <input hidden type="text" id="appointment_id" name="appointment_id" value="{{appointment_id}}">
+        
+        
+        <button 
         type="submit" 
         class="btn btn-primary w-100 mt-2" 
         id="submit_code"

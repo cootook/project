@@ -1,6 +1,4 @@
 __all__ = [
-    'email',
-    'sms',
-    'phone',
-    'recaptcha'
+    'email_service',
+    'sms_service',
 ]
