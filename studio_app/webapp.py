@@ -135,31 +135,12 @@ def test_email():
     else:
         return render_template("apology.html", error_message=status)
 
-@app.route('/sms/', methods=['GET', 'POST'])
-# @register_view
-def sms():
-    account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
-    auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-    client = Client(account_sid, auth_token)
-
-    new_key = client.new_keys.create(friendly_name="test sms")
-
-    message = client.messages.create(
-        body="visit https://maniaurabyrusa.com/",
-        from_="+19295436368",
-        to="+16465191763",
-        )
-
-    print(new_key)
-
-    return redirect('/')
-
 @app.route('/message', methods=['POST'])
 @validate_twilio_request
 def incoming_message():
     resp = MessagingResponse()
 
-    body = "Лиза, я тебя люблю!" 
+    body = "Testing" 
     resp.message(body)
     print(request.values['From'])
     print(request.values['Body'])
@@ -220,7 +201,6 @@ def articles():
     return render_template("articles.html")
 
 @app.route("/book/", methods=["GET", "POST"])
-@login_required
 def _book():
     with app.app_context():
         return book.book()
@@ -287,21 +267,9 @@ def clients():
 def _confirm_appointment():
     return confirm_appointment.confirm_appointment()
 
-@app.route("/confirm-phone/", methods = ["POST"])
-def _confirm_phone():
-    
-    if request.method == "POST":
-        try:                  
-            form_data = request.form.to_dict()
-            code = request.form.get("code")
-            appointment_id = request.form.get("appointment_id")
-                    
-        except Exception as er:
-            print("##/confirm-phone/ --request.form.get")
-            print(er)
-            return  render_template("apology.html", error_message="Something went wrong") 
-    print(code, appointment_id)
-    return redirect("/")
+@app.route("/confirm_phone", methods = ["POST"])
+def _confirm_phone():    
+    return confirm_phone.confirm_phone()
 
 
 @app.route("/contact/")
