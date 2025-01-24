@@ -15,6 +15,7 @@ def book():
             input_datetime_iso = request.form.get("datetime-iso")
             slot_id = int(request.form.get("slot_id"))
             message = request.form.get("message-text")
+            terms_and_privacy = request.form.get("terms_and_privacy")       
             input_phone = request.form.get("full_phone") 
             client_name = request.form.get("client_name")         
             print("## - form:", form_data)

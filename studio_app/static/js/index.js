@@ -22,6 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const phone_valid = document.querySelector("#phone_valid")
     const phone_not_valid = document.querySelector("#phone_not_valid")
 
+    const terms_and_privacy_checkbox = document.getElementById("terms_and_privacy")
+    terms_and_privacy_checkbox.addEventListener('change', submit_btn_active)
+
 
     const iti = window.intlTelInput(input, {
       initialCountry: "us",
@@ -50,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function submit_btn_active() {
     service_check_collection = document.getElementsByClassName("service-check")
     let btn = document.getElementById('submit_booking_btn');
+    const terms_and_privacy = document.getElementById("terms_and_privacy")
     const is_phone_invalid = document.querySelector("#phone_valid").hidden
     let at_least_one_checked = false
     for (const check of service_check_collection) {
@@ -57,8 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
         at_least_one_checked = true
       }
     }
-
-    if (recaptcha_checked && at_least_one_checked && !is_phone_invalid) {
+    if (recaptcha_checked && at_least_one_checked && !is_phone_invalid && terms_and_privacy.checked) {
       btn.disabled = false;
     } else {
       btn.disabled = true;
