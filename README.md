@@ -5,7 +5,7 @@
 
 if there is no 'migrations' directory : run 
     ```console
-        flask bb init
+        flask db init
     ```
     to file 'migrations/script.py.mako' add imports
     ```python

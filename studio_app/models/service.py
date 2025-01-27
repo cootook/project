@@ -4,7 +4,7 @@ from random import randrange
 from sqlalchemy import ForeignKey, update, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
 from typing import List, Optional
-from ..studio_app.config import Config
+from ..config import Config
 from .base import db_base
 
 

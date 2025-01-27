@@ -1,17 +1,18 @@
 from .base import db_base
 from .user import UserModel
-from .appointment import AppointmentModel
-from .appointment import ConsentSmsModel
 from .role import RoleModel
-from .service import ServiceModel
 from .slot import SlotModel
+from .service import ServiceModel
+from .appointment import AppointmentModel
+from .consent_sms import ConsentSmsModel
+
 
 __all__ = [
     'db_base',
     'UserModel',
-    'AppointmentModel',
-    'ConsentSmsModel',
     'RoleModel',
+    'SlotModel',
     'ServiceModel',
-    'SlotModel'
+    'AppointmentModel',
+    'ConsentSmsModel'    
 ]

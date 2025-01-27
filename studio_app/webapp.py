@@ -20,9 +20,13 @@ from .services.email import EmailService
 from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
-from studio_app.config import ProductionConfig, DevelopmentConfig, TestingConfig
-from studio_app.db_classes import db_base
-from studio_app.db_classes import Role, Service, Slot, User
+from .config import ProductionConfig, DevelopmentConfig, TestingConfig
+
+# from studio_app.db_classes import db_base
+# from studio_app.db_classes import Role, Service, Slot, User
+from .models import RoleModel, ServiceModel, SlotModel, UserModel, db_base
+
+
 from studio_app.helpers_legacy import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
@@ -53,7 +57,7 @@ db_base.init_app(app)
 migrate = Migrate(app, db_base)
 
 # Setup Flask-Security
-user_datastore = SQLAlchemyUserDatastore(db_base, User, Role)
+user_datastore = SQLAlchemyUserDatastore(db_base, UserModel, RoleModel)
 app.security = Security(app, user_datastore, confirm_register_form=ExtendedRegisterForm)
 
 app.register_error_handler(404, page_not_found)
@@ -69,7 +73,7 @@ jinja2_env.SITE_KEY_RECAPTCHA = os.environ.get('SITE_KEY_RECAPTCHA')
 @app.context_processor
 def get_services():
     services = []
-    services_from_db = db_base.session.scalars(select(Service))
+    services_from_db = db_base.session.scalars(select(ServiceModel))
     for service in services_from_db:
         service_dict = dict(id = service.id, name = service.name, description = service.description, deleted = service.deleted)
         services.append(service_dict)
@@ -150,7 +154,7 @@ def incoming_message():
 def home():
     today = datetime.datetime.now()
     try:
-        slots_db_v2 = Slot.query.filter(Slot.opened == True).all()
+        slots_db_v2 = SlotModel.query.filter(SlotModel.opened == True).all()
     except Exception as er:
         print("##/")
         print(er)
@@ -332,7 +336,7 @@ def signin():
         if not validate_recaptcha(token):
             return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot protection. Please, try again or contact us.")
         
-        user_to_login = db_base.session.scalar(select(User).where(User.email == login))
+        user_to_login = db_base.session.scalar(select(SlotModel).where(SlotModel.email == login))
         if user_to_login is None:
             return render_template("apology.html", error_message="wrong login or password user_to_login")
         
@@ -373,7 +377,7 @@ def logout():
 @login_required
 @admin_only
 def windows():
-    db_v2_slots = Slot.query.filter().all()
+    db_v2_slots = SlotModel.query.filter().all()
     slots_to_frontend = []
     for s in db_v2_slots:
         slots_to_frontend.append([s.id, s.date.year, s.date.month, s.date.day, s.time.hour, s.time.minute, 1 if s.opened else 0, 1 if s.occupied else 0])
@@ -390,7 +394,7 @@ def windows():
             target_date = datetime.date(year, month, day)
             target_time = datetime.time(hour, minute)
 
-            target_slot = Slot.query.filter(Slot.id == target_slot_id, Slot.date == target_date, Slot.time == target_time).first()
+            target_slot = SlotModel.query.filter(SlotModel.id == target_slot_id, SlotModel.date == target_date, SlotModel.time == target_time).first()
 
             if target_slot.opened :
                 target_slot.opened = False
@@ -415,13 +419,13 @@ def windows():
 @with_appcontext
 def seed_slots():
     amount_days = int(os.environ.get("HOW_FAR_IN_FUTURE_CREATE_SLOTS")) if os.environ.get("HOW_FAR_IN_FUTURE_CREATE_SLOTS") else 300
-    Slot.create_n_days_upfront(amount_days)
+    SlotModel.create_n_days_upfront(amount_days)
 app.cli.add_command(seed_slots)
 
 @click.command("delete_empty_slots")
 @with_appcontext
 def delete_empty_slots():
-    Slot.delete_old_empty()
+    SlotModel.delete_old_empty()
 app.cli.add_command(delete_empty_slots)
 
 @click.command("seed_role")
@@ -440,7 +444,7 @@ app.cli.add_command(seed_role)
 @click.command("seed_admin")
 @with_appcontext
 def seed_admin():
-    if db_base.session.scalar(select(User).where(User.id == 1)) is None:
+    if db_base.session.scalar(select(SlotModel).where(SlotModel.id == 1)) is None:
         admin_email = os.environ.get('ADMINISTRATOR_EMAIL')
         admin_password = os.environ.get('ADMINISTRATOR_PASSWORD')
         admin_name = os.environ.get('ADMINISTRATOR_NAME')
@@ -457,16 +461,16 @@ def seed_admin():
 
         user_datastore.add_role_to_user(admin, "admin")
         db_base.session.commit()
-        print("created: ", db_base.session.scalar(select(User).where(User.id == 1)))
+        print("created: ", db_base.session.scalar(select(SlotModel).where(SlotModel.id == 1)))
     else:
-        print("already exist: ", db_base.session.scalar(select(User).where(User.id == 1)))
+        print("already exist: ", db_base.session.scalar(select(SlotModel).where(SlotModel.id == 1)))
     
 app.cli.add_command(seed_admin)
 
 @click.command("seed_test_user")
 @with_appcontext
 def seed_test_user():
-    if db_base.session.scalar(select(User).where(User.id == 2)) is None:
+    if db_base.session.scalar(select(SlotModel).where(SlotModel.id == 2)) is None:
         test_user_email = os.environ.get('TEST_USER_EMAIL')
         test_user_password = os.environ.get('TEST_USER_PASSWORD')
         test_user_name = os.environ.get('TEST_USER_NAME')
@@ -483,8 +487,8 @@ def seed_test_user():
 
         user_datastore.add_role_to_user(test_user, "tester")
         db_base.session.commit()
-        print("created: ", db_base.session.scalar(select(User).where(User.id == 2)))
+        print("created: ", db_base.session.scalar(select(SlotModel).where(SlotModel.id == 2)))
     else:
-        print("already exist: ", db_base.session.scalar(select(User).where(User.id == 2)))
+        print("already exist: ", db_base.session.scalar(select(SlotModel).where(SlotModel.id == 2)))
 app.cli.add_command(seed_test_user)
 
