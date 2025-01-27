@@ -36,20 +36,6 @@ Table appointment {
   description string
 }
 
-Table booking_message {
-  id integer [primary key]
-  appoint_id integer [not null, ref: <> appointment.id]
-  author_id integer [not null, ref: <> user.id]
-  at datetime [not null]
-  edited_at datetime
-  deleted bool [not null, default: false]
-}
-
-Table language {
-  id integer [primary key]
-  name string [not null, unique]
-  description string
-}
 
 Table    { #######
   id integer [primary key]

@@ -22,7 +22,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
 from studio_app.config import ProductionConfig, DevelopmentConfig, TestingConfig
 from studio_app.db_classes import db_base
-from studio_app.db_classes import Appointment, BookingMessage, Language, NotificationType, Payment, PaymentMethod, PaymentStatus, PaymentType, Role, Service, ServiceRole, Slot, User, UserNotification, UserRole
+from studio_app.db_classes import Appointment, BookingMessage, Role, Service, Slot, User, UserRole
 from studio_app.helpers_legacy import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
