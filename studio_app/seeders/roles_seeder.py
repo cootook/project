@@ -4,7 +4,7 @@ from ..models.base import db
 def seed_roles():
     roles = [
         Role(name="admin"),
-        Role(name="user"),
+        Role(name="client"),
         Role(name="tester")
     ]
     

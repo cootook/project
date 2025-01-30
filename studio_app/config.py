@@ -3,79 +3,19 @@ import os
 from datetime import timedelta
 
 class Config(object):
-    # """Base config."""
-
-    # SECRET_RECAPTCHA = os.environ.get("SECRET_RECAPTCHA")
-    # URL_RECAPTCHA = os.environ.get("URL_RECAPTCHA")
-
-    # SECRET_KEY = os.environ.get("SECRET_KEY")
-    # SECURITY_PASSWORD_SALT = os.environ.get("SECURITY_PASSWORD_SALT")
-
-    # TEMPLATES_AUTO_RELOAD = True
-
-    # SESSION_PERMANENT = True
-    # SESSION_TYPE = os.environ.get('FLASK_SESSION_TYPE')
-    # SESSION_FILE_THRESHOLD = int(os.environ.get('FLASK_SESSION_FILE_THRESHOLD'))
-    # PERMANENT_SESSION_LIFETIME = timedelta(days = int(os.environ.get('FLASK_SESSION_LIFETIME_DAYS')))
-    
-    # SECURITY_CONFIRMABLE = False
-    # SECURITY_RECOVERABLE = True
-    # SECURITY_REGISTERABLE = True
-    # SECURITY_TRACKABLE = True
-    # SECURITY_USERNAME_ENABLE = False
-    
-    # MAIL_SERVER = os.getenv("MAIL_SERVER")
-    # MAIL_PORT = os.getenv("MAIL_PORT")
-
-    # MAIL_USERNAME = os.getenv("MAIL_USERNAME")
-    # MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
-    # MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
-    # MAIL_DEFAULT_SENDER_NAME = os.getenv("MAIL_DEFAULT_SENDER_NAME")
-    # MAIL_DEFAULT_DOMAIN = os.getenv("MAIL_DEFAULT_DOMAIN")
-
-    # DEFAULT_PASSWORD = os.getenv("DEFAULT_PASSWORD")
-
-    # TWILIO_AUTH_TOKEN=os.getenv("TWILIO_AUTH_TOKEN")
-    # TWILIO_ACCOUNT_SID=os.getenv("TWILIO_ACCOUNT_SID")
-    # TWILIO_FROM_NUMBER=os.getenv("TWILIO_FROM_NUMBER")
-    # TWILIO_SITE_LINK=os.getenv("TWILIO_SITE_LINK")
-    # TWILIO_BUSINESS_NAME=os.getenv("TWILIO_BUSINESS_NAME")
-    # TWILIO_SMS_HEADER=os.getenv("TWILIO_BUSINESS_NAME")
-    # TWILIO_SMS_FOOTER=os.getenv("TWILIO_BUSINESS_NAME")
-
-    # # flask-sqlalchemy
-    #     # As of Flask-SQLAlchemy 2.4.0 it is easy to pass in options directly to the
-    # # underlying engine. This option makes sure that DB connections from the
-    # # pool are still valid. Important for entire application since
-    # # many DBaaS options automatically close idle connections.
-
-
-    # # flask/flask_login
-    # REMEMBER_COOKIE_SAMESITE = os.environ.get("FLASK_LOGIN_REMEMBER_COOKIE_SAMESITE")
-    # SESSION_COOKIE_SAMESITE = os.environ.get("FLASK_LOGIN_SESSION_COOKIE_SAMESITE")   
-
-
-    # MAIL_USE_SSL = False
-    # MAIL_USE_TLS = True
-
-    # SQLALCHEMY_ENGINE_OPTIONS = {
-    #     "pool_pre_ping": True,
-    # }
-    # SQLALCHEMY_TRACK_MODIFICATIONS = False 
-
     """Base config class containing all environment variables and hardcoded values."""
     
     # Flask Core Settings
     SECRET_KEY = os.environ.get("SECRET_KEY",)
-    STATIC_FOLDER = os.environ.get("FLASK_STATIC_FOLDER", "../studio_app/static/")
-    TEMPLATE_FOLDER = os.environ.get("FLASK_TEMPLATE_FOLDER", "../studio_app/templates/")
+    STATIC_FOLDER = os.environ.get("FLASK_STATIC_FOLDER")
+    TEMPLATE_FOLDER = os.environ.get("FLASK_TEMPLATE_FOLDER")
     TEMPLATES_AUTO_RELOAD = True
 
     # Session Configuration
     SESSION_PERMANENT = True
-    SESSION_TYPE = os.environ.get('FLASK_SESSION_TYPE', 'filesystem')
-    SESSION_FILE_THRESHOLD = int(os.environ.get('FLASK_SESSION_FILE_THRESHOLD', '250'))
-    PERMANENT_SESSION_LIFETIME = timedelta(days=int(os.environ.get('FLASK_SESSION_LIFETIME_DAYS', '90')))
+    SESSION_TYPE = os.environ.get('FLASK_SESSION_TYPE')
+    SESSION_FILE_THRESHOLD = int(os.environ.get('FLASK_SESSION_FILE_THRESHOLD'))
+    PERMANENT_SESSION_LIFETIME = timedelta(days=int(os.environ.get('FLASK_SESSION_LIFETIME_DAYS')))
     
     # Security Settings
     SECURITY_PASSWORD_SALT = os.environ.get("SECURITY_PASSWORD_SALT")
