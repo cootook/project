@@ -3,90 +3,99 @@ from sqlalchemy import select, update
 from ..webapp import db_base, UserModel, RoleModel
 from ..config import Config
 
+
 class UserRepository:
-    @staticmethod
-    def create_user(**kwargs)  -> UserModel:
+    def __init__(self, db_session=None, user_store=None):
+        self.db = db_session or db_base.session
+        self.user_store = user_store or user_datastore
+
+    def create_user(self, **kwargs) -> UserModel | None:
         """
+        to create new user using input phone use
+        get_or_create_and_update_user_by_phone()
+
         returns None if user with passed email or phone already exists
         """
-        if 'email' in kwargs:
-            if UserRepository.does_user_exist_by_email(kwargs['email']):
-                print(
-                    f'UserRepository: user with email {kwargs["email"]} already exists'
-                )
-                return None
-        elif 'tel' in kwargs:
-            if UserRepository.does_user_exist_by_tel(kwargs['tel']):
-                print(
-                    f'UserRepository: user with phone {kwargs["tel"]} already exists'
-                )
-                return None
-        new_user = user_datastore.create_user(**kwargs)
-        db_base.session.add(new_user)
-        db_base.session.commit()
-        return new_user
-    
-    @staticmethod
-    def add_role_to_user(user: UserModel, role: str | RoleModel) -> bool:
-        """Adds a role to a user.
+        if 'email' in kwargs and self.does_user_exist_by_email(kwargs['email']):
+            print(f'UserRepository: user with email {kwargs["email"]} already exists')
+            return None
+            
+        if 'tel' in kwargs and self.does_user_exist_by_tel(kwargs['tel']):
+            print(f'UserRepository: user with phone {kwargs["tel"]} already exists')
+            return None
 
-        :param user: The user to manipulate.
-        :param role: The role to add to the user. Can be a Role object or
-            string role name
-        :return: True is role was added, False if role already existed.
+        new_user = self.user_store.create_user(**kwargs)
+        self.db.add(new_user)
+        self.db.commit()
+        return new_user
+
+    def add_role_to_user(self, user: UserModel, role: str | RoleModel) -> bool:
         """
-        return user_datastore.add_role_to_user(user, role)
-    
-    @staticmethod
-    def does_user_exist_by_email(email: str) -> bool:
-        user_by_email = db_base.session.scalar(
-        select(UserModel).where(UserModel.email == email)
+        Adds a role to a user.
+        
+        Args:
+            user: The user to manipulate
+            role: The role to add to the user. Can be a Role object or string role name
+        Returns:
+            True if role was added, False if role already existed
+        """
+        return self.user_store.add_role_to_user(user, role)
+
+    def does_user_exist_by_email(self, email: str) -> bool:
+        user = self.db.scalar(
+            select(UserModel).where(UserModel.email == email)
         )
-        return False if user_by_email is None else True
-    
-    @staticmethod
-    def does_user_exist_by_tel(tel: str) -> bool:
-        user_by_tel = db_base.session.scalar(
-        select(UserModel).where(UserModel.email == tel)
+        return user is not None
+
+    def does_user_exist_by_tel(self, tel: str) -> bool:
+        user = self.db.scalar(
+            select(UserModel).where(UserModel.tel == tel)
         )
-        return False if user_by_tel is None else True
-    
-    @staticmethod
-    def get_user_by_email(email: str) -> UserModel | None:
-        return select(UserModel).where(UserModel.email == email)
-    
-    @staticmethod
-    def get_user_by_tel(tel: str) -> UserModel | None:
-        return select(UserModel).where(UserModel.tel == tel)
-    
-    @staticmethod
-    def get_or_create_and_update_user_by_phone(phone: str) -> UserModel:
-        default_email = f"{phone}@{Config.MAIL_DEFAULT_DOMAIN}"
-        user_by_default_email = UserRepository.get_user_by_email(default_email)
-        user_by_phone = UserRepository.get_or_create_id_by_phone(phone)
-        if user_by_phone is None and user_by_default_email is None:
-            return UserRepository.create_user(
-                tel = phone, 
-                email = default_email, 
-                password = hash_password(Config.DEFAULT_PASSWORD)
+        return user is not None
+
+    def get_user_by_email(self, email: str) -> UserModel | None:
+        return self.db.scalar(
+            select(UserModel).where(UserModel.email == email)
+        )
+
+    def get_user_by_tel(self, tel: str) -> UserModel | None:
+        return self.db.scalar(
+            select(UserModel).where(UserModel.tel == tel)
+        )
+
+    def get_or_create_and_update_user_by_phone(self, phone: str) -> UserModel:
+        default_user_data = {
+            'email': f"{phone}@{Config.MAIL_DEFAULT_DOMAIN}",
+            'password': hash_password(Config.DEFAULT_PASSWORD)
+        }
+                
+        user_exists_by_email = self.does_user_exist_by_email(default_user_data['email'])
+        user_exists_by_phone = self.does_user_exist_by_tel(phone)
+        
+
+
+        if not user_exists_by_phone and not user_exists_by_email:
+            return self.create_user(
+                tel=phone,
+                **default_user_data
             )
-        elif user_by_phone is None:
-            return UserRepository.update_user_data(
-                user_by_default_email,
-                tel = phone, 
-                password = hash_password(Config.DEFAULT_PASSWORD) 
-                )
-        else:
-            return UserRepository.update_user_data(
-                user_by_phone,
-                tel = phone, 
-                email = default_email, 
-                password = hash_password(Config.DEFAULT_PASSWORD) 
-                )
-    
-    @staticmethod
-    def update_user_data(user: UserModel, **kwargs: any) -> UserModel:
-        db_base.session.execute(
+        
+        if not user_exists_by_phone:
+            user = self.get_user_by_email(default_user_data['email'])
+            return self.update_user_data(
+                user,
+                tel=phone
+            )
+            
+        user = self.get_user_by_tel(phone)
+        return self.update_user_data(
+            user,
+            **default_user_data
+        )
+
+    def update_user_data(self, user: UserModel, **kwargs: any) -> UserModel:
+        self.db.execute(
             update(UserModel).where(UserModel.id == user.id).values(**kwargs)
-            )
-        db_base.session.commit()
+        )
+        self.db.commit()
+        return user
