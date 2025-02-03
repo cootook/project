@@ -1,12 +1,13 @@
 from ..models.base import db_base
 from ..models.user import UserModel
-from flask_security import hash_password
+from ..models.role import RoleModel
+from flask_security import hash_password, SQLAlchemyUserDatastore
 from ..config import Config
-from ..webapp import user_datastore
 from sqlalchemy import select
 
 
 def seed_test_user():
+    user_datastore = SQLAlchemyUserDatastore(db_base, UserModel, RoleModel)
     if db_base.session.scalar(select(UserModel).where(UserModel.id == 2)) is None:
         test_user = user_datastore.create_user(
             email = Config.TEST_USER_EMAIL, 

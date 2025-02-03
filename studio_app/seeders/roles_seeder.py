@@ -1,16 +1,16 @@
-from ..models.role import Role
-from ..models.base import db
+from ..models.role import RoleModel
+from ..models.base import db_base
 
 def seed_roles():
     roles = [
-        Role(name="admin"),
-        Role(name="client"),
-        Role(name="tester")
+        RoleModel(name="admin"),
+        RoleModel(name="client"),
+        RoleModel(name="tester")
     ]
     
     for role in roles:
-        existing = Role.query.filter_by(name=role.name).first()
+        existing = RoleModel.query.filter_by(name=role.name).first()
         if not existing:
-            db.session.add(role)
+            db_base.session.add(role)
     
-    db.session.commit()
+    db_base.session.commit()

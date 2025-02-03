@@ -1,16 +1,17 @@
 from ..models.base import db_base
 from ..models.user import UserModel
+from ..models.role import RoleModel
 from ..repositories.user_repository import UserRepository
-from flask_security import hash_password, verify_and_update_password
+from flask_security import hash_password, SQLAlchemyUserDatastore
 from ..config import Config
-from ..webapp import user_datastore
 from sqlalchemy import select
 
 
 def seed_admin():
-    from ..webapp import user_datastore
+    user_datastore = SQLAlchemyUserDatastore(db_base, UserModel, RoleModel)
     if db_base.session.scalar(select(UserModel).where(UserModel.id == 1)) is None:
-        admin = UserRepository.create_user(
+        repo = UserRepository()
+        admin = repo.create_user(
             email = Config.ADMINISTRATOR_EMAIL, 
             password = hash_password(Config.ADMINISTRATOR_PASSWORD), 
             name = Config.ADMINISTRATOR_NAME, 

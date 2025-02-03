@@ -1,13 +1,15 @@
-from ..webapp import user_datastore, hash_password
+from flask_security import hash_password, SQLAlchemyUserDatastore
 from sqlalchemy import select, update
-from ..webapp import db_base, UserModel, RoleModel
+from ..models.base import db_base
+from ..models.user import UserModel
+from ..models.role import RoleModel
 from ..config import Config
 
 
 class UserRepository:
     def __init__(self, db_session=None, user_store=None):
         self.db = db_session or db_base.session
-        self.user_store = user_store or user_datastore
+        self.user_store = user_store or SQLAlchemyUserDatastore(db_base, UserModel, RoleModel)
 
     def create_user(self, **kwargs) -> UserModel | None:
         """

@@ -1,5 +1,5 @@
 import datetime
-from flask_security import hash_password
+from flask_security import hash_password, SQLAlchemyUserDatastore
 from flask_security.models import fsqla_v3 as fsqla
 from random import randrange
 from sqlalchemy import ForeignKey, update, select
@@ -7,7 +7,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
 from typing import List, Optional
 from ..config import Config
 from .base import db_base
-
+from .role import RoleModel
+from typing import List
 
 class UserModel(db_base.Model, fsqla.FsUserMixin):
     __tablename__ = "user"
@@ -29,14 +30,19 @@ class UserModel(db_base.Model, fsqla.FsUserMixin):
     deleted: Mapped[bool] = mapped_column(default = False)
     deleted_at: Mapped[Optional[datetime.datetime]]
     deleted_by_id = mapped_column(ForeignKey("user.id"), nullable=True)
+    roles: Mapped[List[RoleModel]] = relationship(
+        "RoleModel",
+        secondary="roles_users",
+        backref=backref("users", lazy="dynamic")
+        )
 
     @staticmethod
     def get_or_create_id_by_phone(phone: str, name: str):
         """
         the method updates user's name if user with this phone exists
         """
+        user_datastore = SQLAlchemyUserDatastore(db_base, UserModel, RoleModel)
         user = db_base.session.scalar(select(UserModel).where(UserModel.tel == phone))
-        from studio_app.webapp import user_datastore
         if user is None:
             user = user_datastore.create_user(
                 tel = phone, 

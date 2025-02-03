@@ -22,6 +22,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
 from .config import ProductionConfig, DevelopmentConfig, TestingConfig
 from .seeders.seeder import Seeder
+from .seeders.slots_seeder import seed_slots as seeder_seed_slots
 
 # from studio_app.db_classes import db_base
 # from studio_app.db_classes import Role, Service, Slot, User
@@ -420,14 +421,16 @@ def windows():
 @click.command("seed-all")
 @with_appcontext
 def seed_all():
-    Seeder.seed_all()
-
+    seeder = Seeder()
+    seeder.seed_all()
+app.cli.add_command(seed_all)
 
 @click.command("seed-slots")
 @with_appcontext
 def seed_slots():
-    amount_days = int(os.environ.get("HOW_FAR_IN_FUTURE_CREATE_SLOTS")) if os.environ.get("HOW_FAR_IN_FUTURE_CREATE_SLOTS") else 300
-    SlotModel.create_n_days_upfront(amount_days)
+    seeder = Seeder()
+    seeder.add_seeder('slots', seeder_seed_slots)
+    seeder.seed('slots')
 app.cli.add_command(seed_slots)
 
 @click.command("delete-empty-slots")
@@ -436,70 +439,23 @@ def delete_empty_slots():
     SlotModel.delete_old_empty()
 app.cli.add_command(delete_empty_slots)
 
-@click.command("seed-role")
+@click.command("seed-roles")
 @with_appcontext
-def seed_role():
-    Seeder.seed_roles()
-    # role_admin = user_datastore.find_or_create_role("admin")
-    # role_client = user_datastore.find_or_create_role("client")
-    # role_tester = user_datastore.find_or_create_role("tester")
-    # roles = [role_admin, role_client, role_tester]
-    # db_base.session.add_all(roles)
-    # db_base.session.commit()
-
-app.cli.add_command(seed_role)
+def seed_roles():
+    seeder = Seeder()
+    seeder.seed('roles')
+app.cli.add_command(seed_roles)
 
 
 @click.command("seed-admin")
 @with_appcontext
 def seed_admin():
     Seeder.seed_admin()
-    # if db_base.session.scalar(select(SlotModel).where(SlotModel.id == 1)) is None:
-    #     admin_email = os.environ.get('ADMINISTRATOR_EMAIL')
-    #     admin_password = os.environ.get('ADMINISTRATOR_PASSWORD')
-    #     admin_name = os.environ.get('ADMINISTRATOR_NAME')
-    #     admin_phone = os.environ.get('ADMINISTRATOR_US_PHONE')
-    #     admin = user_datastore.create_user(
-    #         email = admin_email, 
-    #         password = hash_password(admin_password), 
-    #         name = admin_name, 
-    #         tel = admin_phone, 
-    #         us_phone_number = admin_phone
-    #         )
-    #     db_base.session.add(admin)
-    #     db_base.session.commit()
-
-    #     user_datastore.add_role_to_user(admin, "admin")
-    #     db_base.session.commit()
-    #     print("created: ", db_base.session.scalar(select(SlotModel).where(SlotModel.id == 1)))
-    # else:
-    #     print("already exist: ", db_base.session.scalar(select(SlotModel).where(SlotModel.id == 1)))
-    
 app.cli.add_command(seed_admin)
 
 @click.command("seed-test-user")
 @with_appcontext
 def seed_test_user():
     Seeder.seed_test_user()
-#     if db_base.session.scalar(select(SlotModel).where(SlotModel.id == 2)) is None:
-#         test_user_email = os.environ.get('TEST_USER_EMAIL')
-#         test_user_password = os.environ.get('TEST_USER_PASSWORD')
-#         test_user_name = os.environ.get('TEST_USER_NAME')
-#         test_user_phone = os.environ.get('TEST_USER_US_PHONE')
-#         test_user = user_datastore.create_user(
-#             email = test_user_email, 
-#             password = hash_password(test_user_password), 
-#             name = test_user_name, 
-#             tel = test_user_phone, 
-#             us_phone_number = test_user_phone
-#             )
-#         db_base.session.add(test_user)
-#         db_base.session.commit()
-
-#         user_datastore.add_role_to_user(test_user, "tester")
-#         db_base.session.commit()
-#         print("created: ", db_base.session.scalar(select(SlotModel).where(SlotModel.id == 2)))
-#     else:
-#         print("already exist: ", db_base.session.scalar(select(SlotModel).where(SlotModel.id == 2)))
 app.cli.add_command(seed_test_user)
 
