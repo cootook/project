@@ -21,11 +21,7 @@ from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
 from .config import ProductionConfig, DevelopmentConfig, TestingConfig
-from .seeders.seeder import Seeder
-from .seeders.slots_seeder import seed_slots as seeder_seed_slots
-
-# from studio_app.db_classes import db_base
-# from studio_app.db_classes import Role, Service, Slot, User
+from .cli import seed_admin, seed_all, seed_roles, seed_slots, seed_test_user, delete_empty_slots
 from .models import RoleModel, ServiceModel, SlotModel, UserModel, db_base
 
 
@@ -418,44 +414,9 @@ def windows():
     return render_template("windows.html", slots=slots_to_frontend)
         
 
-@click.command("seed-all")
-@with_appcontext
-def seed_all():
-    seeder = Seeder()
-    seeder.seed_all()
 app.cli.add_command(seed_all)
-
-@click.command("seed-slots")
-@with_appcontext
-def seed_slots():
-    seeder = Seeder()
-    seeder.add_seeder('slots', seeder_seed_slots)
-    seeder.seed('slots')
 app.cli.add_command(seed_slots)
-
-@click.command("delete-empty-slots")
-@with_appcontext
-def delete_empty_slots():
-    SlotModel.delete_old_empty()
 app.cli.add_command(delete_empty_slots)
-
-@click.command("seed-roles")
-@with_appcontext
-def seed_roles():
-    seeder = Seeder()
-    seeder.seed('roles')
 app.cli.add_command(seed_roles)
-
-
-@click.command("seed-admin")
-@with_appcontext
-def seed_admin():
-    Seeder.seed_admin()
 app.cli.add_command(seed_admin)
-
-@click.command("seed-test-user")
-@with_appcontext
-def seed_test_user():
-    Seeder.seed_test_user()
 app.cli.add_command(seed_test_user)
-
