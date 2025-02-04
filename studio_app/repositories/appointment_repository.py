@@ -1,13 +1,10 @@
 from sqlalchemy import select, update
-from ..models.base import db_base
 from ..models.appointment import AppointmentModel
 from random import randrange
+from .base_repository import BaseRepository
 
 
-class AppointmentRepository:
-    def __init__(self, db_session=None):
-        self.db = db_session or db_base.session
-    
+class AppointmentRepository(BaseRepository):
     def create(self, **kwargs):
         new_appointment = AppointmentModel(sms_confirmation_code=randrange(1000, 9999, 11), **kwargs)
         self.db.session.add(new_appointment)

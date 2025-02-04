@@ -1,8 +1,8 @@
 import datetime
 
 from ..models.slot import SlotModel
-from ..models.base import db_base
-from ..config import Config
+from .base_repository import BaseRepository
 
-class SlotRepository:
+
+class SlotRepository(BaseRepository):
     pass

@@ -1,17 +1,11 @@
-from flask_security import hash_password, SQLAlchemyUserDatastore
+from flask_security import hash_password
 from sqlalchemy import select, update
-from ..models.base import db_base
 from ..models.user import UserModel
 from ..models.role import RoleModel
-from ..config import Config
+from .base_repository import BaseRepository
 
 
-class UserRepository:
-    def __init__(self, db_session=None, user_store=None, config=None):
-        self.db = db_session or db_base.session
-        self.user_store = user_store or SQLAlchemyUserDatastore(db_base, UserModel, RoleModel)
-        self.config = config or Config
-
+class UserRepository(BaseRepository):
     def create_user(self, **kwargs) -> UserModel | None:
         """
         to create new user using input phone use
