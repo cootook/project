@@ -1,7 +1,9 @@
 from ..models.role import RoleModel
 from ..models.base import db_base
+from flask_sqlalchemy import SQLAlchemy
 
-def seed_roles():
+
+def seed_roles(db_session: SQLAlchemy=db_base):
     roles = [
         RoleModel(name="admin"),
         RoleModel(name="client"),
@@ -11,6 +13,6 @@ def seed_roles():
     for role in roles:
         existing = RoleModel.query.filter_by(name=role.name).first()
         if not existing:
-            db_base.session.add(role)
+            db_session.session.add(role)
     
-    db_base.session.commit()
+    db_session.session.commit()

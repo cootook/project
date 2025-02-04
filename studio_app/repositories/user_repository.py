@@ -7,9 +7,10 @@ from ..config import Config
 
 
 class UserRepository:
-    def __init__(self, db_session=None, user_store=None):
+    def __init__(self, db_session=None, user_store=None, config=None):
         self.db = db_session or db_base.session
         self.user_store = user_store or SQLAlchemyUserDatastore(db_base, UserModel, RoleModel)
+        self.config = config or Config
 
     def create_user(self, **kwargs) -> UserModel | None:
         """
@@ -67,8 +68,8 @@ class UserRepository:
 
     def get_or_create_and_update_user_by_phone(self, phone: str) -> UserModel:
         default_user_data = {
-            'email': f"{phone}@{Config.MAIL_DEFAULT_DOMAIN}",
-            'password': hash_password(Config.DEFAULT_PASSWORD)
+            'email': f"{phone}@{self.config.MAIL_DEFAULT_DOMAIN}",
+            'password': hash_password(self.config.DEFAULT_PASSWORD)
         }
                 
         user_exists_by_email = self.does_user_exist_by_email(default_user_data['email'])
