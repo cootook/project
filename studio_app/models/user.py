@@ -35,29 +35,3 @@ class UserModel(db_base.Model, fsqla.FsUserMixin):
         secondary="roles_users",
         backref=backref("users", lazy="dynamic")
         )
-
-    @staticmethod
-    def get_or_create_id_by_phone(phone: str, name: str):
-        """
-        the method updates user's name if user with this phone exists
-        """
-        user_datastore = SQLAlchemyUserDatastore(db_base, UserModel, RoleModel)
-        user = db_base.session.scalar(select(UserModel).where(UserModel.tel == phone))
-        if user is None:
-            user = user_datastore.create_user(
-                tel = phone, 
-                name = name, 
-                email = f"{phone}@{Config.MAIL_DEFAULT_DOMAIN}", 
-                password = hash_password(Config.DEFAULT_PASSWORD))
-            db_base.session.add(user)
-            db_base.session.commit()
-            user_datastore.add_role_to_user(user, "client")
-        else:
-            db_base.session.execute(update(UserModel).where(UserModel.tel == phone).values(name = name))
-            user_datastore.add_role_to_user(user, "client")
-            db_base.session.commit()
-        return user.id
-    
-    @staticmethod
-    def get_user_by_id(id):
-        return db_base.session.scalar(select(UserModel).where(UserModel.id == id))

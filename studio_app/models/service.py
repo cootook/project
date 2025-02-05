@@ -15,23 +15,3 @@ class ServiceModel(db_base.Model):
     description: Mapped[str] = mapped_column(default = "")
     deleted: Mapped[bool] = mapped_column(default = False)
 
-    def create(self, name, description):
-        new_service = ServiceModel(name=name, description=description)
-        db_base.session.add(new_service)
-        db_base.session.commit()
-        return new_service
-    
-    def delete(self):
-        db_base.session.execute(update(ServiceModel).where(ServiceModel.id == self.id).values(deleted = True))
-        db_base.session.commit()
-        return
-    
-    @staticmethod
-    def get_list_of_services_from_dict(data: dict):
-        services = []
-        for item in data:
-            if item == data[item]:
-                service = db_base.session.scalar(select(ServiceModel).where(ServiceModel.name == item, ServiceModel.deleted == False))
-                if not service is None:
-                    services.append(item)
-        return services

@@ -36,30 +36,3 @@ class AppointmentModel(db_base.Model):
     phone_confirmed: Mapped[Optional[bool]] = mapped_column(default = False) # to be moved to dedicated table
     confirmed_by_client: Mapped[Optional[bool]] = mapped_column(default = False)
     canceled_by_client: Mapped[Optional[bool]] = mapped_column(default = False)
-
-    @staticmethod
-    def create(user_id, service, date_time, slot_id, description):
-        """
-        this should be called via
-        with app.app_context():
-        """
-        new_appointment = AppointmentModel(user_id=user_id, service = service, at=date_time, slot_id=slot_id, description=description )
-        db_base.session.add(new_appointment)
-        db_base.session.commit()
-        AppointmentModel.set_get_confirmation_code(new_appointment.id)
-        return new_appointment
-    
-    @staticmethod
-    def get_by_id(id):
-        return db_base.session.scalar(select(AppointmentModel).where(AppointmentModel.id == id))
-
-    @staticmethod
-    def set_get_confirmation_code(appointment_id):
-        sms_confirmation_code = randrange(1000, 9999, 11)
-        db_base.session.execute(update(AppointmentModel).where(AppointmentModel.id == appointment_id).values(sms_confirmation_code = sms_confirmation_code))
-        db_base.session.commit()
-        return sms_confirmation_code
-    
-    @staticmethod
-    def set_phone_confirmed(appointment_id):
-        db_base.session.execute(update(AppointmentModel).where(AppointmentModel.id == appointment_id).values(phone_confirmed = True))
