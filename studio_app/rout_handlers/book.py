@@ -5,7 +5,8 @@ from ..services.recaptcha import RecaptchaService
 from ..services.phone import PhoneNumberService
 from ..services.verification import SmsVerificationOfBooking
 from ..services.booking import Booking
-from studio_app.db_classes import Service
+from ..models.service import ServiceModel
+from ..services.service import ServiceService
 
 def book():    
     if request.method == "POST":
@@ -29,7 +30,8 @@ def book():
                 "apology.html", 
                 error_message="Sorry. Something went wrong with anti robot, maybe reCaptcha that you have just checked expired. Please, try again or contact us."
                 )
-        
+        service_for_services = ServiceService()
+
         phone = PhoneNumberService(input_phone)
 
         if not phone.is_valid:
@@ -47,8 +49,7 @@ def book():
                 error_message="Something gone wrong. Please, try again or contact us."
                 )
 
-        list_of_requested_services = Service.get_list_of_services_from_dict(form_data)
-
+        list_of_requested_services = service_for_services.get_list_of_services_from_form_data_dict(form_data) 
         new_booking = Booking(
             booking_datetime, 
             slot_id, message, 

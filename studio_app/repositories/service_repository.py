@@ -21,15 +21,7 @@ class ServiceRepository(BaseRepository):
         self.db.execute(update(ServiceModel).where(ServiceModel.id == service.id).values(name=name, description=description))
         self.db.commit()
         
-    
-    def get_list_of_services_from_dict(self, data: dict):
-        """
-        to be moved to services
-        """
-        services = []
-        for item in data:
-            if item == data[item]:
-                service = self.db.scalar(select(ServiceModel).where(ServiceModel.name == item, ServiceModel.deleted == False))
-                if not service is None:
-                    services.append(item)
-        return services
+
+    def does_exist_and_active(self, name: str) -> bool:
+        service = self.db.scalar(select(ServiceModel).where(ServiceModel.name == name, ServiceModel.deleted == False))
+        return False if service is None else True
