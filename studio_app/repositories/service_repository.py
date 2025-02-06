@@ -7,6 +7,8 @@ from .base_repository import BaseRepository
 class ServiceRepository(BaseRepository):
 
     def create(self, name: str, description: str) -> ServiceModel:
+        if name == "" or description == "":
+            raise ValueError("Name or description of service can not be empty.")
         new_service = ServiceModel(name=name, description=description)
         self.db.add(new_service)
         self.db.commit()
@@ -25,3 +27,21 @@ class ServiceRepository(BaseRepository):
     def does_exist_and_active(self, name: str) -> bool:
         service = self.db.scalar(select(ServiceModel).where(ServiceModel.name == name, ServiceModel.deleted == False))
         return False if service is None else True
+    
+    def get_list_of_dict_of_active_services(self) -> list:
+        """
+        returns
+        [
+            {
+            id:, 
+            name:, 
+            description:
+            }
+        ]
+        """
+        services_bd = self.db.scalars(select(ServiceModel).where(ServiceModel.deleted == 0)).fetchall()
+        services_list = []
+        for service in services_bd:
+            service = service.__dict__
+            services_list.append(service)
+        return services_list

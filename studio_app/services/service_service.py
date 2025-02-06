@@ -1,15 +1,43 @@
-from sqlalchemy import select
-from ..models.service import ServiceModel
+from typing import Tuple, List, Dict
+from sqlalchemy.exc import SQLAlchemyError
 from ..repositories.service_repository import ServiceRepository
+from datetime import datetime
 
 class ServiceService():
     def __init__(self):
         self.service_repo = ServiceRepository()
 
-    def get_list_of_services_from_form_data_dict(self, data: dict):
+    def get_list_of_services_from_form_data_dict(self, data: dict) -> List[str]:
         services = []
         for item in data:
             if item == data[item]:
                 if self.service_repo.does_exist_and_active(item):
                     services.append(item)
         return services
+        
+    def create_service(self, name: str, description: str) -> Tuple[bool, str]:
+        try:
+            if not name or not description:
+                return False, "Service name and description are required"
+                
+            if self.service_repo.does_exist_and_active(name):
+                return False, "This service already exists"
+                
+            self.service_repo.create(name, description)
+            return True, ""
+            
+        except ValueError as e:
+            return False, str(e)
+        except SQLAlchemyError as e:
+            print(f"ERROR {datetime.now()}: ServiceService.create_service: SQLAlchemy: {e}")
+            return False, "Database error occurred"
+        except Exception as e:
+            print(f"ERROR {datetime.now()}: ServiceService.create_service: Exception: {e}")
+            return False, "An unexpected error occurred"
+    
+    def get_active_services(self) -> List[Dict]:
+        try:
+            return self.service_repo.get_list_of_dict_of_active_services()
+        except SQLAlchemyError:
+            print(f"ERROR {datetime.now()}: ServiceService.get_active_services: SQLAlchemy")
+            return []
