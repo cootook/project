@@ -8,8 +8,8 @@ from ..repositories.appointment_repository import AppointmentRepository
 from ..repositories.slot_repository import SlotRepository
 from ..repositories.user_repository import UserRepository
 from random import randrange
-from ..services.user import UserService
-from ..services.appointment import AppointmentService
+from .user_service import UserService
+from ..services.appointment_service import AppointmentService
 
 
 

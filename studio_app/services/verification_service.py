@@ -1,4 +1,4 @@
-from ..services.sms import SmsService
+from .sms_service import SmsService
 from ..config import Config
 
 class SmsVerificationOfBooking:

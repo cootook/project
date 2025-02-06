@@ -16,7 +16,7 @@ from flask_security.forms import LoginForm, ConfirmRegisterForm
 from flask_session import Session
 from jinja2 import Environment as jinja2_env
 from .helpers_legacy import validate_recaptcha, validate_twilio_request, send_email
-from .services.email import EmailService
+from .services.email_service import EmailService
 from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select

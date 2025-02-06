@@ -1,6 +1,6 @@
 from flask import redirect, render_template, request, session
-from ..services.booking import Booking
-from ..services.verification import SmsVerificationOfBooking
+from ..services.booking_service import Booking
+from ..services.verification_service import SmsVerificationOfBooking
 
 def confirm_phone():    
     if request.method == "POST":

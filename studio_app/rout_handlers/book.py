@@ -1,12 +1,12 @@
 import datetime
 
 from flask import redirect, render_template, request, session
-from ..services.recaptcha import RecaptchaService
-from ..services.phone import PhoneNumberService
-from ..services.verification import SmsVerificationOfBooking
-from ..services.booking import Booking
+from ..services.recaptcha_service import RecaptchaService
+from ..services.phone_service import PhoneNumberService
+from ..services.verification_service import SmsVerificationOfBooking
+from ..services.booking_service import Booking
 from ..models.service import ServiceModel
-from ..services.service import ServiceService
+from ..services.service_service import ServiceService
 
 def book():    
     if request.method == "POST":
