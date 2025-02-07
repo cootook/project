@@ -4,7 +4,7 @@ from sqlalchemy import select, update
 from ..models.appointment import AppointmentModel
 from random import randrange
 from .base_repository import BaseRepository
-
+from typing import List
 
 
 class AppointmentRepository(BaseRepository):
@@ -43,3 +43,9 @@ class AppointmentRepository(BaseRepository):
     
     def set_phone_confirmed(self, appointment: AppointmentModel):
         self.db.execute(update(AppointmentModel).where(AppointmentModel.id == appointment.id).values(phone_confirmed = True))
+
+    def get_all(self) -> List[AppointmentModel]:
+        stmt = select(AppointmentModel).order_by(AppointmentModel.at)
+        result = self.db.execute(stmt).scalars().all()
+        return result
+        

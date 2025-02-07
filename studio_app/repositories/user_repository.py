@@ -59,6 +59,11 @@ class UserRepository(BaseRepository):
         return self.db.scalar(
             select(UserModel).where(UserModel.tel == tel)
         )
+    
+    def get_user_by_id(self, id) -> UserModel | None:
+        return self.db.scalar(
+            select(UserModel).where(UserModel.id == id)
+        )
 
     def get_or_create_and_update_user_by_phone(self, phone: str) -> UserModel:
         default_user_data = {

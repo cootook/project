@@ -3,10 +3,12 @@ import json
 
 from flask import flash, redirect, render_template, request, session
 from sqlalchemy import select
+from ..services.appointment_service import AppointmentService
 from studio_app.db_classes import Appointment, User, db_base
 from ..helpers_legacy import get_js_object
 
 def all_appointments():
+    appointment_service = AppointmentService()
     today = datetime.datetime.now()
     user_appointments_for_frontend = []
     user_appoint_db_v2 = Appointment.query.order_by(Appointment.at).all()
