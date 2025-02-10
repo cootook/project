@@ -35,8 +35,8 @@ def edit_appointment():
             amount_time_min = new_duration,
             description = new_message + " | " + messages,
             service = dumps(new_service),
-            lust_update_at = datetime.datetime.now(),
-            lust_update_by_id = current_user.id
+            last_update_at = datetime.datetime.now(),
+            last_update_by_id = current_user.id
         ))
         db_base.session.commit()
       

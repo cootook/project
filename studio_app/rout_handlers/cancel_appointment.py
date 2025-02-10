@@ -19,8 +19,8 @@ def cancel_appointment():
     messages = db_base.session.scalar(select(Appointment.description).where(Appointment.id == booking_id_cancel, Appointment.user_id == user_id_cancel))
     db_base.session.execute(update(Appointment).where(Appointment.id == booking_id_cancel, Appointment.user_id == user_id_cancel).values(
         description = cancel_message + " | " + messages,
-        lust_update_at = datetime.datetime.now(),
-        lust_update_by_id = current_user.id,
+        last_update_at = datetime.datetime.now(),
+        last_update_by_id = current_user.id,
         canceled_at = datetime.datetime.now(),
         canceled_by_id = current_user.id,
         canceled = True

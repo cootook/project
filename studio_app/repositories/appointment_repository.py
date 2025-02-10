@@ -13,21 +13,20 @@ class AppointmentRepository(BaseRepository):
             service, 
             at, 
             slot_id,
-            lust_update_by_id,
+            last_update_by_id,
             description,
             amount_time_min=0,
             price=0
             ):
         new_appointment = AppointmentModel(
-            sms_confirmation_code=randrange(1000, 9999, 11),
             user_id=user_id, 
             service=service, 
             at=at, 
             price=price,
             slot_id=slot_id,
             amount_time_min=amount_time_min,
-            lust_update_at=datetime.datetime.now(),
-            lust_update_by_id=lust_update_by_id,
+            last_update_at=datetime.datetime.now(),
+            last_update_by_id=last_update_by_id,
             description=description,
             )
         self.db.add(new_appointment)
@@ -39,7 +38,7 @@ class AppointmentRepository(BaseRepository):
 
     
     def update_sms_code(self, appointment: AppointmentModel, code: int):
-        pass
+        self.db.execute(update(AppointmentModel).where(AppointmentModel.id == appointment.id).values(sms_confirmation_code=code))
     
     def set_phone_confirmed(self, appointment: AppointmentModel):
         self.db.execute(update(AppointmentModel).where(AppointmentModel.id == appointment.id).values(phone_confirmed = True))

@@ -43,10 +43,10 @@ class Booking:
             service=json.dumps(self.list_of_services), 
             at=self.datetime, 
             slot_id=self.slot.id,
-            lust_update_by_id=self.client.id,
+            last_update_by_id=self.client.id,
             description=message,
         ).id
-        self.confirmation_code = self.appointment_service.set_get_confirmation_code_to_appointment()
+        self.confirmation_code = self.appointment_service.generate_and_set_confirmation_code()
         self.is_phone_verified = False
         self.appointment_service = AppointmentService(self.appointment_repo.get_by_id(self.appointment_id))
         

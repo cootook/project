@@ -20,8 +20,8 @@ def confirm_appointment():
     
     db_base.session.execute(update(Appointment).where(Appointment.id == booking_id_confirm, Appointment.user_id == user_id_confirm).values(
         approved = True,
-        lust_update_at = datetime.datetime.now(),
-        lust_update_by_id = current_user.id,
+        last_update_at = datetime.datetime.now(),
+        last_update_by_id = current_user.id,
         approved_at = datetime.datetime.now(),
         approved_by_id = current_user.id
         ))

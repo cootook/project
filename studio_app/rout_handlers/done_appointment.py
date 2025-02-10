@@ -19,8 +19,8 @@ def done_appointment():
         return  render_template("apology.html", error_message="Something went wrong")
     
     db_base.session.execute(update(Appointment).where(Appointment.id == booking_id_done, Appointment.user_id == user_id_done).values(
-        lust_update_at = datetime.datetime.now(),
-        lust_update_by_id = current_user.id,
+        last_update_at = datetime.datetime.now(),
+        last_update_by_id = current_user.id,
         done_at = datetime.datetime.now(),
         done_by_id = current_user.id,
         price = price_done,

@@ -25,8 +25,8 @@ class UserModel(db_base.Model, fsqla.FsUserMixin):
     name: Mapped[Optional[str]]   
     tel: Mapped[Optional[str]]
     internal_description: Mapped[Optional[str]]  
-    lust_update_at: Mapped[Optional[datetime.datetime]] 
-    lust_update_by_id = mapped_column(ForeignKey("user.id"), nullable=True)
+    last_update_at: Mapped[Optional[datetime.datetime]] 
+    last_update_by_id = mapped_column(ForeignKey("user.id"), nullable=True)
     deleted: Mapped[bool] = mapped_column(default = False)
     deleted_at: Mapped[Optional[datetime.datetime]]
     deleted_by_id = mapped_column(ForeignKey("user.id"), nullable=True)

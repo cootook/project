@@ -9,40 +9,74 @@ from typing import List, Dict
 from copy import deepcopy
 
 
+DEFAULT_CLIENT = {
+    "name": "Unknown Client",
+    "tel": "No Phone",
+    "description": "No Information Available"
+}
+
 class AppointmentService():
     def __init__(self, appointment: AppointmentModel=None):
         self.appointment = appointment
         self.appointment_repo = AppointmentRepository()
         self.user_repo = UserRepository()
 
-    def set_get_confirmation_code_to_appointment(self) -> int:
-        sms_confirmation_code = randrange(1000, 9999, 11)
-        self.appointment_repo.update_sms_code(self.appointment, sms_confirmation_code)
-        return sms_confirmation_code
+    def generate_and_set_confirmation_code(self) -> int: 
+        try:
+            sms_confirmation_code = self._generate_confirmation_code()
+            self.appointment_repo.update_sms_code(self.appointment, sms_confirmation_code)
+            return sms_confirmation_code
+        except Exception as e:
+            self._log_error("Failed to set confirmation code", e)
+            raise
+    
+    def _generate_confirmation_code(self) -> int:
+        return randrange(1000, 9999, 11)
     
     def get_all_as_list(self) -> List[Dict]:
-        now = datetime.datetime.now()
-        all_appointments = self.appointment_repo.get_all()
+        try:
+            all_appointments = self.appointment_repo.get_all()
+            processed_appointments  = []
+            for appointment in all_appointments:
+                appointment_data = self._process_appointment(appointment)
+                processed_appointments.append(appointment_data)
 
-        user_appointments_for_frontend = []
-        list_of_appointments = []
-        for appointment in all_appointments:
-            temp = deepcopy(appointment.__dict__)
-            temp.pop('_sa_instance_state', None)
-            temp["service"] = json.loads(temp["service"])
-            
-            client = self.user_repo.get_user_by_id(appointment.user_id) 
-            if client is None:
-                temp["client_name"] = "no name"
-                temp["client_tel"] = "no phone" 
-                temp["client_description"] = "no info"
-            else:
-                temp["client_name"] = client.name
-                temp["client_tel"] = client.tel 
-                temp["client_description"] = client.internal_description
+            return processed_appointments
+        except Exception as e:
+            self._log_error("Failed to get appointments list", e)
+            raise
 
-            list_of_appointments.append(temp)
-        return list_of_appointments
+    def _process_appointment(self, appointment) -> Dict:
+        """Process single appointment and add client information"""
+        appointment_data = deepcopy(appointment.__dict__)
+        appointment_data.pop('_sa_instance_state', None)
+        
+        try:
+            appointment_data["service"] = json.loads(appointment_data["service"])
+        except json.JSONDecodeError:
+            appointment_data["service"] = {}
+            self._log_error(f"Invalid service JSON for appointment {appointment.id}")
+
+        client = self._get_client_info(appointment.user_id)
+        appointment_data.update(client)
+        
+        return appointment_data
+
+    def _get_client_info(self, user_id: int) -> Dict:
+        """Get client information, return defaults if not found"""
+        client = self.user_repo.get_user_by_id(user_id)
+        if client is None:
+            return {
+                "client_name": DEFAULT_CLIENT["name"],
+                "client_tel": DEFAULT_CLIENT["tel"],
+                "client_description": DEFAULT_CLIENT["description"]
+            }
+        
+        return {
+            "client_name": client.name,
+            "client_tel": client.tel,
+            "client_description": client.internal_description
+        }
 
     def get_js_object_out_of_list_of_appointments(self, list_of_appointments: List[Dict]) -> str:
         def convert(obj):

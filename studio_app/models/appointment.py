@@ -29,8 +29,8 @@ class AppointmentModel(db_base.Model):
     canceled: Mapped[bool] = mapped_column(default = False)
     canceled_by_id = mapped_column(ForeignKey("user.id"))
     canceled_at: Mapped[Optional[datetime.datetime]]
-    lust_update_at: Mapped[Optional[datetime.datetime]]
-    lust_update_by_id = mapped_column(ForeignKey("user.id"))
+    last_update_at: Mapped[Optional[datetime.datetime]]
+    last_update_by_id = mapped_column(ForeignKey("user.id"))
     description: Mapped[str] = mapped_column(default = "")
     sms_confirmation_code: Mapped[Optional[str]] # to be moved to dedicated table
     phone_confirmed: Mapped[Optional[bool]] = mapped_column(default = False) # to be moved to dedicated table
