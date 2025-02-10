@@ -33,21 +33,30 @@ class AppointmentService():
     def _generate_confirmation_code(self) -> int:
         return randrange(1000, 9999, 11)
     
-    def get_all_as_list(self) -> List[Dict]:
+    def get_all_as_list(self, page: int = 1, per_page: int = 50) -> List[Dict]:
         try:
-            all_appointments = self.appointment_repo.get_all()
-            processed_appointments  = []
-            for appointment in all_appointments:
+            total_appointments = self.appointment_repo.get_count()
+            appointments = self.appointment_repo.get_all(page, per_page)
+            
+            processed_appointments = []
+            for appointment in appointments:
                 appointment_data = self._process_appointment(appointment)
                 processed_appointments.append(appointment_data)
 
-            return processed_appointments
+            return {
+                'appointments': processed_appointments,
+                'pagination': {
+                    'total': total_appointments,
+                    'page': page,
+                    'per_page': per_page,
+                    'pages': (total_appointments + per_page - 1) // per_page
+                }
+            }
         except Exception as e:
             self._log_error("Failed to get appointments list", e)
             raise
 
     def _process_appointment(self, appointment) -> Dict:
-        """Process single appointment and add client information"""
         appointment_data = deepcopy(appointment.__dict__)
         appointment_data.pop('_sa_instance_state', None)
         
@@ -63,7 +72,6 @@ class AppointmentService():
         return appointment_data
 
     def _get_client_info(self, user_id: int) -> Dict:
-        """Get client information, return defaults if not found"""
         client = self.user_repo.get_user_by_id(user_id)
         if client is None:
             return {
@@ -78,19 +86,34 @@ class AppointmentService():
             "client_description": client.internal_description
         }
 
-    def get_js_object_out_of_list_of_appointments(self, list_of_appointments: List[Dict]) -> str:
-        def convert(obj):
-            for el in obj:
-                if isinstance(obj[el], datetime.datetime):
-                    obj.update({el: obj[el].strftime('%Y-%m-%dT%H:%M:%S')})
-                elif isinstance(obj[el], datetime.date):
-                    obj.update({el: obj[el].strftime("%m/%d/%Y")})
-                elif isinstance(obj[el], datetime.time):
-                    obj.update({el: obj[el].strftime("%H:%M")})
-            return obj
-        list_of_appointments_as_str = []
-        for appointment in list_of_appointments:
-            appointment_as_str = convert(appointment)
-            list_of_appointments_as_str.append(appointment_as_str)
+    def format_appointments_for_frontend(self, appointments_data: Dict) -> str:
+        try:
+            formatted_appointments = []
+            for appointment in appointments_data['appointments']:
+                formatted_appointment = self._format_datetime_fields(appointment)
+                formatted_appointments.append(formatted_appointment)
             
-        return json.dumps(list_of_appointments_as_str)
+            return json.dumps({
+                'appointments': formatted_appointments,
+                'pagination': appointments_data['pagination']
+            })
+        except Exception as e:
+            self._log_error("Failed to format appointments for frontend", e)
+            raise
+    
+    def _format_datetime_fields(self, obj: Dict) -> Dict:
+        formatted = obj.copy()
+        for key, value in formatted.items():
+            if isinstance(value, datetime.datetime):
+                formatted[key] = value.strftime('%Y-%m-%dT%H:%M:%S')
+            elif isinstance(value, datetime.date):
+                formatted[key] = value.strftime("%m/%d/%Y")
+            elif isinstance(value, datetime.time):
+                formatted[key] = value.strftime("%H:%M")
+        return formatted
+    
+    def _log_error(self, message: str, exception: Exception = None) -> None:
+        error_msg = f"Error: {message}"
+        if exception:
+            error_msg += f" - {str(exception)}"
+        print(error_msg)

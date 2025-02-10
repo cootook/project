@@ -195,7 +195,7 @@ def _appointments():
 @app.route("/all_appointments/", methods=["GET"])
 @login_required
 @admin_only
-def _all_appointments():
+def list_appointments():
     return all_appointments.all_appointments()
 
 @app.route("/articles/")
