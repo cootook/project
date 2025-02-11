@@ -1,9 +1,4 @@
-import datetime
-
-from sqlalchemy import update, select
-from studio_app.db_classes import Appointment, db_base
-from flask import redirect, render_template, request
-from flask_security import current_user
+from ..services.appointment_service import AppointmentService
 from flask import redirect, render_template, request
 
 def cancel_appointment():
@@ -13,18 +8,18 @@ def cancel_appointment():
         cancel_message = request.form.get("cancel_message")
 
     except Exception as er:
-        print("##/cancel_appointment/ --form request")
-        print(er)
-        return  render_template("apology.html", error_message="Something went wrong")
-    messages = db_base.session.scalar(select(Appointment.description).where(Appointment.id == booking_id_cancel, Appointment.user_id == user_id_cancel))
-    db_base.session.execute(update(Appointment).where(Appointment.id == booking_id_cancel, Appointment.user_id == user_id_cancel).values(
-        description = cancel_message + " | " + messages,
-        last_update_at = datetime.datetime.now(),
-        last_update_by_id = current_user.id,
-        canceled_at = datetime.datetime.now(),
-        canceled_by_id = current_user.id,
-        canceled = True
-        ))
-    db_base.session.commit()
+        print("ERROR: /cancel_appointment/ --form request: ", er)
+        return  render_template("apology.html", error_message="Something went wrong"), 400
     
-    return redirect("/all_appointments/")
+    appointment_service = AppointmentService()
+    success_cancel = appointment_service.cancel_with_message(
+        booking_id_cancel, 
+        user_id_cancel, 
+        cancel_message
+        )
+    if success_cancel:
+        print(f"CANCELED appointment {booking_id_cancel}")
+        return redirect("/all_appointments/"), 200
+    else:
+        print("ERROR: /cancel_appointment/ .cancel_with_message ")
+        return  render_template("apology.html", error_message="Something went wrong"), 500

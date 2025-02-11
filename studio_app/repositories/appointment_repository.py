@@ -94,3 +94,45 @@ class AppointmentRepository(BaseRepository):
             self._log_error("Failed to get appointment count", e)
             return 0
         
+    def get_description(self, appointment_id: int, user_id: int) -> str:
+        try:
+            self.db.scalar(select(AppointmentModel.description)
+                        .where(
+                            AppointmentModel.id == appointment_id, 
+                            AppointmentModel.user_id == user_id
+                            )
+                            )
+        except Exception as e:
+            self._log_error("Failed to get description", e)
+            return ""
+        
+    def update_description(self, appointment_id: int, description: int, updated_by_id: int):
+        try:
+            self.db.execute(update(AppointmentModel).where(AppointmentModel.id == appointment_id).values(
+                description = description,
+                last_update_at = datetime.datetime.now(),
+                last_update_by_id = updated_by_id,
+                )
+            )
+            self.db.commit()
+        except Exception as e:
+            self._log_error("Failed to update description", e)
+            self.db.rollback()
+            raise
+    
+    def set_canceled(self, appointment_id: int, updated_by_id: int):
+        try:
+            self.db.execute(update(AppointmentModel).where(AppointmentModel.id == appointment_id).values(
+                canceled_at = datetime.datetime.now(),
+                canceled_by_id = updated_by_id,
+                canceled = True,
+                last_update_at = datetime.datetime.now(),
+                last_update_by_id = updated_by_id,
+                )
+            )
+            self.db.commit()
+        except Exception as e:
+            self._log_error(f"Failed cancel appointment {appointment_id}", e)
+            self.db.rollback()
+            raise
+

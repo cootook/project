@@ -4,9 +4,11 @@ import json
 from ..repositories.appointment_repository import AppointmentRepository
 from ..repositories.user_repository import UserRepository
 from ..models.appointment import AppointmentModel
+from ..models.user import UserModel
 from random import randrange
 from typing import List, Dict
 from copy import deepcopy
+from flask_security import current_user
 
 
 DEFAULT_CLIENT = {
@@ -117,3 +119,30 @@ class AppointmentService():
         if exception:
             error_msg += f" - {str(exception)}"
         print(error_msg)
+
+    def cancel_with_message(
+            self, 
+            appointment_id: int, 
+            user_id: int, 
+            message: str, 
+            canceled_by_user: UserModel=None
+            ):
+        
+        if canceled_by_user is None:
+            canceled_by_user = current_user
+            
+        try:
+            self.appointment = self.appointment_repo.get_by_id(appointment_id)
+            is_for_user_id = self.appointment.user_id == user_id
+
+            if is_for_user_id:
+                current_description = self.appointment_repo.get_description(self)
+                cancel_description = f"{message} | {current_description}"
+                self.appointment_repo.update_description(self.appointment.id, cancel_description, canceled_by_user.id)
+                self.appointment_repo.set_canceled(self.appointment.id, canceled_by_user.id)
+                return True
+            else:
+                return False
+        except Exception as e:
+            self._log_error("cancel_with_message: Failed to cancel", e)
+            raise

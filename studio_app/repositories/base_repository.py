@@ -21,3 +21,9 @@ class BaseRepository():
         self.db = db.session
         self.user_store = user_store or SQLAlchemyUserDatastore(db_base, UserModel, RoleModel)
         self.config = config or Config
+
+    def _log_error(self, message: str, exception: Exception = None) -> None:
+        error_msg = f"Error: {message}"
+        if exception:
+            error_msg += f" - {str(exception)}"
+        print(error_msg)
