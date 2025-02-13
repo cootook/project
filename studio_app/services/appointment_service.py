@@ -133,6 +133,11 @@ class AppointmentService():
             
         try:
             self.appointment = self.appointment_repo.get_by_id(appointment_id)
+            
+            if not self.appointment:
+                self._log_error(f"Appointment {appointment_id} not found")
+                return False
+            
             is_for_user_id = self.appointment.user_id == user_id
 
             if is_for_user_id:

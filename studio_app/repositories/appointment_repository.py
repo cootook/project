@@ -96,12 +96,13 @@ class AppointmentRepository(BaseRepository):
         
     def get_description(self, appointment_id: int, user_id: int) -> str:
         try:
-            self.db.scalar(select(AppointmentModel.description)
+            result = self.db.scalar(select(AppointmentModel.description)
                         .where(
                             AppointmentModel.id == appointment_id, 
                             AppointmentModel.user_id == user_id
                             )
                             )
+            return result or ""
         except Exception as e:
             self._log_error("Failed to get description", e)
             return ""
