@@ -6,11 +6,11 @@ from sqlalchemy import ForeignKey, update, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
 from typing import List, Optional
 from ..config import Config
-from .base import db_base
+from .base import data_base
 from .role import RoleModel
 from typing import List
 
-class UserModel(db_base.Model, fsqla.FsUserMixin):
+class UserModel(data_base.Model, fsqla.FsUserMixin):
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[Optional[str]] = mapped_column(unique = True)

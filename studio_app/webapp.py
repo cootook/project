@@ -19,7 +19,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
 from .config import ProductionConfig, DevelopmentConfig, TestingConfig
 from .cli import seed_admin, seed_all, seed_roles, seed_slots, seed_test_user, delete_empty_slots
-from .models import RoleModel, ServiceModel, SlotModel, UserModel, db_base
+from .models import RoleModel, ServiceModel, SlotModel, UserModel, data_base
 
 
 from studio_app.helpers_legacy import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_logged_only, admin_only, get_service_name
@@ -45,11 +45,11 @@ app.config.from_object(DevelopmentConfig)
 Session(app)
 mail = Mail(app)
 
-db_base.init_app(app)
-migrate = Migrate(app, db_base)
+data_base.init_app(app)
+migrate = Migrate(app, data_base)
 
 # Setup Flask-Security
-user_datastore = SQLAlchemyUserDatastore(db_base, UserModel, RoleModel)
+user_datastore = SQLAlchemyUserDatastore(data_base, UserModel, RoleModel)
 app.security = Security(app, user_datastore, confirm_register_form=ExtendedRegisterForm)
 
 app.register_error_handler(404, page_not_found)
@@ -65,7 +65,7 @@ jinja2_env.SITE_KEY_RECAPTCHA = os.environ.get('SITE_KEY_RECAPTCHA')
 @app.context_processor
 def get_services():
     services = []
-    services_from_db = db_base.session.scalars(select(ServiceModel))
+    services_from_db = data_base.session.scalars(select(ServiceModel))
     for service in services_from_db:
         service_dict = dict(id = service.id, name = service.name, description = service.description, deleted = service.deleted)
         services.append(service_dict)
@@ -114,7 +114,7 @@ def register():
         tel = request.form.get('tel')
         
         user_datastore.create_user(email = email, password = hash_password(password))
-        db_base.commit()
+        data_base.commit()
     return render_template('security/register_user.html')
 
 @app.route('/test_email/', methods=['GET', 'POST'])
@@ -325,12 +325,12 @@ def signin():
         if not validate_recaptcha(token):
             return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot protection. Please, try again or contact us.")
         
-        user_to_login = db_base.session.scalar(select(SlotModel).where(SlotModel.email == login))
+        user_to_login = data_base.session.scalar(select(SlotModel).where(SlotModel.email == login))
         if user_to_login is None:
             return render_template("apology.html", error_message="wrong login or password user_to_login")
         
         password_ok = verify_and_update_password(password, user_to_login)
-        db_base.session.commit()
+        data_base.session.commit()
         if password_ok:
 
             login_user(user_to_login, remember, "password")
@@ -391,7 +391,7 @@ def windows():
                 target_slot.opened_by_id = session["user_id"]
                 target_slot.opened_at = datetime.datetime.now()
 
-            db_base.session.commit()
+            data_base.session.commit()
             return redirect("/windows/")
 
         except Exception as er:

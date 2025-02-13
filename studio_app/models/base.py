@@ -6,6 +6,6 @@ class Base(DeclarativeBase):
     pass
 
 
-db_base = SQLAlchemy(model_class=Base)
+data_base = SQLAlchemy(model_class=Base)
 
-fsqla.FsModels.set_db_info(db_base)
+fsqla.FsModels.set_db_info(data_base)

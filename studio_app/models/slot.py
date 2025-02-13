@@ -6,10 +6,10 @@ from sqlalchemy import ForeignKey, update, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
 from typing import List, Optional
 from ..config import Config
-from .base import db_base
+from .base import data_base
 
 
-class SlotModel(db_base.Model):
+class SlotModel(data_base.Model):
     __tablename__ = "slot"
     id: Mapped[int] = mapped_column(primary_key=True)
     date: Mapped[datetime.date]

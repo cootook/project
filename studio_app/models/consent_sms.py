@@ -5,10 +5,10 @@ from sqlalchemy import ForeignKey, update, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
 from typing import List, Optional
 from ..config import Config
-from .base import db_base
+from .base import data_base
 
 
-class ConsentSmsModel(db_base.Model):
+class ConsentSmsModel(data_base.Model):
     __tablename__ = "consent_sms"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id = mapped_column(ForeignKey("user.id"))

@@ -1,4 +1,4 @@
-from .base import db_base
+from .base import data_base
 from .user import UserModel
 from .role import RoleModel
 from .slot import SlotModel
@@ -8,7 +8,7 @@ from .consent_sms import ConsentSmsModel
 
 
 __all__ = [
-    'db_base',
+    'data_base',
     'UserModel',
     'RoleModel',
     'SlotModel',

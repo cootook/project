@@ -1,4 +1,4 @@
-from ..models.base import db_base
+from ..models.base import data_base
 from ..models.user import UserModel
 from ..models.role import RoleModel
 from ..repositories.user_repository import UserRepository
@@ -8,7 +8,7 @@ from sqlalchemy import select
 from flask_sqlalchemy import SQLAlchemy
 
 
-def seed_admin(db_session: SQLAlchemy=db_base, config=Config):
+def seed_admin(db_session: SQLAlchemy=data_base, config=Config):
     user_datastore = SQLAlchemyUserDatastore(db_session, UserModel, RoleModel)
     if db_session.session.scalar(select(UserModel).where(UserModel.id == 1)) is None:
         repo = UserRepository()

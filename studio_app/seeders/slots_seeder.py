@@ -1,14 +1,14 @@
 import datetime
 
 from ..models.slot import SlotModel
-from ..models.base import db_base
+from ..models.base import data_base
 from ..config import Config
 from flask_sqlalchemy import SQLAlchemy
 
 
 def seed_slots(
           days_seed_upfront: int=Config.HOW_FAR_IN_FUTURE_CREATE_SLOTS, 
-          db_session: SQLAlchemy=db_base, 
+          db_session: SQLAlchemy=data_base, 
           config=Config
           ):
         """

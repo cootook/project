@@ -5,10 +5,10 @@ from sqlalchemy import ForeignKey, update, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
 from typing import List, Optional
 from ..config import Config
-from .base import db_base
+from .base import data_base
 
 
-class AppointmentModel(db_base.Model):
+class AppointmentModel(data_base.Model):
     """
     column 'service' value is list of Service.name as JSON str. this field to be moved in dedicated table
     """

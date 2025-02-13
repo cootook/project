@@ -2,7 +2,7 @@ from .roles_seeder import seed_roles
 from .admin_user_seeder import seed_admin
 from .test_user_seeder import seed_test_user
 from flask_sqlalchemy import SQLAlchemy
-from ..models.base import db_base
+from ..models.base import data_base
 
 
 class Seeder:
@@ -12,7 +12,7 @@ class Seeder:
             'admin': seed_admin,
             'test_user': seed_test_user
         }
-        self.db_session = db_session or db_base
+        self.db_session = db_session or data_base
     
     def add_seeder(self, name, seeder_func):
         self.seeders[name] = seeder_func

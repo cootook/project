@@ -1,9 +1,9 @@
 from ..models.role import RoleModel
-from ..models.base import db_base
+from ..models.base import data_base
 from flask_sqlalchemy import SQLAlchemy
 
 
-def seed_roles(db_session: SQLAlchemy=db_base):
+def seed_roles(db_session: SQLAlchemy=data_base):
     roles = [
         RoleModel(name="admin"),
         RoleModel(name="client"),
