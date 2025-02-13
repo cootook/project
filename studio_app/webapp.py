@@ -1,9 +1,6 @@
 import os
-import click
 import sqlite3
 import datetime
-import requests
-import flask_security
 
 from calendar import monthrange
 from dotenv import load_dotenv
@@ -25,14 +22,11 @@ from .cli import seed_admin, seed_all, seed_roles, seed_slots, seed_test_user, d
 from .models import RoleModel, ServiceModel, SlotModel, UserModel, db_base
 
 
-from studio_app.helpers_legacy import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
+from studio_app.helpers_legacy import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_logged_only, admin_only, get_service_name
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
 from .rout_handlers import *
 
-
-# flask security
-from typing import List
 
 load_dotenv()
 
@@ -62,7 +56,7 @@ app.register_error_handler(404, page_not_found)
 
 # Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "History", "Account", "Contact", "Terms_of_service", "Privacy_policy", "LogOut"]
-navbar_items_not_loged_in = ["Contact", "Terms_of_service", "Privacy_policy", "SignIn"]
+navbar_items_not_logged_in = ["Contact", "Terms_of_service", "Privacy_policy", "SignIn"]
 navbar_items_admin = ["All_appointments", "Add_service", "Account", "Clients", "Windows", "Contact", "Terms_of_service", "Privacy_policy", "LogOut"]
 days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
 
@@ -86,8 +80,8 @@ def inject_navbar_items():
     return dict(navbar_menu=navbar_items)
 
 @app.context_processor
-def inject_navbar_items_not_loged_in():
-    return dict(navbar_menu_not_loged_in=navbar_items_not_loged_in)
+def inject_navbar_items_not_logged_in():
+    return dict(navbar_menu_not_logged_in=navbar_items_not_logged_in)
 
 @app.context_processor
 def inject_navbar_items_admin():
@@ -175,11 +169,11 @@ def about():
 
 @app.route("/account/", methods=["GET", "POST"])
 @login_required
-def _account():
+def account_page():
     return account.account()
 
 @app.route("/add_service/", methods=["GET", "POST"])
-def _add_service():
+def adding_service():
     with app.app_context():
         return add_service.add_service()
 
@@ -189,7 +183,7 @@ def apology():
 
 @app.route("/appointments/", methods=["GET", "POST"])
 @login_required
-def _appointments():
+def show_appointments():
     return appointments.appointments()
 
 @app.route("/all_appointments/", methods=["GET"])
@@ -203,11 +197,9 @@ def articles():
     return render_template("articles.html")
 
 @app.route("/book/", methods=["GET", "POST"])
-def _book():
+def book_appointment():
     with app.app_context():
         return book.book()
-
-
 
 @app.route("/cancel_appointment/", methods = ["POST"])
 @login_required
@@ -217,20 +209,20 @@ def appointment_canceling():
 
 @app.route("/change_password/", methods = ["GET", "POST"])
 @login_required
-def _change_password():
+def changing_password():
     return change_password.change_password()
 
 
 @app.route("/change_role/", methods = ["GET", "POST"])
 @login_required
-def _change_role():
+def changing_role():
     return change_role.change_role()
 
 
 @app.route("/clients/", methods=["GET", "POST"])
 @login_required
 @admin_only
-def clients():
+def showing_clients():
     try:
         con = sqlite3.connect("./db.db") 
         cur = con.cursor()
@@ -266,11 +258,11 @@ def clients():
 @app.route("/confirm_appointment/", methods = ["POST"])
 @login_required
 @admin_only
-def _confirm_appointment():
+def confirmation_appointment():
     return confirm_appointment.confirm_appointment()
 
 @app.route("/confirm_phone", methods = ["POST"])
-def _confirm_phone():    
+def confirmation_phone():    
     return confirm_phone.confirm_phone()
 
 
@@ -284,37 +276,36 @@ def day():
     return render_template("day.html")
 
 @app.route("/delete_service/", methods=["POST", "GET"])
-def _delete_service():
+def deleting_service():
     with app.app_context():
         return delete_service.delete_service()
-
 
 @app.route("/done_appointment/", methods = ["POST"])
 @login_required
 @admin_only
-def _done_appointment():
+def finishing_appointment():
     return done_appointment.done_appointment()
 
 @app.route("/edit_appointment/", methods=["POST"])
 @login_required
 @admin_only
-def _edit_appointment():
+def editing_appointment():
     return edit_appointment.edit_appointment()
 
 @app.route("/edit_service/", methods=["POST", "GET"])
-def _edit_service():
+def editing_service():
     with app.app_context():
         return edit_service.edit_service()
 
 @app.route("/history/")
 @login_required
-def _history():
+def showing_history():
     return history.history()
 
 @app.route("/all_history/", methods = ["GET", "POST"])
 @login_required
 @admin_only
-def _all_history():
+def showing_all_history():
     return all_history.all_history()
 
 @app.route("/pricing/")
@@ -322,7 +313,7 @@ def pricing():
     return render_template("pricing.html")
 
 @app.route("/signin/", methods = ["GET", "POST"])
-@not_loged_only
+@not_logged_only
 def signin():
     if request.method == "POST":
         # try:
@@ -351,17 +342,14 @@ def signin():
             session["tell"] = user_to_login.__dict__["us_phone_number"]
             return redirect("/")
         else:
-            return render_template("apology.html", error_message="wrong login or password password_ok")                
-
-           
+            return render_template("apology.html", error_message="wrong login or password password_ok")            
 
     else:
-        return render_template("signin.html")
-    
+        return render_template("signin.html")    
 
 @app.route("/signup/", methods = ["GET", "POST"])
-@not_loged_only
-def _signup():
+@not_logged_only
+def signing_up():
     return signup.signup()
     
 @app.route("/logout/")
