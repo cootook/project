@@ -151,3 +151,45 @@ class AppointmentService():
         except Exception as e:
             self._log_error("cancel_with_message: Failed to cancel", e)
             raise
+
+    def confirm_booking(self, appointment_id, user_id, confirmed_by: UserModel=None) -> bool:
+        if confirmed_by is None:
+            confirmed_by_id = current_user.id 
+        else:
+            confirmed_by_id = confirmed_by.id
+
+        self.appointment = self.appointment_repo.get_by_id(appointment_id)
+
+        if self.appointment is None:
+            self._log_error(f"Appointment {appointment_id} not found")
+            return False
+        
+        is_for_user_id = self.appointment.user_id == user_id
+
+        if not is_for_user_id:
+            self._log_error(
+                "confirm_booking: Failed to confirm", 
+                "appointment {self.appointment.id} does not belong to user {user_id}"
+                )
+            return False
+        
+        if self.appointment.done:
+            self._log_error(
+                "confirm_booking: Failed to confirm", 
+                "appointment {self.appointment.id} was done"
+                )
+            return False
+
+        if self.appointment.canceled:
+            self._log_error(
+                "confirm_booking: Failed to confirm", 
+                "appointment {self.appointment.id} was canceled"
+                )
+            return False
+        
+        success = self.appointment_repo.set_confirmed(
+            self.appointment.id,
+            confirmed_by_id
+        )
+
+        return success

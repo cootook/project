@@ -137,3 +137,20 @@ class AppointmentRepository(BaseRepository):
             self.db.rollback()
             raise
 
+    def set_confirmed(self, appointment_id: int, confirmed_by_id: int) -> bool:
+        try:
+            self.db.execute(update(AppointmentModel).where(AppointmentModel.id == appointment_id).values(
+                approved_at = datetime.datetime.now(),
+                approved_by_id = confirmed_by_id,
+                approved = True,
+                last_update_at = datetime.datetime.now(),
+                last_update_by_id = confirmed_by_id,
+                )
+            )
+            self.db.commit()
+            return True
+        
+        except Exception as e:
+            self._log_error(f"Failed approve appointment {appointment_id}", e)
+            self.db.rollback()
+            raise

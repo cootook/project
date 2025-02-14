@@ -1,18 +1,12 @@
-import datetime
-
-from sqlalchemy import update
-from studio_app.db_classes import Appointment, db_base
-from flask import redirect, render_template, request
-from flask_security import current_user
-
+from ..services.appointment_service import AppointmentService
+from flask import redirect, render_template, request, Response
+from typing import Tuple, Union
+from http import HTTPStatus
 
 def confirm_appointment():
     try:
-        user_id_confirm = int(request.form.get("user_id_confirm"))
-        booking_id_confirm = int(request.form.get("booking_id_confirm"))
-        
-        print(user_id_confirm, booking_id_confirm)
-        
+        confirmation_data = _extract_confirmation_data
+        return _process_confirmation(confirmation_data)
     except Exception as er:
         print("##/confirm_appointment/ --form request")
         print(er)
@@ -30,3 +24,14 @@ def confirm_appointment():
 
     return redirect("/all_appointments/")
 
+def _extract_confirmation_data(data: dict) -> dict:
+    try:
+        return {
+            'user_id': int(request.form.get("user_id_confirm")),
+            'appointment_id': int(request.form.get("booking_id_confirm"))
+        }
+    except (TypeError, ValueError) as e:
+        raise ValueError(f"Failed to parse form data: {str(e)}")
+
+def _process_confirmation(data: dict) -> Tuple[Union[Response, str], int]:
+    appointment_service = AppointmentService()
