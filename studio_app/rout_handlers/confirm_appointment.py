@@ -1,30 +1,23 @@
 from ..services.appointment_service import AppointmentService
-from flask import redirect, render_template, request, Response
+from flask import redirect, request, Response
 from typing import Tuple, Union
 from http import HTTPStatus
+from ..error_handlers.appointment_error_handler import AppointmentErrorHandler
 
-def confirm_appointment():
+appointment_error_handler = AppointmentErrorHandler()
+
+def confirm_appointment() -> Tuple[Union[Response, str], int]:
     try:
-        confirmation_data = _extract_confirmation_data
+        confirmation_data = _extract_confirmation_data()
         return _process_confirmation(confirmation_data)
-    except Exception as er:
-        print("##/confirm_appointment/ --form request")
-        print(er)
-        return  render_template("apology.html", error_message="Something went wrong")
-    
-    db_base.session.execute(update(Appointment).where(Appointment.id == booking_id_confirm, Appointment.user_id == user_id_confirm).values(
-        approved = True,
-        last_update_at = datetime.datetime.now(),
-        last_update_by_id = current_user.id,
-        approved_at = datetime.datetime.now(),
-        approved_by_id = current_user.id
-        ))
-    db_base.session.commit()
+    except ValueError as e:
+        return appointment_error_handler.handle_appointment_error(
+            error=e,
+            appointment_id=request.form.get("booking_id_confirm", 0),
+            additional_data={'user_id': request.form.get("user_id_confirm", 0)}
+        )
 
-
-    return redirect("/all_appointments/")
-
-def _extract_confirmation_data(data: dict) -> dict:
+def _extract_confirmation_data() -> dict:
     try:
         return {
             'user_id': int(request.form.get("user_id_confirm")),
@@ -35,3 +28,19 @@ def _extract_confirmation_data(data: dict) -> dict:
 
 def _process_confirmation(data: dict) -> Tuple[Union[Response, str], int]:
     appointment_service = AppointmentService()
+    success = appointment_service.confirm_booking(
+        data['appointment_id'],
+        data['user_id']
+    )
+
+    if success:
+        print(f"Successfully confirmed appointment {data['appointment_id']}")
+        return redirect("/all_appointments/"), HTTPStatus.OK
+    
+    return appointment_error_handler.handle_appointment_error(
+        error=ValueError("User ID mismatch or appointment not found"),
+        appointment_id=data['appointment_id'],
+        additional_data={
+            'user_id': data['user_id']
+        }
+    )
