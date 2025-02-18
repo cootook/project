@@ -1,7 +1,10 @@
 from studio_app.db_classes import db_base, Service
 from sqlalchemy import select, delete
 from flask import redirect, render_template, request
+from ..services.service_service import ServiceService
+from ..error_handlers.error_handlers import ErrorHandler
 
+error_handler = ErrorHandler()
 
 def delete_service():    
 
