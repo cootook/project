@@ -16,19 +16,16 @@ Delete service
       </tr>
     </thead>
     <tbody>
-        {% for service in services_list %}
         <tr>
             <td>{{ service["name"] }}</td>
             <td>{{ service["description"] }}</td>
         </tr>
-        {% endfor%}
     </tbody>
   </table>
 <div class="form-group mt-3">
     <form action="/delete_service/" method="post">
-        
-        <input hidden type="text" id="service_id" name="service_id" value="{{ services_list[0]['id'] }}">
-        
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input hidden type="text" id="service_id" name="service_id" value="{{ service['id'] }}">
         <button class="btn btn-primary my-2" type="submit">delete</button>
         <a href="/add_service/" class="btn btn-primary my-2" >cancel</a>
     

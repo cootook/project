@@ -2,6 +2,7 @@ from typing import Tuple, List, Dict
 from sqlalchemy.exc import SQLAlchemyError
 from ..repositories.service_repository import ServiceRepository
 from datetime import datetime
+from ..models.service import ServiceModel
 
 class ServiceService():
     def __init__(self):
@@ -41,3 +42,24 @@ class ServiceService():
         except SQLAlchemyError:
             print(f"ERROR {datetime.now()}: ServiceService.get_active_services: SQLAlchemy")
             return []
+        
+    def delete_by_id(self, id: int) -> bool:
+        try:
+            service = self.service_repo.get_by_id(id)
+            if service is None:
+                return False
+            success = self.service_repo.delete_soft(service)
+            return success
+        except Exception as e:
+            print(f"ERROR {datetime.now()}: Failed to delete service ID {id}")
+            return False
+        
+    def get_by_id_as_dict(self, id: int) -> dict | None:
+        try:
+            service = self.service_repo.get_by_id()
+            if service is None:
+                return None
+            return service.__dict__
+        except Exception as e:
+            print(f"ERROR {datetime.now()}: Failed to get service ID {id} as dict")
+            return None

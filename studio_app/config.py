@@ -24,6 +24,8 @@ class Config(object):
     SECURITY_REGISTERABLE = True
     SECURITY_TRACKABLE = True
     SECURITY_USERNAME_ENABLE = False
+    SECURITY_CSRF_PROTECT_MECHANISMS = ['session', 'basic']
+    SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS = False
     
     # Cookie Settings
     REMEMBER_COOKIE_SAMESITE = os.environ.get("FLASK_LOGIN_REMEMBER_COOKIE_SAMESITE", "strict")

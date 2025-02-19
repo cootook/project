@@ -20,7 +20,7 @@ from sqlalchemy import select
 from .config import ProductionConfig, DevelopmentConfig, TestingConfig
 from .cli import seed_admin, seed_all, seed_roles, seed_slots, seed_test_user, delete_empty_slots
 from .models import RoleModel, ServiceModel, SlotModel, UserModel, data_base
-
+from flask_wtf.csrf import CSRFProtect
 
 from studio_app.helpers_legacy import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_logged_only, admin_only, get_service_name
 from twilio.rest import Client
@@ -276,6 +276,8 @@ def day():
     return render_template("day.html")
 
 @app.route("/delete_service/", methods=["POST", "GET"])
+@login_required
+@admin_only
 def deleting_service():
     with app.app_context():
         return delete_service.delete_service()
