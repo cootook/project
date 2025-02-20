@@ -13,6 +13,7 @@ Edit service
     <form action="/edit_service/" method="post">
         
         <label for="service">New service name</label>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="text" hidden value="{{ service_edit['id'] }}" id="service_id" name="service_id">
         <input class="form-control" type="text" id="service" name="service" value="{{ service_edit['name'] }}">
         

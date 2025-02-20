@@ -63,3 +63,24 @@ class ServiceService():
         except Exception as e:
             print(f"ERROR {datetime.now()}: Failed to get service ID {id} as dict")
             return None
+        
+    def edit_by_id(self, id: int, name: str, description: str) -> bool:
+        try:
+            service = self.service_repo.get_by_id(id)
+            if service is None:
+                return False
+            success = self.service_repo.update(service, name, description)
+            return success
+        except Exception as e:
+            print(f"ERROR {datetime.now()}: Failed to update service ID {id}")
+            return False
+        
+    def does_exist_by_id(self, id: int) -> bool:
+        try:
+            service = self.service_repo.get_by_id(id)
+            if service is None:
+                return False
+            return True
+        except Exception as e:
+            print(f"ERROR {datetime.now()}: Failed to update service ID {id}")
+            raise
