@@ -24,39 +24,31 @@ class AppointmentService():
         self.user_repo = UserRepository()
 
     def generate_and_set_confirmation_code(self) -> int: 
-        try:
-            sms_confirmation_code = self._generate_confirmation_code()
-            self.appointment_repo.update_sms_code(self.appointment, sms_confirmation_code)
-            return sms_confirmation_code
-        except Exception as e:
-            self._log_error("Failed to set confirmation code", e)
-            raise
+        sms_confirmation_code = self._generate_confirmation_code()
+        self.appointment_repo.update_sms_code(self.appointment, sms_confirmation_code)
+        return sms_confirmation_code
     
     def _generate_confirmation_code(self) -> int:
         return randrange(1000, 9999, 11)
     
     def get_all_as_list(self, page: int = 1, per_page: int = 50) -> List[Dict]:
-        try:
-            total_appointments = self.appointment_repo.get_count()
-            appointments = self.appointment_repo.get_all(page, per_page)
-            
-            processed_appointments = []
-            for appointment in appointments:
-                appointment_data = self._process_appointment(appointment)
-                processed_appointments.append(appointment_data)
+        total_appointments = self.appointment_repo.get_count()
+        appointments = self.appointment_repo.get_all(page, per_page)
+        
+        processed_appointments = []
+        for appointment in appointments:
+            appointment_data = self._process_appointment(appointment)
+            processed_appointments.append(appointment_data)
 
-            return {
-                'appointments': processed_appointments,
-                'pagination': {
-                    'total': total_appointments,
-                    'page': page,
-                    'per_page': per_page,
-                    'pages': (total_appointments + per_page - 1) // per_page
-                }
+        return {
+            'appointments': processed_appointments,
+            'pagination': {
+                'total': total_appointments,
+                'page': page,
+                'per_page': per_page,
+                'pages': (total_appointments + per_page - 1) // per_page
             }
-        except Exception as e:
-            self._log_error("Failed to get appointments list", e)
-            raise
+        }
 
     def _process_appointment(self, appointment) -> Dict:
         appointment_data = deepcopy(appointment.__dict__)
@@ -89,20 +81,16 @@ class AppointmentService():
         }
 
     def format_appointments_for_frontend(self, appointments_data: Dict) -> str:
-        try:
-            formatted_appointments = []
-            for appointment in appointments_data['appointments']:
-                formatted_appointment = self._format_datetime_fields(appointment)
-                formatted_appointments.append(formatted_appointment)
-            
-            return json.dumps({
-                'appointments': formatted_appointments,
-                'pagination': appointments_data['pagination']
-            })
-        except Exception as e:
-            self._log_error("Failed to format appointments for frontend", e)
-            raise
-    
+        formatted_appointments = []
+        for appointment in appointments_data['appointments']:
+            formatted_appointment = self._format_datetime_fields(appointment)
+            formatted_appointments.append(formatted_appointment)
+        
+        return json.dumps({
+            'appointments': formatted_appointments,
+            'pagination': appointments_data['pagination']
+        })
+
     def _format_datetime_fields(self, obj: Dict) -> Dict:
         formatted = obj.copy()
         for key, value in formatted.items():
@@ -131,26 +119,22 @@ class AppointmentService():
         if canceled_by_user is None:
             canceled_by_user = current_user
             
-        try:
-            self.appointment = self.appointment_repo.get_by_id(appointment_id)
-            
-            if not self.appointment:
-                self._log_error(f"Appointment {appointment_id} not found")
-                return False
-            
-            is_for_user_id = self.appointment.user_id == user_id
+        self.appointment = self.appointment_repo.get_by_id(appointment_id)
+        
+        if not self.appointment:
+            self._log_error(f"Appointment {appointment_id} not found")
+            return False
+        
+        is_for_user_id = self.appointment.user_id == user_id
 
-            if is_for_user_id:
-                current_description = self.appointment_repo.get_description(self)
-                cancel_description = f"{message} | {current_description}"
-                self.appointment_repo.update_description(self.appointment.id, cancel_description, canceled_by_user.id)
-                self.appointment_repo.set_canceled(self.appointment.id, canceled_by_user.id)
-                return True
-            else:
-                return False
-        except Exception as e:
-            self._log_error("cancel_with_message: Failed to cancel", e)
-            raise
+        if is_for_user_id:
+            current_description = self.appointment_repo.get_description(self)
+            cancel_description = f"{message} | {current_description}"
+            self.appointment_repo.update_description(self.appointment.id, cancel_description, canceled_by_user.id)
+            self.appointment_repo.set_canceled(self.appointment.id, canceled_by_user.id)
+            return True
+        else:
+            return False
 
     def confirm_booking(self, appointment_id, user_id, confirmed_by: UserModel=None) -> bool:
         if confirmed_by is None:
