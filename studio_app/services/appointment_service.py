@@ -187,9 +187,9 @@ class AppointmentService():
                 )
             return False
         
-        success = self.appointment_repo.set_confirmed(
+        self.appointment_repo.set_confirmed(
             self.appointment.id,
             confirmed_by_id
         )
 
-        return success
+        return True
