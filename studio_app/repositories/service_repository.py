@@ -14,33 +14,18 @@ class ServiceRepository(BaseRepository):
         self.db.commit()
         return new_service
     
-    def delete_soft(self, service: ServiceModel) -> bool:
-        try:
-            self.db.execute(update(ServiceModel).where(ServiceModel.id == service.id).values(deleted = True))
-            self.db.commit()
-            return True
-        except Exception as e:
-            self.db.rollback()
-            self._log_error(f"Failed to set service as deleted: {service.id}", e)
-            raise
+    def delete_soft(self, service: ServiceModel):
+        self.db.execute(update(ServiceModel).where(ServiceModel.id == service.id).values(deleted = True))
+        self.db.commit()
         
     def get_by_id(self, id: int) -> ServiceModel | None:
-        try:
-            return self.db.scalar(select(ServiceModel).where(ServiceModel.id == id))
-        except Exception as e:
-            self._log_error(f"Failed to get service by ID: {id}", e)
-            raise
-    
-    def update(self, service: ServiceModel, name: str, description: str='') -> bool:
-        try:
-            self.db.execute(update(ServiceModel).where(ServiceModel.id == service.id).values(name=name, description=description))
-            self.db.commit()
-            return True
-        except Exception as e:
-            self.db.rollback()
-            self._log_error(f"Failed to update service: {service.id}", e)
-            raise        
+        return self.db.scalar(select(ServiceModel).where(ServiceModel.id == id))
 
+    
+    def update(self, service: ServiceModel, name: str, description: str=''):
+        self.db.execute(update(ServiceModel).where(ServiceModel.id == service.id).values(name=name, description=description))
+        self.db.commit()
+   
     def does_exist_and_active(self, name: str) -> bool:
         service = self.db.scalar(select(ServiceModel).where(ServiceModel.name == name, ServiceModel.deleted == False))
         return False if service is None else True

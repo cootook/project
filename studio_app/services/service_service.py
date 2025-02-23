@@ -48,8 +48,8 @@ class ServiceService():
             service = self.service_repo.get_by_id(id)
             if service is None:
                 return False
-            success = self.service_repo.delete_soft(service)
-            return success
+            self.service_repo.delete_soft(service)
+            return True
         except Exception as e:
             print(f"ERROR {datetime.now()}: Failed to delete service ID {id}")
             return False
@@ -69,8 +69,8 @@ class ServiceService():
             service = self.service_repo.get_by_id(id)
             if service is None:
                 return False
-            success = self.service_repo.update(service, name, description)
-            return success
+            self.service_repo.update(service, name, description)
+            return True
         except Exception as e:
             print(f"ERROR {datetime.now()}: Failed to update service ID {id}")
             return False
