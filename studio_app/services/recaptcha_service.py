@@ -8,19 +8,13 @@ class RecaptchaService:
         pass
 
     def validate (token: str):
-        try:
-            url = Config.URL_RECAPTCHA
-            params = {
-            "secret": Config.SECRET_RECAPTCHA,
-            "response": token
-            }
+        url = Config.URL_RECAPTCHA
+        params = {
+        "secret": Config.SECRET_RECAPTCHA,
+        "response": token
+        }
 
-            recaptcha = requests.post(url, params)
-            recaptcha_respond_dict = json.loads(recaptcha.text)
+        recaptcha = requests.post(url, params)
+        recaptcha_respond_dict = json.loads(recaptcha.text)
 
-            return True if recaptcha_respond_dict['success'] else False
-
-        except Exception as er:
-            print("#helpers.recaptcha.RecaptchaService.validate ---recaptcha request")
-            print(er)
-            return  False
+        return True if recaptcha_respond_dict['success'] else False
