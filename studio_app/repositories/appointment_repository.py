@@ -95,7 +95,7 @@ class AppointmentRepository(BaseRepository):
         )
         self.db.commit()
 
-    def set_confirmed(self, appointment_id: int, confirmed_by_id: int) -> bool:
+    def set_confirmed(self, appointment_id: int, confirmed_by_id: int):
         self.db.execute(update(AppointmentModel).where(AppointmentModel.id == appointment_id).values(
             approved_at = datetime.datetime.now(),
             approved_by_id = confirmed_by_id,
