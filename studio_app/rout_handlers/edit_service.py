@@ -95,19 +95,13 @@ def _process_editing(data: Dict[str, Union[int, str]]) -> Tuple[Union[Response, 
                 status_code=HTTPStatus.NOT_FOUND
             )
     
-    success = service_service.edit_by_id(
+    service_service.edit_by_id(
         id=data["service_id"],
         name=data["service_name"],
         description=data["service_description"]
     )
 
-    if success:
-        print(f"Successfully edited service ID {data['service_id']}")
-        return redirect("/add_service/"), HTTPStatus.OK
-    
-    return error_handler.handle_error(
-        error_point="/delete_service/",
-        message=f"service ID {data['service_id']} was not edited",
-        status_code=HTTPStatus.BAD_REQUEST
-    )
+    print(f"Successfully edited service ID {data['service_id']}")
+
+    return redirect("/add_service/"), HTTPStatus.OK
  

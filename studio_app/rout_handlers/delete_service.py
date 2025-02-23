@@ -65,15 +65,7 @@ def _extract_form_data_get() -> int:
         raise ValueError(f"Failed to parse form data: {str(e)}")
 
 def _process_deleting(data: Dict[str, int]) -> Tuple[Union[Response, str], int]:
-    success = service_service.delete_by_id(data['service_id'])
-
-    if success:
-        print(f"Successfully deleted service ID {data['service_id']}")
-        return redirect("/add_service/"), HTTPStatus.OK
-    
-    return error_handler.handle_error(
-        error_point="/delete_service/",
-        message=f"service ID {data['service_id']} was not deleted",
-        status_code=HTTPStatus.BAD_REQUEST
-    )
+    service_service.delete_by_id(data['service_id'])
+    print(f"Successfully deleted service ID {data['service_id']}")
+    return redirect("/add_service/"), HTTPStatus.OK
  
