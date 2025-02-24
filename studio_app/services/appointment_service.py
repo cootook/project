@@ -177,3 +177,35 @@ class AppointmentService():
         )
 
         return True
+    
+    def set_as_done_with_price(
+            self, 
+            appointment_id: int, 
+            user_id: int, 
+            price: float,
+            set_done_by_user: UserModel=None
+            ):
+        
+        if set_done_by_user is None:
+            set_done_by_user = current_user
+            
+        self.appointment = self.appointment_repo.get_by_id(appointment_id)
+
+        if self.appointment is None:
+            raise
+        
+        is_for_user_id = self.appointment.user_id == user_id
+
+        if not is_for_user_id:
+            raise
+
+        self.appointment_repo.set_price(
+            appointment_id,
+            set_done_by_user.id,
+            price            
+        )
+        self.appointment_repo.set_done(
+            appointment_id,
+            set_done_by_user.id
+        )
+        

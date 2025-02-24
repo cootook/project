@@ -1,31 +1,36 @@
-import datetime
+from flask import redirect, request
+from ..services.appointment_service import AppointmentService
+from flask import redirect, request, Response
+from typing import Tuple, Union
+from http import HTTPStatus
+from ..error_handlers.appointment_error_handler import AppointmentErrorHandler
 
-from sqlalchemy import update
-from studio_app.db_classes import Appointment, db_base
-from flask import redirect, render_template, request
-from flask_security import current_user
-from flask import redirect, render_template, request
+appointment_error_handler = AppointmentErrorHandler()
 
-def done_appointment():
+def done_appointment() -> Tuple[Union[Response, str], int]:
     try:
-        user_id_done = int(request.form.get("user_id_done"))
-        booking_id_done = int(request.form.get("booking_id_done"))
-        price_done = request.form.get("done_price")
-        print(user_id_done, booking_id_done, price_done)
-        
-    except Exception as er:
-        print("##/done_appointment/ --form request")
-        print(er)
-        return  render_template("apology.html", error_message="Something went wrong")
+        data = _extract_cancellation_data()
+        appointment_service = AppointmentService()
+        appointment_service.set_as_done_with_price(
+            data['booking_id'],
+            data['user_id'],
+            data['price']
+        )
+    except ValueError as e:
+        return appointment_error_handler.handle_appointment_error(
+            error=e,
+            appointment_id=data.get('booking_id_done'),
+            additional_data={'user_id': data.get('user_id')}
+        )
     
-    db_base.session.execute(update(Appointment).where(Appointment.id == booking_id_done, Appointment.user_id == user_id_done).values(
-        last_update_at = datetime.datetime.now(),
-        last_update_by_id = current_user.id,
-        done_at = datetime.datetime.now(),
-        done_by_id = current_user.id,
-        price = price_done,
-        done = True
-        ))
-    db_base.session.commit()
-    
-    return redirect("/all_appointments/")
+    return redirect("/all_appointments/"), HTTPStatus.OK
+
+def _extract_cancellation_data() -> dict:
+    try:
+        return {
+            'user_id': int(request.form.get("user_id_done")),
+            'booking_id': int(request.form.get("booking_id_done")),
+            'price': float(request.form.get("done_price", 0))
+        }
+    except (TypeError, ValueError) as e:
+        raise ValueError(f"Failed to parse form data: {str(e)}")

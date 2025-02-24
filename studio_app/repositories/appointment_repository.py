@@ -32,7 +32,7 @@ class AppointmentRepository(BaseRepository):
         )
         return new_appointment
     
-    def get_by_id(self, id) -> AppointmentModel:
+    def get_by_id(self, id) -> AppointmentModel | None:
         return self.db.scalar(
             select(AppointmentModel).where(AppointmentModel.id == id)
         )
@@ -103,6 +103,41 @@ class AppointmentRepository(BaseRepository):
             last_update_at = datetime.datetime.now(),
             last_update_by_id = confirmed_by_id,
             )
+        )
+        self.db.commit()
+
+    def set_done(
+            self, 
+            appointment_id: int, 
+            set_done_by_id: int, 
+            ):
+        self.db.execute(
+            update(AppointmentModel)
+            .where(AppointmentModel.id == appointment_id)
+            .values(
+                done_at = datetime.datetime.now(),
+                done_by_id = set_done_by_id,
+                done = True,
+                last_update_at = datetime.datetime.now(),
+                last_update_by_id = set_done_by_id,
+                )
+        )
+        self.db.commit()
+
+    def set_price(
+            self, 
+            appointment_id: int, 
+            set_by_id: int, 
+            price: float
+            ):
+        self.db.execute(
+            update(AppointmentModel)
+            .where(AppointmentModel.id == appointment_id)
+            .values(
+                last_update_at = datetime.datetime.now(),
+                last_update_by_id = set_by_id,
+                price = price
+                )
         )
         self.db.commit()
 
