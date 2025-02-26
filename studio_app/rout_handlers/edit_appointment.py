@@ -1,10 +1,6 @@
 import datetime
 
 from json import dumps
-from sqlalchemy import select, update
-from studio_app.db_classes import Appointment, Service, db_base
-from flask import redirect, render_template, request
-from flask_security import current_user
 
 from flask import redirect, request
 from ..services.appointment_service import AppointmentService
