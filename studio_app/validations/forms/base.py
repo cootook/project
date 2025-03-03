@@ -1,8 +1,12 @@
 from flask_wtf import FlaskForm
 from wtforms import ValidationError
 
+
 class BaseForm(FlaskForm):
     """Base form with common validation methods and utilities."""
+    def __init__():
+        pass
+            
     
     def log_validation_error(self, field_name, message):
         """Log validation error for debugging purposes."""

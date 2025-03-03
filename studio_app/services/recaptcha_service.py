@@ -7,7 +7,7 @@ class RecaptchaService:
     def __init__(self):
         pass
 
-    def validate (token: str):
+    def validate (self, token: str):
         url = Config.URL_RECAPTCHA
         params = {
         "secret": Config.SECRET_RECAPTCHA,

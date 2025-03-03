@@ -1,85 +1,145 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField
+import datetime
+from flask_wtf import RecaptchaField
+from wtforms import StringField, IntegerField
 from wtforms.validators import DataRequired, Length, ValidationError
-
+from wtforms.fields.datetime import DateTimeLocalField
+from wtforms.fields.simple import TelField, HiddenField, BooleanField
+from wtforms import ValidationError, SelectField
 from .base import BaseForm
+from ...services.phone_service import PhoneNumberService
+from ...repositories.slot_repository import SlotRepository
+from ...repositories.user_repository import UserRepository
+from ...repositories.appointment_repository import AppointmentRepository
+
+appointment_repo = AppointmentRepository()
+slot_repo = SlotRepository()
+user_repo = UserRepository()
+
+def _phone_number_validator(
+        form,
+        field,
+
+):
+    phone_number_service = PhoneNumberService(field.data)
+    if not phone_number_service.is_valid:
+        raise ValidationError("phone number is not valid")
+    
+def _terms_and_privacy_concern_validator(
+        form,
+        field,
+):
+    """
+    Custom validator for terms and privacy:
+    """
+    if not field.data:
+        raise ValidationError("terms are not accepted")
+    
+def _slot_exists(
+        form,
+        field
+):
+    if slot_repo.get_by_id(int(field.data)) is None:
+        raise ValidationError("no slot found")
+
+def _date_in_form_and_slot_match(
+        form,
+        field
+):
+    date_time_pythonic = datetime.datetime.strptime(
+            form.date_time_iso.data, 
+            '%Y-%m-%dT%H:%M'
+            ) 
+    slot = slot_repo.get_by_id(int(field.data))
+    if date_time_pythonic != slot.date:
+        raise ValidationError("Error: date and slot do not match")
+
+def _appointment_in_form_belongs_to_user(
+        form,
+        field
+):
+    appointment_id = int(form.appointment_id.data)
+    pass
+
+def _user_exists(
+        form,
+        field
+):
+    pass
 
 class BaseAppointmentForm(BaseForm):
     name = StringField('Name', validators=[
         DataRequired(message="Name is required"),
         Length(min=2, max=100, message="Name must be between 2 and 100 characters")
-    ])
-    date_time_iso = StringField('Name', validators=[
-        DataRequired(message="Name is required"),
-        Length(min=2, max=100, message="Name must be between 2 and 100 characters")
-    ])   
-    message   
-        #     at = new_date_py,
-        #     amount_time_min = new_duration,
-        #     description = new_message + " | " + messages,
-        #     service = dumps(new_service),
-        #     last_update_at = datetime.datetime.now(),
-        #     last_update_by_id = current_user.id
-            # 'user_id': int(request.form.get("user_id_edit")),
-            # 'booking_id': int(request.form.get("booking_id_edit")),
-            # 'message': float(request.form.get("new_message", "")),
-            # 'duration': int(request.form.get("new_duration")),
-            # 'date_time': request.form.get("new_date"),
-            # 'service': service_for_services.get_list_of_services_from_form_data_dict(request.form)
-
-class CreateAppointmentForm(BaseAppointmentForm):
-    phone= StringField('Service Name', validators=[
-        DataRequired(message="Service name is required"),
-        Length(min=2, max=100, message="Service name must be between 2 and 100 characters")
-    ])
-    token
-    terms_and_privacy_concern
+        ],
+        name="client_name",
+        id="client_name"
+        )
+    date_time_iso = DateTimeLocalField(
+        'Date and time', 
+        format="%Y-%m-%dT%H:%M", 
+        validators=[
+            DataRequired(message="Date and time are required"),
+            Length(min=16, max=16, message="Wrong format")
+            ],
+        name="datetime-iso",
+        id="datetime-iso"
+        )   
+    message = StringField('Message', validators=[
+        DataRequired(message="Message is required"),
+        Length(min=2, max=300, message="Name must be between 2 and 100 characters")
+        ],
+        name="message-text",
+        id="message-text"
+        )
+ 
+class BookAppointmentForm(BaseAppointmentForm):
+    slot_id = HiddenField(
+        validators=[
+            DataRequired(),
+            _slot_exists,
+            _date_in_form_and_slot_match
+        ],
+        name="slot_id",
+        id="slot_id"
+    )
+    phone= TelField('Phone number', validators=[
+        DataRequired(message="Phone number is required"),
+        Length(min=10, max=14, message="Service name must be between 2 and 100 characters"),
+        _phone_number_validator
+        ],
+        name="full_phone",
+        id="full_phone"
+        )
+    token = RecaptchaField()
+    terms_and_privacy_concern = BooleanField("Terms and privacy", validators=[
+        DataRequired(),
+        _terms_and_privacy_concern_validator
+        ],
+        name="client_name",
+        id="client_name"
+        )
     
 
 class EditAppointmentForm(BaseAppointmentForm):
-    slot_id
-    pass
-
-
-class CreateServiceForm(BaseForm):
-    """
-    Form for validating new service creation.
-    
-    This form validates that the service name is unique and properly formatted
-    before any data reaches the service layer.
-    """
-    service = StringField('Service Name', validators=[
-        DataRequired(message="Service name is required"),
-        Length(min=2, max=100, message="Service name must be between 2 and 100 characters")
-    ])
-    description = StringField('Description', validators=[
-        DataRequired(message="Description is required"),
-        Length(min=5, max=500, message="Description must be between 5 and 500 characters")
-    ])
-    
-    def __init__(self, service_repository=None, *args, **kwargs):
-        """
-        Initialize form with optional service repository dependency.
-        
-        Args:
-            service_repository: Repository used to check if service exists
-            *args, **kwargs: Standard form arguments
-        """
-        super(CreateServiceForm, self).__init__(*args, **kwargs)
-        self.service_repository = service_repository
-    
-    def validate_service(self, field):
-        """
-        Custom validator for service name uniqueness.
-        
-        This method is automatically called by WTForms during validation.
-        It checks if a service with the same name already exists.
-        
-        Args:
-            field: The form field being validated (service name)
-            
-        Raises:
-            ValidationError: If service already exists
-        """
-        if self.service_repository and self.service_repository.does_exist_and_active(field.data):
-            raise ValidationError("This service already exists")
+    appointment_id = HiddenField(validators=[
+        DataRequired(),
+        Length(min=1, max=6),
+        _user_exists,
+        _appointment_in_form_belongs_to_user
+        ],
+        name="appointment_id",
+        id="appointment_id"
+        )
+    user_id = HiddenField(validators=[
+        DataRequired(),
+        Length(min=1, max=4),
+        _user_exists,
+        _appointment_in_form_belongs_to_user
+        ],
+        name="user_id",
+        id="user_id"
+        )
+    duration = IntegerField('Duration of the appointment', 
+        name="new_duration",
+        id="new_duration"
+        )

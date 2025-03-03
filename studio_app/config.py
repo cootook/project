@@ -47,6 +47,10 @@ class Config(object):
     SITE_KEY_RECAPTCHA = os.environ.get("SITE_KEY_RECAPTCHA")
     URL_RECAPTCHA = os.environ.get("URL_RECAPTCHA")
 
+    # Flask WTF recaptcha
+    RECAPTCHA_PUBLIC_KEY = SITE_KEY_RECAPTCHA
+    RECAPTCHA_PRIVATE_KEY = SECRET_RECAPTCHA
+
     # User Role Settings
     KEY_CHANGE_ROLE_LIST = os.environ.get("KEY_CHANGE_ROLE_LIST")
     KEY_CHANGE_ROLE = os.environ.get("KEY_CHANGE_ROLE")
