@@ -47,3 +47,12 @@ class ServiceRepository(BaseRepository):
             service = service.__dict__
             services_list.append(service)
         return services_list
+    
+    def get_list_of_names_of_active_services(self) -> list:
+        services_bd = self.db.scalars(
+            select(ServiceModel)
+            .where(ServiceModel.deleted == 0)).fetchall()
+        list_of_names_of_active_services = []
+        for service in services_bd:
+            list_of_names_of_active_services.append(service.name)
+        return list_of_names_of_active_services
