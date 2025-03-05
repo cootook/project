@@ -10,10 +10,12 @@ from ...services.phone_service import PhoneNumberService
 from ...repositories.slot_repository import SlotRepository
 from ...repositories.user_repository import UserRepository
 from ...repositories.appointment_repository import AppointmentRepository
+from ...repositories.service_repository import ServiceRepository
 
 appointment_repo = AppointmentRepository()
 slot_repo = SlotRepository()
 user_repo = UserRepository()
+service_repo = ServiceRepository()
 
 def _phone_number_validator(
         form,
@@ -69,6 +71,13 @@ def _user_exists(
     if not user_repo.does_user_exist_by_id(int(field.data)):
         raise ValidationError("Error: user does not exist")
     
+def _service_exists(
+        form,
+        field
+):
+    if not service_repo.does_exist_and_active(field.data):
+        raise ValidationError("Error: wrong service")
+    
 class BaseAppointmentForm(BaseForm):
     name = StringField('Name', validators=[
         DataRequired(message="Name is required"),
@@ -121,6 +130,14 @@ class BookAppointmentForm(BaseAppointmentForm):
         name="client_name",
         id="client_name"
         )
+    service = SelectField(
+        "select service",
+        validators=[
+            DataRequired(),
+            _service_exists
+        ],
+        choices=service_repo.get_list_of_names_of_active_services()
+    )
     
 
 class EditAppointmentForm(BaseAppointmentForm):
