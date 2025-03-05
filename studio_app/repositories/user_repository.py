@@ -43,6 +43,12 @@ class UserRepository(BaseRepository):
             select(UserModel).where(UserModel.email == email)
         )
         return user is not None
+    
+    def does_user_exist_by_id(self, id: int) -> bool:
+        user = self.db.scalar(
+            select(UserModel).where(UserModel.id == id)
+        )
+        return user is not None
 
     def does_user_exist_by_tel(self, tel: str) -> bool:
         user = self.db.scalar(

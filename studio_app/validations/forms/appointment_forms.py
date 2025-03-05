@@ -58,14 +58,17 @@ def _appointment_in_form_belongs_to_user(
         field
 ):
     appointment_id = int(form.appointment_id.data)
-    pass
+    appointment = appointment_repo.get_by_id(appointment_id)
+    if appointment.user_id != int(field.data):
+        raise ValidationError("Error: appointment does not belong to user")
 
 def _user_exists(
         form,
         field
 ):
-    pass
-
+    if not user_repo.does_user_exist_by_id(int(field.data)):
+        raise ValidationError("Error: user does not exist")
+    
 class BaseAppointmentForm(BaseForm):
     name = StringField('Name', validators=[
         DataRequired(message="Name is required"),
