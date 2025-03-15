@@ -136,7 +136,6 @@ class BookAppointmentForm(BaseAppointmentForm):
             DataRequired(),
             _service_exists
         ],
-        choices=service_repo.get_list_of_names_of_active_services()
     )
     
 

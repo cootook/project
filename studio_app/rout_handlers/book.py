@@ -7,6 +7,7 @@ from ..services.verification_service import SmsVerificationOfBooking
 from ..services.booking_service import Booking
 from ..models.service import ServiceModel
 from ..services.service_service import ServiceService
+from ..validations.forms.appointment_forms import BaseAppointmentForm
 
 def book():    
     if request.method == "POST":
@@ -70,4 +71,10 @@ def book():
             )
 
     else:
-        return redirect("/")
+        form = BaseAppointmentForm()
+        # get slot id
+        # get date
+        return render_template(
+            "book.html", 
+            form=form
+            )

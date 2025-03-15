@@ -21,7 +21,6 @@ from .config import ProductionConfig, DevelopmentConfig, TestingConfig
 from .cli import seed_admin, seed_all, seed_roles, seed_slots, seed_test_user, delete_empty_slots
 from .models import RoleModel, ServiceModel, SlotModel, UserModel, data_base
 from flask_wtf.csrf import CSRFProtect
-
 from studio_app.helpers_legacy import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_logged_only, admin_only, get_service_name
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
@@ -47,6 +46,9 @@ mail = Mail(app)
 
 data_base.init_app(app)
 migrate = Migrate(app, data_base)
+
+csrf = CSRFProtect(app)
+
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(data_base, UserModel, RoleModel)

@@ -3,7 +3,6 @@ from ..services.service_service import ServiceService
 from ..error_handlers.error_handlers import ErrorHandler
 from http import HTTPStatus
 from typing import Dict, Tuple, Union
-from flask_security import csrf_token_required
 
 error_handler = ErrorHandler()
 service_service = ServiceService()
@@ -32,7 +31,6 @@ def edit_service() -> Tuple[Union[Response, str], int]:
                 status_code=HTTPStatus.BAD_REQUEST
             )    
     
-@csrf_token_required
 def _handle_edit_post() -> Tuple[Union[Response, str], int]:
     try:
         data = _extract_form_data_post()
