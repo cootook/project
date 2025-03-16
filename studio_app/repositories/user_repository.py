@@ -1,4 +1,5 @@
 from flask_security import hash_password
+from flask_security.utils import verify_and_update_password
 from sqlalchemy import select, update
 from ..models.user import UserModel
 from ..models.role import RoleModel
@@ -100,6 +101,9 @@ class UserRepository(BaseRepository):
             user,
             **default_user_data
         )
+    
+    def verify_and_update_password(self, user: UserModel, password: str):
+        return verify_and_update_password(password, user)
 
     def update_user_data(self, user: UserModel, **kwargs: any) -> UserModel:
         self.db.execute(
