@@ -14,3 +14,10 @@ class UserService:
         self.user = self.user_repo.get_user_by_id(id)
         return login_user(self.user)
     
+    def login_by_email_and_remember(self, email: str, remember: bool=None):
+        if self.user is not None:
+            logout_user(self.user)
+
+        self.user = self.user_repo.get_user_by_email(email)
+        return login_user(self.user, remember)
+    

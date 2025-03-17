@@ -14,6 +14,8 @@ from flask_session import Session
 from jinja2 import Environment as jinja2_env
 from .helpers_legacy import validate_recaptcha, validate_twilio_request, send_email
 from .services.email_service import EmailService
+from .services.user_service import UserService
+from .repositories.user_repository import UserRepository
 from studio_app.forms import ExtendedRegisterForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
@@ -25,7 +27,7 @@ from studio_app.helpers_legacy import log_user_in, log_user_out, login_required,
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
 from .rout_handlers import *
-
+from wtforms import ValidationError
 
 load_dotenv()
 
@@ -349,7 +351,37 @@ def signin():
             return render_template("apology.html", error_message="wrong login or password password_ok")            
 
     else:
-        return render_template("signin.html")    
+        return render_template("signin.html") 
+
+@app.route("/login-with-email/", methods = ["GET", "POST"])
+@not_logged_only
+def login_with_email():
+    from .validations.forms.login_forms import LoginByEmailForm
+    form = LoginByEmailForm()
+
+    if request.method == "GET":
+        return render_template("login_by_mail.html", form=form)
+    
+    try:
+        if form.validate_on_submit():
+            user_service = UserService()
+            user_repo = UserRepository()
+            user_service.login_by_email_and_remember(form.email.data, form.do_remember_me.data)
+
+            # legacy: backward compatibility
+            user_to_login = user_repo.get_user_by_email(form.email.data)
+            session["user_id"] = user_to_login.__dict__["id"]
+            session["is_admin"] = 1 if user_to_login.has_role("admin") else 0            
+            session["name"] = user_to_login.__dict__["name"]
+            session["login"] = user_to_login.__dict__["email"]
+            session["instagram"] = user_to_login.__dict__["instagram"]
+            session["tell"] = user_to_login.__dict__["us_phone_number"]
+
+    except ValidationError as e:
+            flash(str(e))
+            return redirect("/")
+            
+
 
 @app.route("/signup/", methods = ["GET", "POST"])
 @not_logged_only

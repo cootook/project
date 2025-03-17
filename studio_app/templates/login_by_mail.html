@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Sign In 
+{% endblock %}
+
+{% block content %}
+<div class="signin-container">
+    <form class="form-signin" action="/login-with-email/" method="POST" id="signin-form">
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+    
+        <div class="form_input">
+            {{ form.email(class="form-control") }}
+        </div>
+        
+        <div class="form_input">
+            {{ form.password(class="form-control") }}
+        </div>
+
+        <div class="checkbox mb-3">
+            {{ form.remember(class="form-check-input") }}
+        </div>
+        
+        {{ form.form.csrf_token }}
+
+        {{ form.recaptcha }}
+
+        <button class="w-100 btn btn-lg btn-primary" type="submit" id="signin-submit" disabled>Sign in</button>
+    </form>
+</div>
+
+<!-- missing js part -->
+<script src="{{ url_for('static', filename='/js/signin.js') }}"></script>
+
+{% endblock %}

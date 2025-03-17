@@ -31,8 +31,8 @@ class LoginByEmailForm(BaseForm):
             Length(min=2, max=100, message="email must be between 2 and 100 characters"),
             _login_validator
         ],
-        name="login",
-        id="login"
+        name="email",
+        id="email"
         )
     
     password = PasswordField(
