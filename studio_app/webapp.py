@@ -42,10 +42,6 @@ app = Flask(
 # app.config.from_object(ProductionConfig)
 app.config.from_object(DevelopmentConfig)
 # app.config.from_object(TestingConfig)
-app.config['SECURITY_WAN_ALLOW_AS_FIRST_FACTOR'] = False
-app.config['SECURITY_WAN_ALLOW_AS_MULTI_FACTOR'] = False
-app.config['SECURITY_WAN_ALLOW_AS_VERIFY'] = False
-app.config['SECURITY_WAN_ALLOW_USER_HINTS'] = False
 
 Session(app)
 mail = Mail(app)
