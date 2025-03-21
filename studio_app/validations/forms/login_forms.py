@@ -57,7 +57,7 @@ class LoginByEmailForm(BaseForm):
         id="remember"
     )
 
-    token = RecaptchaField(render_kw={
+    recaptcha = RecaptchaField(render_kw={
         "data-callback": DATA_CALLBACK_JS_FUNC_NAME, 
         "data-expired-callback": DATA_EXPIRED_CALLBACK_JS_FUNC_NAME
         })

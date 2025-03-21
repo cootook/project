@@ -4,8 +4,8 @@ from wtforms import ValidationError
 
 class BaseForm(FlaskForm):
     """Base form with common validation methods and utilities."""
-    def __init__():
-        pass
+    def __init__(self, *args, **kwargs):
+        super(BaseForm, self).__init__(*args, **kwargs)
             
     
     def log_validation_error(self, field_name, message):

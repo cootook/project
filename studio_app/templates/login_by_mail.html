@@ -18,10 +18,10 @@ Sign In
         </div>
 
         <div class="checkbox mb-3">
-            {{ form.remember(class="form-check-input") }}
+            {{ form.do_remember_me(class="form-check-input") }}
         </div>
         
-        {{ form.form.csrf_token }}
+        {{ form.csrf_token }}
 
         {{ form.recaptcha }}
 
@@ -29,7 +29,6 @@ Sign In
     </form>
 </div>
 
-<!-- missing js part -->
 <script src="{{ url_for('static', filename='/js/login_by_mail.js') }}"></script>
 
 {% endblock %}
