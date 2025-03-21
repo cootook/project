@@ -5,6 +5,9 @@ from wtforms import ValidationError
 from .base import BaseForm
 from ...repositories.user_repository import UserRepository
 
+DATA_CALLBACK_JS_FUNC_NAME = "set_is_recaptcha_true"
+DATA_EXPIRED_CALLBACK_JS_FUNC_NAME = "set_is_recaptcha_false"
+
 user_repo = UserRepository()
 
 def _login_validator(
@@ -54,4 +57,7 @@ class LoginByEmailForm(BaseForm):
         id="remember"
     )
 
-    token = RecaptchaField()
+    token = RecaptchaField(render_kw={
+        "data-callback": DATA_CALLBACK_JS_FUNC_NAME, 
+        "data-expired-callback": DATA_EXPIRED_CALLBACK_JS_FUNC_NAME
+        })

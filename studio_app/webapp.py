@@ -42,6 +42,10 @@ app = Flask(
 # app.config.from_object(ProductionConfig)
 app.config.from_object(DevelopmentConfig)
 # app.config.from_object(TestingConfig)
+app.config['SECURITY_WAN_ALLOW_AS_FIRST_FACTOR'] = False
+app.config['SECURITY_WAN_ALLOW_AS_MULTI_FACTOR'] = False
+app.config['SECURITY_WAN_ALLOW_AS_VERIFY'] = False
+app.config['SECURITY_WAN_ALLOW_USER_HINTS'] = False
 
 Session(app)
 mail = Mail(app)
@@ -354,6 +358,7 @@ def signin():
         return render_template("signin.html") 
 
 @app.route("/login-with-email/", methods = ["GET", "POST"])
+@app.route("/login-with-email", methods = ["GET", "POST"])
 @not_logged_only
 def login_with_email():
     from .validations.forms.login_forms import LoginByEmailForm
