@@ -15,5 +15,6 @@ __all__ = [
     'add_service',
     'edit_service',
     'delete_service',
-    'confirm_phone'
+    'confirm_phone',
+    'login_with_email'
 ]

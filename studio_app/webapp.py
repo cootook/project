@@ -2,28 +2,25 @@ import os
 import sqlite3
 import datetime
 
-from calendar import monthrange
 from dotenv import load_dotenv
-from flask import Flask, flash, redirect, render_template, request, session, render_template_string, send_file
-from flask.cli import with_appcontext
+from flask import Flask, flash, redirect, render_template, request, session, send_file
 from flask_mailman import Mail
 from flask_migrate import Migrate
-from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password, login_user, verify_and_update_password, logout_user
-from flask_security.forms import LoginForm, ConfirmRegisterForm
+from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password, logout_user
 from flask_session import Session
 from jinja2 import Environment as jinja2_env
-from .helpers_legacy import validate_recaptcha, validate_twilio_request, send_email
+
+from .helpers_legacy import validate_twilio_request
 from .services.email_service import EmailService
 from .services.user_service import UserService
 from .repositories.user_repository import UserRepository
 from studio_app.forms import ExtendedRegisterForm
-from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
 from .config import ProductionConfig, DevelopmentConfig, TestingConfig
 from .cli import seed_admin, seed_all, seed_roles, seed_slots, seed_test_user, delete_empty_slots
 from .models import RoleModel, ServiceModel, SlotModel, UserModel, data_base
 from flask_wtf.csrf import CSRFProtect
-from studio_app.helpers_legacy import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_logged_only, admin_only, get_service_name
+from studio_app.helpers_legacy import log_user_out, login_required, page_not_found, not_logged_only, admin_only
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
 from .rout_handlers import *
@@ -60,7 +57,7 @@ app.register_error_handler(404, page_not_found)
 
 # Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "History", "Account", "Contact", "Terms_of_service", "Privacy_policy", "LogOut"]
-navbar_items_not_logged_in = ["Contact", "Terms_of_service", "Privacy_policy", "SignIn"]
+navbar_items_not_logged_in = ["Contact", "Terms_of_service", "Privacy_policy"]
 navbar_items_admin = ["All_appointments", "Add_service", "Account", "Clients", "Windows", "Contact", "Terms_of_service", "Privacy_policy", "LogOut"]
 days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
 
@@ -318,71 +315,11 @@ def showing_all_history():
 def pricing():
     return render_template("pricing.html")
 
-@app.route("/signin/", methods = ["GET", "POST"])
-@not_logged_only
-def signin():
-    if request.method == "POST":
-        # try:
-        token = request.form.get("g-recaptcha-response")
-        login = request.form.get("login")
-        password = request.form.get("password")
-        remember = False if request.form.get("remember") == None else True
-
-        if not validate_recaptcha(token):
-            return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot protection. Please, try again or contact us.")
-        
-        user_to_login = data_base.session.scalar(select(SlotModel).where(SlotModel.email == login))
-        if user_to_login is None:
-            return render_template("apology.html", error_message="wrong login or password user_to_login")
-        
-        password_ok = verify_and_update_password(password, user_to_login)
-        data_base.session.commit()
-        if password_ok:
-
-            login_user(user_to_login, remember, "password")
-            session["user_id"] = user_to_login.__dict__["id"]
-            session["is_admin"] = 1 if user_to_login.has_role("admin") else 0            
-            session["name"] = user_to_login.__dict__["name"]
-            session["login"] = user_to_login.__dict__["email"]
-            session["instagram"] = user_to_login.__dict__["instagram"]
-            session["tell"] = user_to_login.__dict__["us_phone_number"]
-            return redirect("/")
-        else:
-            return render_template("apology.html", error_message="wrong login or password password_ok")            
-
-    else:
-        return render_template("signin.html") 
-
 @app.route("/login-with-email/", methods = ["GET", "POST"])
 @app.route("/login-with-email", methods = ["GET", "POST"])
 @not_logged_only
-def login_with_email():
-    from .validations.forms.login_forms import LoginByEmailForm
-    form = LoginByEmailForm()
-
-    if request.method == "GET":
-        return render_template("login_by_mail.html", form=form)
-    
-    try:
-        if form.validate_on_submit():
-            user_service = UserService()
-            user_repo = UserRepository()
-            user_service.login_by_email_and_remember(form.email.data, form.do_remember_me.data)
-
-            # legacy: backward compatibility
-            user_to_login = user_repo.get_user_by_email(form.email.data)
-            session["user_id"] = user_to_login.__dict__["id"]
-            session["is_admin"] = 1 if user_to_login.has_role("admin") else 0            
-            session["name"] = user_to_login.__dict__["name"]
-            session["login"] = user_to_login.__dict__["email"]
-            session["instagram"] = user_to_login.__dict__["instagram"]
-            session["tell"] = user_to_login.__dict__["us_phone_number"]
-
-    except ValidationError as e:
-            flash(str(e))
-            return redirect("/")
-            
-
+def login():
+    return login_with_email.login_with_email()
 
 @app.route("/signup/", methods = ["GET", "POST"])
 @not_logged_only

@@ -21,9 +21,14 @@ def _password_validator(
         form,
         field
 ):
-    user = user_repo.get_user_by_email(form.login.data)
+    try:
+        password_ok = user_repo.verify_and_update_password(
+            user_repo.get_user_by_email(form.email.data),
+            field.data)
+    except:
+        password_ok = False
     
-    if not user_repo.verify_and_update_password(user, field.data):
+    if not password_ok:
         raise ValidationError("wrong login or password")
       
 class LoginByEmailForm(BaseForm):
@@ -31,8 +36,7 @@ class LoginByEmailForm(BaseForm):
         'email', 
         validators=[
             DataRequired(message="email is required"),
-            Length(min=2, max=100, message="email must be between 2 and 100 characters"),
-            _login_validator
+            Length(min=2, max=100, message="email must be between 2 and 100 characters")
         ],
         name="email",
         id="email"
@@ -50,14 +54,9 @@ class LoginByEmailForm(BaseForm):
 
     do_remember_me = BooleanField(
         'remember me',
-        validators=[
-            DataRequired(message="remember check box")
-        ],
         name="remember",
-        id="remember"
+        id="remember", 
+        default=False    
     )
 
-    recaptcha = RecaptchaField(render_kw={
-        "data-callback": DATA_CALLBACK_JS_FUNC_NAME, 
-        "data-expired-callback": DATA_EXPIRED_CALLBACK_JS_FUNC_NAME
-        })
+    recaptcha = RecaptchaField()

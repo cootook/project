@@ -305,7 +305,6 @@ project
    │  │  ├─ _menu.html
    │  │  ├─ login_user.html
    │  │  └─ register_user.html
-   │  ├─ signin.html
    │  ├─ signup.html
    │  ├─ terms_of_service.html
    │  └─ windows.html

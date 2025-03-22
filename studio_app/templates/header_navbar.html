@@ -3,11 +3,7 @@
 {% endblock %}
 
 {% if session.get("user_id") %}
-    {% if session.get("name") %}
         <span class="font-weight-light text-warning">Hi {{session.get("name")}}!</span>
-    {% else %}
-        <span class="font-weight-light text-warning">Hi {{session.get("instagram")}}!</span>
-    {% endif %}
         {% if session.get("is_admin")==1 %}
             {% for navbar_item in navbar_items_admin %}
             <li class="nav-item">

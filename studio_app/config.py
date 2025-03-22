@@ -46,10 +46,16 @@ class Config(object):
     SECRET_RECAPTCHA = os.environ.get("SECRET_RECAPTCHA")
     SITE_KEY_RECAPTCHA = os.environ.get("SITE_KEY_RECAPTCHA")
     URL_RECAPTCHA = os.environ.get("URL_RECAPTCHA")
+    DATA_CALLBACK_JS_FUNC_NAME = "set_is_recaptcha_true"
+    DATA_EXPIRED_CALLBACK_JS_FUNC_NAME = "set_is_recaptcha_false"
 
     # Flask WTF recaptcha
     RECAPTCHA_PUBLIC_KEY = SITE_KEY_RECAPTCHA
     RECAPTCHA_PRIVATE_KEY = SECRET_RECAPTCHA
+    RECAPTCHA_DATA_ATTRS = {
+        "callback": DATA_CALLBACK_JS_FUNC_NAME, 
+        "expired-callback": DATA_EXPIRED_CALLBACK_JS_FUNC_NAME
+    }
 
     # User Role Settings
     KEY_CHANGE_ROLE_LIST = os.environ.get("KEY_CHANGE_ROLE_LIST")
