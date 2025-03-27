@@ -49,6 +49,11 @@ class AppointmentService():
                 'pages': (total_appointments + per_page - 1) // per_page
             }
         }
+    
+    def get_user_phone_by_appointment_id(self, appointment_id):
+        self.appointment = self.appointment_repo.get_by_id(appointment_id)
+        user = self.user_repo.get_user_by_id(self.appointment.user_id)
+        return user.tel
 
     def _process_appointment(self, appointment) -> Dict:
         appointment_data = deepcopy(appointment.__dict__)
@@ -208,4 +213,8 @@ class AppointmentService():
             appointment_id,
             set_done_by_user.id
         )
+
+    def set_phone_confirmed_by_appointment_id(self, appointment_id: int):
+        appointment = self.appointment_repo.get_by_id(appointment_id)
+        self.appointment_repo.set_phone_confirmed(appointment)
         

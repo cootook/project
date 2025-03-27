@@ -331,14 +331,39 @@
         var square = createElement('div', 'event-category ' + ev.color);
         //var span = createElement('span', '', ev.eventName);
         if (action_path == "/book/"){
-                var modal_button = createElement('button', 'btn btn-primary btn-calendar')
-                modal_button.setAttribute("data-toggle", "modal")
-                modal_button.setAttribute("data-target", "#book_confirm_modal")
-                modal_button.setAttribute("data-slot_id", ev.id)
-                modal_button.setAttribute("data-datetime-iso", ev.date.format('YYYY-MM-DD[T]HH[:]mm[:00]'))
-                modal_button.setAttribute("data-date-local", ev.date.format('ddd, MMM D [at] h:mm A'))
-                modal_button.innerText = ev.date.format('ddd, MMM D [at] h:mm A')
-                div.appendChild(modal_button);
+                const form_to_booking_page = createElement('form')
+                form_to_booking_page.setAttribute('action', `/book`)
+                form_to_booking_page.setAttribute('method', 'GET')
+
+                const input_slot_id = createElement('input')
+                input_slot_id.setAttribute('type', 'hidden')
+                input_slot_id.setAttribute('name', 'slot_id')
+                input_slot_id.setAttribute('id', 'slot_id')
+                input_slot_id.setAttribute('value', ev.id)
+
+                const input_datetime_iso = createElement('input')
+                input_datetime_iso.setAttribute('type', 'hidden')
+                input_datetime_iso.setAttribute('name', 'datetime-iso')
+                input_datetime_iso.setAttribute('id', 'datetime-iso')
+                input_datetime_iso.setAttribute('value', ev.date.format('YYYY-MM-DD[T]HH[:]mm[:00]'))
+
+                const btn_submit = createElement('button', 'btn btn-primary btn-calendar')
+                btn_submit.setAttribute('type', 'submit')
+                btn_submit.textContent = ev.date.format('ddd, MMM D [at] h:mm A')
+
+                form_to_booking_page.appendChild(input_slot_id)
+                form_to_booking_page.appendChild(input_datetime_iso)
+                form_to_booking_page.appendChild(btn_submit)
+                div.appendChild(form_to_booking_page)
+
+                // var modal_button = createElement('button', 'btn btn-primary btn-calendar')
+                // modal_button.setAttribute("data-toggle", "modal")
+                // modal_button.setAttribute("data-target", "#book_confirm_modal")
+                // modal_button.setAttribute("data-slot_id", ev.id)
+                // modal_button.setAttribute("data-datetime-iso", ev.date.format('YYYY-MM-DD[T]HH[:]mm[:00]'))
+                // modal_button.setAttribute("data-date-local", ev.date.format('ddd, MMM D [at] h:mm A'))
+                // modal_button.innerText = ev.date.format('ddd, MMM D [at] h:mm A')
+                // div.appendChild(modal_button);
                 }
 
         else if (action_path == "/windows/") {

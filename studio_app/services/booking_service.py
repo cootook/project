@@ -12,7 +12,6 @@ from .user_service import UserService
 from ..services.appointment_service import AppointmentService
 
 
-
 class Booking:
     def __init__(
             self, 
@@ -26,6 +25,7 @@ class Booking:
         self.slot_repo = SlotRepository()
         self.user_repo = UserRepository()
         self.appointment_repo = AppointmentRepository()
+        self.user_service = UserService()
         self.datetime = datetime
         self.date = self.datetime.date()
         self.time = self.datetime.time()
@@ -33,9 +33,9 @@ class Booking:
         self.message = message
         self.client_phone = client_phone
         self.client_name = client_name
-        self.client = UserRepository.get_or_create_and_update_user_by_phone(self.client_phone) #set name for client
-        self.user_repo.update_user_data(name=client_name)
-        self.client_is_logged_in = UserService.login_by_id(self.client_id)
+        self.client = self.user_repo.get_or_create_and_update_user_by_phone(self.client_phone) #set name for client
+        self.user_repo.update_user_data(self.client, name=client_name)
+        self.client_is_logged_in = self.user_service.login_by_id(self.client.id)
         self.is_slot_open = self.slot_repo.is_open(self.slot, self.date, self.time)
         self.list_of_services = list_of_services
         self.appointment_id = appointment_id or self.appointment_repo.create(
@@ -46,9 +46,10 @@ class Booking:
             last_update_by_id=self.client.id,
             description=message,
         ).id
+        self.appointment_service = AppointmentService(self.appointment_repo.get_by_id(self.appointment_id))
         self.confirmation_code = self.appointment_service.generate_and_set_confirmation_code()
         self.is_phone_verified = False
-        self.appointment_service = AppointmentService(self.appointment_repo.get_by_id(self.appointment_id))
+        
         
     def set_phone_confirmed(self):
         self.appointment_repo.set_phone_confirmed(self.appointment)

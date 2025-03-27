@@ -28,8 +28,15 @@ class AppointmentRepository(BaseRepository):
             amount_time_min=amount_time_min,
             last_update_at=datetime.datetime.now(),
             last_update_by_id=last_update_by_id,
-            description=description,
+            description=description
         )
+        self.db.add(new_appointment)
+        self.db.commit()
+        print("# create_appointment ", new_appointment)
+        print("# try to find ", self.db.scalar(
+            select(AppointmentModel).where(AppointmentModel.id == new_appointment.id)
+        ))
+
         return new_appointment
     
     def get_by_id(self, id) -> AppointmentModel | None:

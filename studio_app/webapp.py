@@ -3,7 +3,7 @@ import sqlite3
 import datetime
 
 from dotenv import load_dotenv
-from flask import Flask, flash, redirect, render_template, request, session, send_file
+from flask import Flask, flash, redirect, render_template, request, session, send_file, url_for
 from flask_mailman import Mail
 from flask_migrate import Migrate
 from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password, logout_user
@@ -25,6 +25,7 @@ from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
 from .rout_handlers import *
 from wtforms import ValidationError
+from .config import Config
 
 load_dotenv()
 
@@ -87,6 +88,10 @@ def inject_navbar_items_not_logged_in():
 @app.context_processor
 def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
+
+@app.context_processor
+def inject_twilio_phone_from():
+    return dict(twilio_phone_from=Config.TWILIO_FROM_NUMBER)
 
 @app.route('/f2c5930a29900498068d74013e18e78c.html', methods=['GET'])
 def verify_html():
@@ -174,6 +179,7 @@ def account_page():
     return account.account()
 
 @app.route("/add_service/", methods=["GET", "POST"])
+@csrf.exempt
 def adding_service():
     with app.app_context():
         return add_service.add_service()
@@ -199,8 +205,50 @@ def articles():
 
 @app.route("/book/", methods=["GET", "POST"])
 def book_appointment():
-    with app.app_context():
-        return book.book()
+    return book.book()
+
+@app.route("/confirmation-code", methods = ["GET", "POST"])
+@login_required
+def confirmation_code():
+    from .validations.forms.appointment_forms import ConfirmAppointmentViaSms
+    from .services.appointment_service import AppointmentService
+    from .services.slot_service import SlotService
+    from .repositories.slot_repository import SlotRepository
+    from .repositories.appointment_repository import AppointmentRepository
+    form = ConfirmAppointmentViaSms()
+    
+    if request.method == "GET":
+        appointment_id = request.args.get("appointment_id")
+        form.appointment_id.data = appointment_id
+        appointment_service = AppointmentService()
+        flash(f"code was sent to {appointment_service.get_user_phone_by_appointment_id(appointment_id)}")
+        return render_template("booking_sms_confirmation_code.html", form=form)
+    if form.validate_on_submit():
+        appointment_service = AppointmentService()
+        appointment_repo = AppointmentRepository()
+        slot_service = SlotService()
+        slot_repo = SlotRepository()
+
+        appointment = appointment_repo.get_by_id(form.appointment_id.data)
+        slot = slot_repo.get_by_id(appointment.slot_id) 
+
+        appointment_service.set_phone_confirmed_by_appointment_id(appointment.id)
+        slot_service.reserve_slot(slot.id, appointment.id) 
+        
+        return render_template("message_page.html", message_title="success", 
+                                        message_header=f"Your request for {str(appointment.service).lstrip("[").rstrip("]")} on", 
+                                        message_text= f"""  {slot.date.strftime("%d %B, %Y")} 
+                                        at {slot.time.strftime("%I:%M%p").lstrip('0')} was sent.
+                                          We will review the request and contact you as soon as possible.
+                                          Thank you!""", 
+                                        message_link="/", 
+                                        message_link_text="Home page.")
+    else:
+        flash("wrong code", "error")
+        return redirect(url_for(
+                "confirmation_code",
+                appointment_id=form.appointment_id.data
+            ))
 
 @app.route("/cancel_appointment/", methods = ["POST"])
 @login_required
@@ -334,6 +382,7 @@ def logout():
     return redirect("/")
 
 @app.route("/windows/", methods = ["GET", "POST"])
+@csrf.exempt
 @login_required
 @admin_only
 def windows():

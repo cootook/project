@@ -24,7 +24,23 @@ class ServiceService():
         return True, ""
     
     def get_active_services(self) -> List[Dict]:
+        """
+        List[
+            {
+            id:, 
+            name:, 
+            description:
+            },
+        ]
+        """
         return self.service_repo.get_list_of_dict_of_active_services()
+    
+    def get_list_of_active_services(self) -> List[str]:
+        list_of_dict = self.service_repo.get_list_of_dict_of_active_services()
+        list_of_str = []
+        for service in list_of_dict:
+            list_of_str.append(service["name"])
+        return list_of_str
         
     def delete_by_id(self, id: int):
         service = self.service_repo.get_by_id(id)

@@ -6,8 +6,7 @@ from ..config import Config
 from flask_sqlalchemy import SQLAlchemy
 
 
-def seed_slots(
-          days_seed_upfront: int=Config.HOW_FAR_IN_FUTURE_CREATE_SLOTS, 
+def seed_slots(           
           db_session: SQLAlchemy=data_base, 
           config=Config
           ):
@@ -15,6 +14,7 @@ def seed_slots(
         before creating slots the func checks if slots already exist at current day
         if there are any slots the day will be skipped
         """
+        days_seed_upfront: int=Config.HOW_FAR_IN_FUTURE_CREATE_SLOTS
         print("     # create slots ", days_seed_upfront, " days upfront:")
         print("         -- starting from ", datetime.datetime.now())
         service_timedelta = datetime.timedelta(minutes=config.TIME_DELTA_SLOTS_MINUTES)

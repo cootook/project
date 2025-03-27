@@ -45,7 +45,12 @@ class ServiceRepository(BaseRepository):
         services_list = []
         for service in services_bd:
             service = service.__dict__
-            services_list.append(service)
+            temp_dict = {
+                "id": service["id"],
+                "name": service["name"],
+                "description": service["description"]
+            }
+            services_list.append(temp_dict)
         return services_list
     
     def get_list_of_names_of_active_services(self) -> list:
