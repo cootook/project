@@ -5,7 +5,7 @@
 
 if there is no 'migrations' directory : run 
     ```console
-        flask bb init
+        flask db init
     ```
     to file 'migrations/script.py.mako' add imports
     ```python
@@ -171,9 +171,10 @@ Administrators can confirm, edit, cancel, or mark appointments as done. They can
 
 ```
 project
-├─ .gitignore
 ├─ CODE_OF_CONDUCT.md
 ├─ CONTRIBUTING.md
+├─ LICENSE
+├─ README.md
 ├─ docs
 │  ├─ commit_message_format.md
 │  ├─ database_schema.md
@@ -193,16 +194,13 @@ project
 │  ├─ pull_request_template.md
 │  └─ route_handlers.md
 ├─ env_config_info.txt
-├─ LICENSE
 ├─ migrations
+│  ├─ README
 │  ├─ alembic.ini
 │  ├─ env.py
-│  ├─ README
 │  ├─ script.py.mako
 │  └─ versions
-│     ├─ 11b4045c2dcb_.py
-│     └─ a0e6bbf34d48_.py
-├─ README.md
+│     └─ 0b7ea3825b73_.py
 ├─ requirements.txt
 └─ studio_app
    ├─ config.py
@@ -210,13 +208,19 @@ project
    ├─ f2c5930a29900498068d74013e18e78c.html
    ├─ forms.py
    ├─ helpers
-   │  ├─ email.py
-   │  ├─ phone.py
-   │  ├─ recaptcha.py
-   │  ├─ sms.py
    │  └─ __init__.py
    ├─ helpers_legacy.py
+   ├─ models
+   │  ├─ __init__.py
+   │  ├─ appointment.py
+   │  ├─ base.py
+   │  ├─ consent_sms.py
+   │  ├─ role.py
+   │  ├─ service.py
+   │  ├─ slot.py
+   │  └─ user.py
    ├─ rout_handlers
+   │  ├─ __init__.py
    │  ├─ account.py
    │  ├─ add_service.py
    │  ├─ all_appointments.py
@@ -233,10 +237,13 @@ project
    │  ├─ edit_appointment.py
    │  ├─ edit_service.py
    │  ├─ history.py
-   │  ├─ signup.py
-   │  └─ __init__.py
+   │  └─ signup.py
    ├─ services
    │  ├─ booking.py
+   │  ├─ email.py
+   │  ├─ phone.py
+   │  ├─ recaptcha.py
+   │  ├─ sms.py
    │  ├─ user.py
    │  └─ verification.py
    ├─ static
@@ -274,8 +281,8 @@ project
    │  ├─ all_appointments.html
    │  ├─ all_history.html
    │  ├─ apology.html
-   │  ├─ appointments.html
    │  ├─ appointment_request.html
+   │  ├─ appointments.html
    │  ├─ articles.html
    │  ├─ booking_sms_confirmation_code.html
    │  ├─ calendar.html
@@ -294,11 +301,10 @@ project
    │  ├─ pricing.html
    │  ├─ privacy_policy.html
    │  ├─ security
-   │  │  ├─ login_user.html
-   │  │  ├─ register_user.html
    │  │  ├─ _macros.html
-   │  │  └─ _menu.html
-   │  ├─ signin.html
+   │  │  ├─ _menu.html
+   │  │  ├─ login_user.html
+   │  │  └─ register_user.html
    │  ├─ signup.html
    │  ├─ terms_of_service.html
    │  └─ windows.html

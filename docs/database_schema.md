@@ -31,25 +31,11 @@ Table appointment {
   canceled bool [not null, default: false]
   canceled_by integer [ref: <> user.id]
   canceled_at datetime
-  lust_update_at datetime
-  lust_update_by integer [ref: <> user.id]
+  last_update_at datetime
+  last_update_by integer [ref: <> user.id]
   description string
 }
 
-Table booking_message {
-  id integer [primary key]
-  appoint_id integer [not null, ref: <> appointment.id]
-  author_id integer [not null, ref: <> user.id]
-  at datetime [not null]
-  edited_at datetime
-  deleted bool [not null, default: false]
-}
-
-Table language {
-  id integer [primary key]
-  name string [not null, unique]
-  description string
-}
 
 Table    { #######
   id integer [primary key]
@@ -75,8 +61,8 @@ Table payment {
   accepted_by integer [not null, ref: <> user.id]
   payed_by integer [not null, ref: <> user.id]
   at datetime [not null]
-  lust_update_at datetime                           ### nullable
-  lust_update_by integer [ref: <> user.id]
+  last_update_at datetime                           ### nullable
+  last_update_by integer [ref: <> user.id]
   description string
 }
 
@@ -147,8 +133,8 @@ Table user {
   picture_path string
   appointment list
   role list
-  lust_update_at datetime
-  lust_update_by integer [ref: <> user.id]
+  last_update_at datetime
+  last_update_by integer [ref: <> user.id]
       deleted: sa.orm.Mapped[bool] = sa.orm.mapped_column(nullable = False, default = False)
     deleted_at: sa.orm.Mapped[datetime.datetime] = sa.orm.mapped_column(nullable = True) 
     deleted_by: sa.orm.Mapped[int] = sa.orm.mapped_column(nullable = True)

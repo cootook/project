@@ -1,4 +1,3 @@
-import json
 from ..config import Config
 from twilio.rest import Client
 class SmsService:

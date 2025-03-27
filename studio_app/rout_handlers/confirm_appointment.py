@@ -1,32 +1,46 @@
-import datetime
+from ..services.appointment_service import AppointmentService
+from flask import redirect, request, Response
+from typing import Tuple, Union
+from http import HTTPStatus
+from ..error_handlers.appointment_error_handler import AppointmentErrorHandler
 
-from sqlalchemy import update
-from studio_app.db_classes import Appointment, db_base
-from flask import redirect, render_template, request
-from flask_security import current_user
+appointment_error_handler = AppointmentErrorHandler()
 
-
-def confirm_appointment():
+def confirm_appointment() -> Tuple[Union[Response, str], int]:
     try:
-        user_id_confirm = int(request.form.get("user_id_confirm"))
-        booking_id_confirm = int(request.form.get("booking_id_confirm"))
-        
-        print(user_id_confirm, booking_id_confirm)
-        
-    except Exception as er:
-        print("##/confirm_appointment/ --form request")
-        print(er)
-        return  render_template("apology.html", error_message="Something went wrong")
+        confirmation_data = _extract_confirmation_data()
+        return _process_confirmation(confirmation_data)
+    except ValueError as e:
+        return appointment_error_handler.handle_appointment_error(
+            error=e,
+            appointment_id=request.form.get("booking_id_confirm", 0),
+            additional_data={'user_id': request.form.get("user_id_confirm", 0)}
+        )
+
+def _extract_confirmation_data() -> dict:
+    try:
+        return {
+            'user_id': int(request.form.get("user_id_confirm")),
+            'appointment_id': int(request.form.get("booking_id_confirm"))
+        }
+    except (TypeError, ValueError) as e:
+        raise ValueError(f"Failed to parse form data: {str(e)}")
+
+def _process_confirmation(data: dict) -> Tuple[Union[Response, str], int]:
+    appointment_service = AppointmentService()
+    success = appointment_service.confirm_booking(
+        data['appointment_id'],
+        data['user_id']
+    )
+
+    if success:
+        print(f"Successfully confirmed appointment {data['appointment_id']}")
+        return redirect("/all_appointments/"), HTTPStatus.OK
     
-    db_base.session.execute(update(Appointment).where(Appointment.id == booking_id_confirm, Appointment.user_id == user_id_confirm).values(
-        approved = True,
-        lust_update_at = datetime.datetime.now(),
-        lust_update_by_id = current_user.id,
-        approved_at = datetime.datetime.now(),
-        approved_by_id = current_user.id
-        ))
-    db_base.session.commit()
-
-
-    return redirect("/all_appointments/")
-
+    return appointment_error_handler.handle_appointment_error(
+        error=ValueError("User ID mismatch or appointment not found"),
+        appointment_id=data['appointment_id'],
+        additional_data={
+            'user_id': data['user_id']
+        }
+    )

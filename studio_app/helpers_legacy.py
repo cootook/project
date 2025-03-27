@@ -151,7 +151,7 @@ def send_email(to_email: str, subject: str, plain_text, from_email: str = None, 
         return str(error)
     
 
-def not_loged_only(f):
+def not_logged_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is not None:

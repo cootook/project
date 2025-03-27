@@ -7,6 +7,8 @@ const options_datetime = {
   hour: "numeric",
   minute: "2-digit"
 };
+const paginationInfo = user_appointments_for_frontend.pagination;
+const appointments = user_appointments_for_frontend.appointments;
 
 function create_card_for_appointment(appointment) {
   appointment.at_Date_obj = new Date(appointment.at)
@@ -179,12 +181,15 @@ function create_card_for_appointment(appointment) {
   return card_container
 }
 
-let appointment_main = document.getElementsByTagName("main")[0]
+var appointment_main = document.getElementsByTagName("main")[0]
 
-for (let index = 0; index < user_appointments_for_frontend.length; index++) {
-  const appointment = user_appointments_for_frontend[index];
+// for (let index = 0; index < user_appointments_for_frontend.length; index++) {
+//   const appointment = user_appointments_for_frontend[index];
+//   appointment_main.appendChild(create_card_for_appointment(appointment))
+// }
+appointments.forEach(appointment => {
   appointment_main.appendChild(create_card_for_appointment(appointment))
-}
+});
 document.addEventListener("DOMContentLoaded", () => {
     // data-date="{{get_this_date}}" data-service="{{service}}" data-client="{{client}}"
      $('#cancelModal').on('show.bs.modal', function (event) {

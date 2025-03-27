@@ -5,6 +5,7 @@ db_v2.db
 project.code-workspace
 .vscode
 .venv
+.git
 venv
 instance
 bash.exe.stackdump

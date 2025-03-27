@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Sign In 
+{% endblock %}
+
+{% block content %}
+
+<div class="signin-container">
+    <h1 class="h3 m-3 fw-normal">Log in</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class=" form-control p-2 bg-warning text-dark">
+            {% for message in messages %}
+                <p class="text-dark p-0 m-0">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+    <form class="form-signin" action="/login-with-email/" method="POST" id="signin-form">
+        
+    
+        <div class="py-1">
+            {{ form.email.label }}
+            {{ form.email(class="form-control w-100") }}
+
+        </div>
+        
+        <div class="py-1">
+            {{ form.password.label }}
+            {{ form.password(class="form-control w-100") }}            
+        </div>
+
+        <div class="checkbox mb-3">
+            {{ form.do_remember_me(class="form-check-input") }}
+            {{ form.do_remember_me.label }}
+        </div>
+        
+        {{ form.csrf_token }}
+
+        {{ form.recaptcha }}
+
+        <button class="w-100 btn btn-lg btn-primary my-2" type="submit" id="signin-submit" disabled>Sign in</button>
+    </form>
+</div>
+
+<script src="{{ url_for('static', filename='/js/login_by_mail.js') }}"></script>
+
+{% endblock %}

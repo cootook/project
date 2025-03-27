@@ -1,36 +1,31 @@
 import os
-import click
 import sqlite3
 import datetime
-import requests
-import flask_security
 
-from calendar import monthrange
 from dotenv import load_dotenv
-from flask import Flask, flash, redirect, render_template, request, session, render_template_string, send_file
-from flask.cli import with_appcontext
+from flask import Flask, flash, redirect, render_template, request, session, send_file, url_for
 from flask_mailman import Mail
 from flask_migrate import Migrate
-from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password, login_user, verify_and_update_password, logout_user
-from flask_security.forms import LoginForm, ConfirmRegisterForm
+from flask_security import Security, SQLAlchemyUserDatastore, auth_required, hash_password, logout_user
 from flask_session import Session
 from jinja2 import Environment as jinja2_env
-from .helpers_legacy import validate_recaptcha, validate_twilio_request, send_email
-from .services.email import EmailService
+
+from .helpers_legacy import validate_twilio_request
+from .services.email_service import EmailService
+from .services.user_service import UserService
+from .repositories.user_repository import UserRepository
 from studio_app.forms import ExtendedRegisterForm
-from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import select
-from studio_app.config import ProductionConfig, DevelopmentConfig, TestingConfig
-from studio_app.db_classes import db_base
-from studio_app.db_classes import Appointment, BookingMessage, Language, NotificationType, Payment, PaymentMethod, PaymentStatus, PaymentType, Role, Service, ServiceRole, Slot, User, UserNotification, UserRole
-from studio_app.helpers_legacy import log_user_in, log_user_out, login_required, validate_password, page_not_found, does_user_exist, not_loged_only, admin_only, get_service_name
+from .config import ProductionConfig, DevelopmentConfig, TestingConfig
+from .cli import seed_admin, seed_all, seed_roles, seed_slots, seed_test_user, delete_empty_slots
+from .models import RoleModel, ServiceModel, SlotModel, UserModel, data_base
+from flask_wtf.csrf import CSRFProtect
+from studio_app.helpers_legacy import log_user_out, login_required, page_not_found, not_logged_only, admin_only
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
 from .rout_handlers import *
-
-
-# flask security
-from typing import List
+from wtforms import ValidationError
+from .config import Config
 
 load_dotenv()
 
@@ -49,18 +44,21 @@ app.config.from_object(DevelopmentConfig)
 Session(app)
 mail = Mail(app)
 
-db_base.init_app(app)
-migrate = Migrate(app, db_base)
+data_base.init_app(app)
+migrate = Migrate(app, data_base)
+
+csrf = CSRFProtect(app)
+
 
 # Setup Flask-Security
-user_datastore = SQLAlchemyUserDatastore(db_base, User, Role)
+user_datastore = SQLAlchemyUserDatastore(data_base, UserModel, RoleModel)
 app.security = Security(app, user_datastore, confirm_register_form=ExtendedRegisterForm)
 
 app.register_error_handler(404, page_not_found)
 
 # Define lists of navbar items to be used in templates
 navbar_items = ["Appointments", "History", "Account", "Contact", "Terms_of_service", "Privacy_policy", "LogOut"]
-navbar_items_not_loged_in = ["Contact", "Terms_of_service", "Privacy_policy", "SignIn"]
+navbar_items_not_logged_in = ["Contact", "Terms_of_service", "Privacy_policy"]
 navbar_items_admin = ["All_appointments", "Add_service", "Account", "Clients", "Windows", "Contact", "Terms_of_service", "Privacy_policy", "LogOut"]
 days_slots = [[10, 0], [10, 30], [11, 0], [11, 30], [12, 0], [13, 0], [13, 30], [14, 0], [14, 30], [15, 0]]
 
@@ -69,7 +67,7 @@ jinja2_env.SITE_KEY_RECAPTCHA = os.environ.get('SITE_KEY_RECAPTCHA')
 @app.context_processor
 def get_services():
     services = []
-    services_from_db = db_base.session.scalars(select(Service))
+    services_from_db = data_base.session.scalars(select(ServiceModel))
     for service in services_from_db:
         service_dict = dict(id = service.id, name = service.name, description = service.description, deleted = service.deleted)
         services.append(service_dict)
@@ -84,12 +82,16 @@ def inject_navbar_items():
     return dict(navbar_menu=navbar_items)
 
 @app.context_processor
-def inject_navbar_items_not_loged_in():
-    return dict(navbar_menu_not_loged_in=navbar_items_not_loged_in)
+def inject_navbar_items_not_logged_in():
+    return dict(navbar_menu_not_logged_in=navbar_items_not_logged_in)
 
 @app.context_processor
 def inject_navbar_items_admin():
     return dict(navbar_items_admin=navbar_items_admin)
+
+@app.context_processor
+def inject_twilio_phone_from():
+    return dict(twilio_phone_from=Config.TWILIO_FROM_NUMBER)
 
 @app.route('/f2c5930a29900498068d74013e18e78c.html', methods=['GET'])
 def verify_html():
@@ -118,7 +120,7 @@ def register():
         tel = request.form.get('tel')
         
         user_datastore.create_user(email = email, password = hash_password(password))
-        db_base.commit()
+        data_base.commit()
     return render_template('security/register_user.html')
 
 @app.route('/test_email/', methods=['GET', 'POST'])
@@ -150,7 +152,7 @@ def incoming_message():
 def home():
     today = datetime.datetime.now()
     try:
-        slots_db_v2 = Slot.query.filter(Slot.opened == True).all()
+        slots_db_v2 = SlotModel.query.filter(SlotModel.opened == True).all()
     except Exception as er:
         print("##/")
         print(er)
@@ -173,11 +175,12 @@ def about():
 
 @app.route("/account/", methods=["GET", "POST"])
 @login_required
-def _account():
+def account_page():
     return account.account()
 
 @app.route("/add_service/", methods=["GET", "POST"])
-def _add_service():
+@csrf.exempt
+def adding_service():
     with app.app_context():
         return add_service.add_service()
 
@@ -187,13 +190,13 @@ def apology():
 
 @app.route("/appointments/", methods=["GET", "POST"])
 @login_required
-def _appointments():
+def show_appointments():
     return appointments.appointments()
 
 @app.route("/all_appointments/", methods=["GET"])
 @login_required
 @admin_only
-def _all_appointments():
+def list_appointments():
     return all_appointments.all_appointments()
 
 @app.route("/articles/")
@@ -201,34 +204,74 @@ def articles():
     return render_template("articles.html")
 
 @app.route("/book/", methods=["GET", "POST"])
-def _book():
-    with app.app_context():
-        return book.book()
+def book_appointment():
+    return book.book()
 
+@app.route("/confirmation-code", methods = ["GET", "POST"])
+@login_required
+def confirmation_code():
+    from .validations.forms.appointment_forms import ConfirmAppointmentViaSms
+    from .services.appointment_service import AppointmentService
+    from .services.slot_service import SlotService
+    from .repositories.slot_repository import SlotRepository
+    from .repositories.appointment_repository import AppointmentRepository
+    form = ConfirmAppointmentViaSms()
+    
+    if request.method == "GET":
+        appointment_id = request.args.get("appointment_id")
+        form.appointment_id.data = appointment_id
+        appointment_service = AppointmentService()
+        flash(f"code was sent to {appointment_service.get_user_phone_by_appointment_id(appointment_id)}")
+        return render_template("booking_sms_confirmation_code.html", form=form)
+    if form.validate_on_submit():
+        appointment_service = AppointmentService()
+        appointment_repo = AppointmentRepository()
+        slot_service = SlotService()
+        slot_repo = SlotRepository()
 
+        appointment = appointment_repo.get_by_id(form.appointment_id.data)
+        slot = slot_repo.get_by_id(appointment.slot_id) 
+
+        appointment_service.set_phone_confirmed_by_appointment_id(appointment.id)
+        slot_service.reserve_slot(slot.id, appointment.id) 
+        
+        return render_template("message_page.html", message_title="success", 
+                                        message_header=f"Your request for {str(appointment.service).lstrip("[").rstrip("]")} on", 
+                                        message_text= f"""  {slot.date.strftime("%d %B, %Y")} 
+                                        at {slot.time.strftime("%I:%M%p").lstrip('0')} was sent.
+                                          We will review the request and contact you as soon as possible.
+                                          Thank you!""", 
+                                        message_link="/", 
+                                        message_link_text="Home page.")
+    else:
+        flash("wrong code", "error")
+        return redirect(url_for(
+                "confirmation_code",
+                appointment_id=form.appointment_id.data
+            ))
 
 @app.route("/cancel_appointment/", methods = ["POST"])
 @login_required
-def _cancel_appointment():
+def appointment_canceling():
     return cancel_appointment.cancel_appointment()
 
 
 @app.route("/change_password/", methods = ["GET", "POST"])
 @login_required
-def _change_password():
+def changing_password():
     return change_password.change_password()
 
 
 @app.route("/change_role/", methods = ["GET", "POST"])
 @login_required
-def _change_role():
+def changing_role():
     return change_role.change_role()
 
 
 @app.route("/clients/", methods=["GET", "POST"])
 @login_required
 @admin_only
-def clients():
+def showing_clients():
     try:
         con = sqlite3.connect("./db.db") 
         cur = con.cursor()
@@ -264,11 +307,11 @@ def clients():
 @app.route("/confirm_appointment/", methods = ["POST"])
 @login_required
 @admin_only
-def _confirm_appointment():
+def confirmation_appointment():
     return confirm_appointment.confirm_appointment()
 
 @app.route("/confirm_phone", methods = ["POST"])
-def _confirm_phone():    
+def confirmation_phone():    
     return confirm_phone.confirm_phone()
 
 
@@ -282,84 +325,53 @@ def day():
     return render_template("day.html")
 
 @app.route("/delete_service/", methods=["POST", "GET"])
-def _delete_service():
+@login_required
+@admin_only
+def deleting_service():
     with app.app_context():
         return delete_service.delete_service()
-
 
 @app.route("/done_appointment/", methods = ["POST"])
 @login_required
 @admin_only
-def _done_appointment():
+def finishing_appointment():
     return done_appointment.done_appointment()
 
 @app.route("/edit_appointment/", methods=["POST"])
 @login_required
 @admin_only
-def _edit_appointment():
+def editing_appointment():
     return edit_appointment.edit_appointment()
 
 @app.route("/edit_service/", methods=["POST", "GET"])
-def _edit_service():
+def editing_service():
     with app.app_context():
         return edit_service.edit_service()
 
 @app.route("/history/")
 @login_required
-def _history():
+def showing_history():
     return history.history()
 
 @app.route("/all_history/", methods = ["GET", "POST"])
 @login_required
 @admin_only
-def _all_history():
+def showing_all_history():
     return all_history.all_history()
 
 @app.route("/pricing/")
 def pricing():
     return render_template("pricing.html")
 
-@app.route("/signin/", methods = ["GET", "POST"])
-@not_loged_only
-def signin():
-    if request.method == "POST":
-        # try:
-        token = request.form.get("g-recaptcha-response")
-        login = request.form.get("login")
-        password = request.form.get("password")
-        remember = False if request.form.get("remember") == None else True
-
-        if not validate_recaptcha(token):
-            return  render_template("apology.html", error_message="Sorry. Something went wrong with anti robot protection. Please, try again or contact us.")
-        
-        user_to_login = db_base.session.scalar(select(User).where(User.email == login))
-        if user_to_login is None:
-            return render_template("apology.html", error_message="wrong login or password user_to_login")
-        
-        password_ok = verify_and_update_password(password, user_to_login)
-        db_base.session.commit()
-        if password_ok:
-
-            login_user(user_to_login, remember, "password")
-            session["user_id"] = user_to_login.__dict__["id"]
-            session["is_admin"] = 1 if user_to_login.has_role("admin") else 0            
-            session["name"] = user_to_login.__dict__["name"]
-            session["login"] = user_to_login.__dict__["email"]
-            session["instagram"] = user_to_login.__dict__["instagram"]
-            session["tell"] = user_to_login.__dict__["us_phone_number"]
-            return redirect("/")
-        else:
-            return render_template("apology.html", error_message="wrong login or password password_ok")                
-
-           
-
-    else:
-        return render_template("signin.html")
-    
+@app.route("/login-with-email/", methods = ["GET", "POST"])
+@app.route("/login-with-email", methods = ["GET", "POST"])
+@not_logged_only
+def login():
+    return login_with_email.login_with_email()
 
 @app.route("/signup/", methods = ["GET", "POST"])
-@not_loged_only
-def _signup():
+@not_logged_only
+def signing_up():
     return signup.signup()
     
 @app.route("/logout/")
@@ -370,10 +382,11 @@ def logout():
     return redirect("/")
 
 @app.route("/windows/", methods = ["GET", "POST"])
+@csrf.exempt
 @login_required
 @admin_only
 def windows():
-    db_v2_slots = Slot.query.filter().all()
+    db_v2_slots = SlotModel.query.filter().all()
     slots_to_frontend = []
     for s in db_v2_slots:
         slots_to_frontend.append([s.id, s.date.year, s.date.month, s.date.day, s.time.hour, s.time.minute, 1 if s.opened else 0, 1 if s.occupied else 0])
@@ -390,7 +403,7 @@ def windows():
             target_date = datetime.date(year, month, day)
             target_time = datetime.time(hour, minute)
 
-            target_slot = Slot.query.filter(Slot.id == target_slot_id, Slot.date == target_date, Slot.time == target_time).first()
+            target_slot = SlotModel.query.filter(SlotModel.id == target_slot_id, SlotModel.date == target_date, SlotModel.time == target_time).first()
 
             if target_slot.opened :
                 target_slot.opened = False
@@ -401,7 +414,7 @@ def windows():
                 target_slot.opened_by_id = session["user_id"]
                 target_slot.opened_at = datetime.datetime.now()
 
-            db_base.session.commit()
+            data_base.session.commit()
             return redirect("/windows/")
 
         except Exception as er:
@@ -411,80 +424,10 @@ def windows():
         
     return render_template("windows.html", slots=slots_to_frontend)
         
-@click.command("seed_slots")
-@with_appcontext
-def seed_slots():
-    amount_days = int(os.environ.get("HOW_FAR_IN_FUTURE_CREATE_SLOTS")) if os.environ.get("HOW_FAR_IN_FUTURE_CREATE_SLOTS") else 300
-    Slot.create_n_days_upfront(amount_days)
+
+app.cli.add_command(seed_all)
 app.cli.add_command(seed_slots)
-
-@click.command("delete_empty_slots")
-@with_appcontext
-def delete_empty_slots():
-    Slot.delete_old_empty()
 app.cli.add_command(delete_empty_slots)
-
-@click.command("seed_role")
-@with_appcontext
-def seed_role():
-    role_admin = user_datastore.find_or_create_role("admin")
-    role_client = user_datastore.find_or_create_role("client")
-    role_tester = user_datastore.find_or_create_role("tester")
-    roles = [role_admin, role_client, role_tester]
-    db_base.session.add_all(roles)
-    db_base.session.commit()
-
-app.cli.add_command(seed_role)
-
-
-@click.command("seed_admin")
-@with_appcontext
-def seed_admin():
-    if db_base.session.scalar(select(User).where(User.id == 1)) is None:
-        admin_email = os.environ.get('ADMINISTRATOR_EMAIL')
-        admin_password = os.environ.get('ADMINISTRATOR_PASSWORD')
-        admin_name = os.environ.get('ADMINISTRATOR_NAME')
-        admin_phone = os.environ.get('ADMINISTRATOR_US_PHONE')
-        admin = user_datastore.create_user(
-            email = admin_email, 
-            password = hash_password(admin_password), 
-            name = admin_name, 
-            tel = admin_phone, 
-            us_phone_number = admin_phone
-            )
-        db_base.session.add(admin)
-        db_base.session.commit()
-
-        user_datastore.add_role_to_user(admin, "admin")
-        db_base.session.commit()
-        print("created: ", db_base.session.scalar(select(User).where(User.id == 1)))
-    else:
-        print("already exist: ", db_base.session.scalar(select(User).where(User.id == 1)))
-    
+app.cli.add_command(seed_roles)
 app.cli.add_command(seed_admin)
-
-@click.command("seed_test_user")
-@with_appcontext
-def seed_test_user():
-    if db_base.session.scalar(select(User).where(User.id == 2)) is None:
-        test_user_email = os.environ.get('TEST_USER_EMAIL')
-        test_user_password = os.environ.get('TEST_USER_PASSWORD')
-        test_user_name = os.environ.get('TEST_USER_NAME')
-        test_user_phone = os.environ.get('TEST_USER_US_PHONE')
-        test_user = user_datastore.create_user(
-            email = test_user_email, 
-            password = hash_password(test_user_password), 
-            name = test_user_name, 
-            tel = test_user_phone, 
-            us_phone_number = test_user_phone
-            )
-        db_base.session.add(test_user)
-        db_base.session.commit()
-
-        user_datastore.add_role_to_user(test_user, "tester")
-        db_base.session.commit()
-        print("created: ", db_base.session.scalar(select(User).where(User.id == 2)))
-    else:
-        print("already exist: ", db_base.session.scalar(select(User).where(User.id == 2)))
 app.cli.add_command(seed_test_user)
-

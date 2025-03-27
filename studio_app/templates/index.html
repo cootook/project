@@ -15,6 +15,16 @@ Liza Nail Studio
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.1.1/build/js/intlTelInput.min.js"></script>
 <script src="{{ url_for('static', filename='/js/index.js') }}"></script>
 
+{% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class=" form-control p-2 bg-warning text-dark">
+            {% for message in messages %}
+                <p class="text-dark p-0 m-0">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
 {% include 'calendar.html' %}
 <div class="modal fade" id="book_confirm_modal" tabindex="-1" role="dialog" aria-labelledby="book_confirm_modal_lable" aria-hidden="true">
   <div class="modal-dialog" role="document">

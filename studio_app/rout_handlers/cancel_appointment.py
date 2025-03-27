@@ -1,30 +1,47 @@
-import datetime
+from ..services.appointment_service import AppointmentService
+from flask import redirect, request, Response
+from typing import Tuple, Union
+from http import HTTPStatus
+from ..error_handlers.appointment_error_handler import AppointmentErrorHandler
 
-from sqlalchemy import update, select
-from studio_app.db_classes import Appointment, db_base
-from flask import redirect, render_template, request
-from flask_security import current_user
-from flask import redirect, render_template, request
+appointment_error_handler = AppointmentErrorHandler()
 
 def cancel_appointment():
     try:
-        user_id_cancel = int(request.form.get("user_id_cancel"))
-        booking_id_cancel = int(request.form.get("booking_id_cancel"))
-        cancel_message = request.form.get("cancel_message")
-
-    except Exception as er:
-        print("##/cancel_appointment/ --form request")
-        print(er)
-        return  render_template("apology.html", error_message="Something went wrong")
-    messages = db_base.session.scalar(select(Appointment.description).where(Appointment.id == booking_id_cancel, Appointment.user_id == user_id_cancel))
-    db_base.session.execute(update(Appointment).where(Appointment.id == booking_id_cancel, Appointment.user_id == user_id_cancel).values(
-        description = cancel_message + " | " + messages,
-        lust_update_at = datetime.datetime.now(),
-        lust_update_by_id = current_user.id,
-        canceled_at = datetime.datetime.now(),
-        canceled_by_id = current_user.id,
-        canceled = True
-        ))
-    db_base.session.commit()
+        cancellation_data = _extract_cancellation_data()
+        return _process_cancellation(cancellation_data)
+    except ValueError as e:
+        return appointment_error_handler.handle_appointment_error(
+            error=e,
+            appointment_id=cancellation_data.get('appointment_id'),
+            additional_data={'user_id': cancellation_data.get('user_id')}
+        )
+def _extract_cancellation_data() -> dict:
+    try:
+        return {
+            'user_id': int(request.form.get("user_id_cancel")),
+            'booking_id': int(request.form.get("booking_id_cancel")),
+            'message': request.form.get("cancel_message")
+        }
+    except (TypeError, ValueError) as e:
+        raise ValueError(f"Failed to parse form data: {str(e)}")
     
-    return redirect("/all_appointments/")
+def _process_cancellation(data: dict) -> Tuple[Union[Response, str], int]:
+    appointment_service = AppointmentService()
+    success = appointment_service.cancel_with_message(
+        data['booking_id'],
+        data['user_id'],
+        data['message']
+    )
+    
+    if success:
+        print(f"Successfully canceled appointment {data['booking_id']}")
+        return redirect("/all_appointments/"), HTTPStatus.OK
+    
+    return appointment_error_handler.handle_appointment_error(
+        error=ValueError("User ID mismatch or appointment not found"),
+        appointment_id=data['booking_id'],
+        additional_data={
+            'user_id': data['user_id']
+        }
+    )

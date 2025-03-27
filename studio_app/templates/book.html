@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block custom_styles %} 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.0/build/css/intlTelInput.css">
+{% endblock %}
+
+{% block title %}
+Request appointment
+{% endblock %}
+
+{% block content %}
+
+
+<form id="book_form" action="/book/" method="post">
+                {{ form.csrf_token }}
+                {{ form.slot_id }}
+                
+                <div class="form-group mt-2">
+                  {{ form.date_time_iso.label(class="form-label mb-0")}}
+                  {{ form.date_time_iso(readonly=true)}}
+                </div>
+                
+                <div class="form-group  my-2">
+                  {{ form.phone.label(class="form-label mb-0") }}
+                  {{ form.phone(class="form-control bg-light text-dark") }}
+                </div>
+                
+                <div class="form-group my-2">
+                  {{ form.name.label(class="form-label mb-0")}}
+                  {{ form.name(class="form-control") }}
+                </div>
+                
+                <div class="form-group my-2">
+                  {{ form.service.label(class="form-label mb-0")}}
+                  {{ form.service(class="form-control") }}
+                </div>
+                
+                <div class="form-group my-2">
+                  {{ form.message.label(class="form-label mb-0") }}
+                  {{ form.message(class="form-control") }}
+                </div>
+                
+                <div class="form-group my-2">
+                  {{ form.terms_and_privacy_concern(class="form-check-input") }}
+                  {{ form.terms_and_privacy_concern.label(class="form-check-label px-2 small w-75") }}
+                </div>
+                {{ form.token }}
+
+
+         <div class="form-group  my-2 w-100">
+          <div class="text-danger fw-bold" id="phone_not_valid">
+            <b class="text-danger" >✖</b> <span class="text-danger">not valid</span> 
+          </div>
+          <div class="text-success fw-bold" id="phone_valid" hidden>
+            <b class="text-success" >✔</b> <span class="text-success">valid</span>
+          </div>
+         </div>
+         <button class="w-20 btn btn-lg btn-primary my-2" type="submit" id="book-submit" >
+          Book
+         </button>
+        
+</form>    
+
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.0/build/js/intlTelInput.min.js"></script>
+<script>
+  const input = document.querySelector("#phone");
+  window.intlTelInput(input, {
+    initialCountry: "us",
+    hiddenInput: () => ({ phone: "full_phone", country: "country_code" }),    
+    loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.0/build/js/utils.js"),
+  });
+</script>
+ 
+{% endblock %}
