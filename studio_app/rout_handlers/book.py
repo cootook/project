@@ -34,7 +34,7 @@ def book():
                 form.name.data,
                 [form.service.data]
             )
-
+            print(booking_service.client_is_logged_in)
             sms_verification = SmsVerification(
                 booking_service.client_phone,
                 booking_service.confirmation_code
