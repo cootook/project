@@ -42,7 +42,7 @@ def book():
             message_instance = sms_verification.send_code()   
 
             return redirect(url_for(
-                "confirmation_code",
+                "sms_confirmation",
                 appointment_id=booking_service.appointment_id
             ))
         else:
