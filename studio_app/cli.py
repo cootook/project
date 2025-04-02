@@ -3,6 +3,7 @@ from flask.cli import with_appcontext
 from flask import current_app
 from .seeders.seeder import Seeder
 from .seeders.slots_seeder import seed_slots as seeder_seed_slots
+from .seeders.admin_user_seeder import restore_first_admin
 from .models import SlotModel
 
 @click.command("seed-all")
@@ -32,9 +33,18 @@ def seed_roles():
 @click.command("seed-admin")
 @with_appcontext
 def seed_admin():
-    Seeder.seed_admin()
+    seeder = Seeder()
+    seeder.seed('admin')
 
 @click.command("seed-test-user")
 @with_appcontext
 def seed_test_user():
     Seeder.seed_test_user()
+
+@click.command("restore-first-admin")
+@with_appcontext
+def restore_first_admin_command():
+    seeder = Seeder()
+    seeder.add_seeder('restore_first_admin', restore_first_admin)
+    seeder.seed('restore_first_admin')
+

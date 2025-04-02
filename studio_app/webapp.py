@@ -17,7 +17,7 @@ from .repositories.user_repository import UserRepository
 from studio_app.forms import ExtendedRegisterForm
 from sqlalchemy import select
 from .config import ProductionConfig, DevelopmentConfig, TestingConfig
-from .cli import seed_admin, seed_all, seed_roles, seed_slots, seed_test_user, delete_empty_slots
+from .cli import seed_admin, seed_all, seed_roles, seed_slots, seed_test_user, delete_empty_slots, restore_first_admin_command
 from .models import RoleModel, ServiceModel, SlotModel, UserModel, data_base
 from flask_wtf.csrf import CSRFProtect
 from studio_app.helpers_legacy import log_user_out, login_required, page_not_found, not_logged_only, admin_only
@@ -393,3 +393,4 @@ app.cli.add_command(delete_empty_slots)
 app.cli.add_command(seed_roles)
 app.cli.add_command(seed_admin)
 app.cli.add_command(seed_test_user)
+app.cli.add_command(restore_first_admin_command)
