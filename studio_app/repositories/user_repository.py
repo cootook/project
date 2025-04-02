@@ -103,7 +103,9 @@ class UserRepository(BaseRepository):
         )
     
     def verify_and_update_password(self, user: UserModel, password: str):
-        return verify_and_update_password(password, user)
+        password_ok = verify_and_update_password(password, user)
+        self.db.commit()
+        return password_ok
 
     def update_user_data(self, user: UserModel, **kwargs: any) -> UserModel:
         self.db.execute(
