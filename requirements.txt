@@ -19,7 +19,7 @@ blinker==1.7.0
 build==1.2.1
 cachelib==0.10.2
 cachetools==5.3.3
-cbor2==5.6.3
+cbor2==5.8.0
 certifi==2023.11.17
 cffi==1.16.0
 cfgv==3.4.0
