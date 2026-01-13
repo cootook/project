@@ -132,7 +132,7 @@ typing_extensions==4.9.0
 tzdata==2024.1
 tzlocal==5.2
 urllib3==2.1.0
-virtualenv==20.26.6
+virtualenv==20.36.1
 webencodings==0.5.1
 Werkzeug==3.0.3
 wheel-filename==1.4.1
